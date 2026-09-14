@@ -31,14 +31,6 @@ class PaymentWebhookException extends RuntimeException
         return new self('Signature de webhook invalide — événement rejeté (protection anti-fraude).', 400);
     }
 
-    public static function transactionNotApprovedByApi(string $transactionId, string $actualStatus): self
-    {
-        return new self(
-            "La vérification auprès de l'API du PSP indique que la transaction [{$transactionId}] n'est pas approuvée (statut réel: {$actualStatus}).",
-            409
-        );
-    }
-
     public static function orderNotFound(string $reference): self
     {
         return new self("Aucune commande ne correspond à la référence de transaction [{$reference}].", 404);

@@ -37,11 +37,13 @@ class Product extends Model
         'sku',
         'stock_available',
         'stock_reserved',
+        'stock_sold',
         'weight',
         'dimensions',
         'duration_minutes',
         'location',
         'delivery_mode',
+        'meeting_link',
     ];
 
     protected function casts(): array
@@ -66,6 +68,35 @@ class Product extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * §12 — variantes (produits physiques uniquement).
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('position')->orderBy('created_at');
+    }
+
+    public function hasVariants(): bool
+    {
+        return $this->variants()->exists();
+    }
+
+    /**
+     * §18 — créneaux hebdomadaires récurrents (services uniquement).
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(ServiceSchedule::class);
+    }
+
+    /**
+     * §18 — indisponibilités / congés propres à ce service.
+     */
+    public function timeOff(): HasMany
+    {
+        return $this->hasMany(ServiceTimeOff::class);
     }
 
     /*

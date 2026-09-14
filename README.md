@@ -1,66 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MALKUTHAR — Plateforme e-commerce & affiliation 3 niveaux
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plateforme e-commerce propriétaire de **MALKUTHAR SARL** : vente de produits
+**digitaux**, **physiques** et de **services**, avec un module financier
+d'affiliation à **3 niveaux (15 % / 10 % / 5 %)** réservé **exclusivement aux
+produits digitaux déclarés affiliables**.
 
-## About Laravel
+- Stack : **Laravel 12**, PHP 8.2+, base SQLite en dev.
+- PSP : **FedaPay** (en place), **CinetPay** (prévu) — architecture multi‑PSP.
+- Le wallet affilié est un **registre comptable (ledger)** : le solde est
+  toujours recalculable à partir des écritures, jamais écrit à la main.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Règle métier absolue
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Type de produit | Affiliation |
+|---|---|
+| `digital` **et** `is_affiliable = true` | ✅ commissions |
+| `digital` non affiliable | ❌ |
+| `physical` | ❌ |
+| `service` | ❌ |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Les 3 taux sont **indépendants**, appliqués sur le **même** montant éligible
+(figé au moment de l'achat dans `order_items.commission_base_amount`).
 
-## Learning Laravel
+## Démarrage
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+composer install
+cp .env.example .env        # si absent
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan test
+npm install && npm run dev  # assets
+php artisan serve
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Configuration
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- `config/malkuthar.php` — taux de commission, délai de validation des
+  commissions (§42), minimum/plafond/frais de retrait (§51, §57).
+- `config/services.php` — blocs `fedapay` et `cinetpay` (clés via `.env` :
+  `FEDAPAY_SECRET_KEY`, `FEDAPAY_WEBHOOK_SECRET`, `FEDAPAY_ENVIRONMENT`, …).
 
-## Laravel Sponsors
+## Architecture (état actuel)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+app/
+  Models/            User, Product, Order, OrderItem, Wallet, LedgerEntry, Withdrawal
+  Services/          AffiliationService, CheckoutService, DigitalDeliveryService, WithdrawalService
+  Services/Payments/ FedaPayWebhookService
+  Exceptions/        CommissionDistributionException, PaymentWebhookException, WithdrawalException
+  Http/Controllers/  Checkout, PaymentWebhook, Withdrawal, AffiliateDashboard
+database/migrations/ users + products + orders + order_items + wallets + ledger_entries + withdrawals
+```
 
-### Premium Partners
+### Flux paiement → commission (§66)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```
+Webhook FedaPay → vérif signature HMAC + re‑vérif API FedaPay (§26)
+  → Order.payment_status = paid (idempotent, §27)
+  → AffiliationService::distributeCommissions()  (ledger, statut pending, §40)
+  → DigitalDeliveryService (email + liens signés, §9)
+```
 
-## Contributing
+## Reste à faire (feuille de route)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Chaîne d'affiliation bout‑en‑bout** *(en cours)* : auth, onboarding
+   affilié (`MAL-AFF-xxxxxx`, code parrainage, `/ref/{code}`, tracking,
+   attribution du parrain, anti auto‑parrainage), checkout renseignant
+   `referring_affiliate_id`.
+2. Cycle de vie des commissions : `pending → available` planifié (§42),
+   reprise sur remboursement (§80).
+3. Tests obligatoires §84 / §85 / §90.
+4. Paiement bout‑en‑bout : interface PSP commune, initiation de paiement,
+   CinetPay, téléchargement digital sécurisé.
+5. Admin, audit log, stock / variantes / livraison / calendrier / coupons.

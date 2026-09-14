@@ -27,6 +27,7 @@ class Wallet extends Model
         'total_withdrawn',
         'default_withdrawal_method',
         'default_withdrawal_account',
+        'withdrawal_method_changed_at',
         'last_reconciled_at',
     ];
 
@@ -38,6 +39,7 @@ class Wallet extends Model
             'total_earned' => 'decimal:2',
             'total_withdrawn' => 'decimal:2',
             'default_withdrawal_account' => 'array',
+            'withdrawal_method_changed_at' => 'datetime',
             'last_reconciled_at' => 'datetime',
         ];
     }

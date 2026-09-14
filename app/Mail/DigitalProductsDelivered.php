@@ -27,8 +27,7 @@ class DigitalProductsDelivered extends Mailable implements ShouldQueue
     public function __construct(
         public readonly Order $order,
         public readonly Collection $downloadLinks,
-    ) {
-    }
+    ) {}
 
     public function build(): self
     {
@@ -36,7 +35,7 @@ class DigitalProductsDelivered extends Mailable implements ShouldQueue
             ->map(function (string $url, string $productName) {
                 $safeName = e($productName);
 
-                return "<li><strong>{$safeName}</strong> — <a href=\"{$url}\">Télécharger</a> (lien valable ".DigitalProductsDelivered::linkValidityLabel().")</li>";
+                return "<li><strong>{$safeName}</strong> — <a href=\"{$url}\">Télécharger</a> (lien valable ".DigitalProductsDelivered::linkValidityLabel().')</li>';
             })
             ->implode('');
 

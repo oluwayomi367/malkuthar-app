@@ -74,7 +74,9 @@ class CheckoutRequest extends FormRequest
             // §26 - le moyen/prestataire de paiement est choisi au checkout,
             // la confirmation réelle se fait ensuite côté serveur (webhook).
             'payment_method' => ['required', 'string', 'max:50'],
-            'payment_provider' => ['required', 'string', Rule::in(['fedapay', 'cinetpay'])],
+            // 'cod' = paiement à la livraison : aucun PSP n'est sollicité,
+            // l'encaissement est déclaré par un administrateur (§22/§26).
+            'payment_provider' => ['required', 'string', Rule::in(['fedapay', 'cinetpay', 'cod'])],
 
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
@@ -90,6 +92,7 @@ class CheckoutRequest extends FormRequest
                 Rule::exists('products', 'id'),
             ],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
+            'items.*.variant_id' => ['nullable', 'uuid', Rule::exists('product_variants', 'id')],
             'items.*.variant_sku' => ['nullable', 'string', 'max:100'],
         ];
 

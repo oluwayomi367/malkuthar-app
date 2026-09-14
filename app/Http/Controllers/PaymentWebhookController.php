@@ -3,55 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\PaymentWebhookException;
-use App\Services\Payments\FedaPayWebhookService;
+use App\Services\Payments\ProcessPaymentWebhook;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
 
 /**
- * PaymentWebhookController — reçoit les notifications serveur-à-serveur
- * des PSP (FedaPay, CinetPay — §22, §66). Contrôleur intentionnellement
- * fin : toute la logique (vérification de signature, re-vérification via
- * l'API du PSP, mise à jour de la commande, distribution des commissions,
- * livraison digitale) vit dans les Services dédiés.
+ * PaymentWebhookController — point d'entrée unique des notifications
+ * serveur-à-serveur des PSP (§22, §26, §66) : POST /webhooks/{provider}.
  *
- * IMPORTANT (configuration à faire au niveau du projet, hors de ce
- * fichier) :
- *  - Cette route doit être exclue de la vérification CSRF (FedaPay
- *    n'envoie pas de jeton Laravel) : à ajouter dans la configuration du
- *    middleware `ValidateCsrfToken` / `bootstrap/app.php`.
- *  - Elle ne doit PAS être protégée par un middleware `auth`.
- *  - Elle doit rester accessible en HTTPS uniquement.
+ * Contrôleur volontairement fin : authentification de la charge utile,
+ * re-vérification via l'API du PSP, mise à jour de la commande,
+ * distribution des commissions et livraison digitale vivent dans les
+ * Services. La route est exclue de la vérification CSRF (bootstrap/app.php)
+ * et ne doit jamais être protégée par `auth`.
  */
 class PaymentWebhookController extends Controller
 {
-    public function __construct(
-        private readonly FedaPayWebhookService $fedaPayWebhookService,
-    ) {
-    }
+    public function __construct(private readonly ProcessPaymentWebhook $processor) {}
 
-    /**
-     * POST /webhooks/fedapay
-     *
-     * Vérifie l'authenticité de l'événement (signature HMAC ET
-     * re-vérification directe auprès de l'API FedaPay — §26), puis, si le
-     * paiement est confirmé et qu'il s'agit du premier événement reçu
-     * pour cette commande (§27), fait passer la commande au statut payée,
-     * déclenche la livraison automatique des produits digitaux (§9) et
-     * distribue les commissions d'affiliation (§28-§39).
-     */
-    public function handleFedaPayWebhook(Request $request): Response
+    public function __invoke(Request $request, string $provider): Response
     {
-        $rawPayload = $request->getContent();
-        $signatureHeader = $request->header('X-FEDAPAY-SIGNATURE');
-
         try {
-            $this->fedaPayWebhookService->handle($rawPayload, $signatureHeader);
+            $this->processor->handle($provider, $request->getContent(), $request->headers->all());
         } catch (PaymentWebhookException $e) {
-            // Erreur métier identifiée (signature invalide, transaction
-            // non approuvée côté API, commande introuvable...) : on
-            // journalise et on répond avec le code HTTP adapté, sans
-            // exposer de détail sensible au tiers appelant.
             report($e);
 
             return response($e->getMessage(), $e->statusCode());
@@ -61,8 +36,7 @@ class PaymentWebhookController extends Controller
             return response('Erreur interne lors du traitement du webhook.', 500);
         }
 
-        // FedaPay attend une réponse 2xx rapide pour ne pas déclencher de
-        // nouvelle tentative.
+        // Réponse 2xx rapide attendue par les PSP pour éviter les retries.
         return response('OK', 200);
     }
 }

@@ -29,6 +29,9 @@ class User extends Authenticatable
         'parent_id',
         'affiliate_activated_at',
         'status',
+        'suspended_at',
+        'suspension_category',
+        'suspension_reason',
     ];
 
     protected $hidden = [
@@ -41,6 +44,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'affiliate_activated_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -116,6 +120,15 @@ class User extends Authenticatable
         return $this->hasMany(Withdrawal::class);
     }
 
+    /**
+     * MARKETPLACE — profil vendeur associé à ce compte, s'il en a un.
+     * Le compte reste unique : client + affilié + vendeur cohabitent.
+     */
+    public function vendorProfile(): HasOne
+    {
+        return $this->hasOne(\App\Models\Marketplace\VendorProfile::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Helpers métier
@@ -130,5 +143,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * MARKETPLACE — le compte a un espace vendeur actif (profil validé).
+     */
+    public function isVendor(): bool
+    {
+        return $this->vendorProfile()->where('status', 'active')->exists();
     }
 }

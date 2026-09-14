@@ -16,7 +16,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            // Nullable : le parcours invité (achat digital sans compte, §77)
+            // crée une commande sans user_id. L'email de contact est alors
+            // porté par la commande (guest_email, ajouté ultérieurement).
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
 
             // Affilié à l'origine de la vente (tracking, §33-§39). Nullable si
             // aucun lien d'affiliation n'a généré la commande.

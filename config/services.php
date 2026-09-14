@@ -35,4 +35,30 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Prestataires de paiement (PSP) — §22
+    |--------------------------------------------------------------------------
+    | L'architecture est multi-PSP : chaque prestataire a son bloc de
+    | configuration. FedaPay et CinetPay au démarrage, d'autres pourront
+    | être ajoutés sans toucher au moteur d'affiliation.
+    */
+
+    'fedapay' => [
+        'public_key' => env('FEDAPAY_PUBLIC_KEY'),
+        'secret_key' => env('FEDAPAY_SECRET_KEY'),
+        // Secret du endpoint webhook (vérification de signature HMAC, §26).
+        'webhook_secret' => env('FEDAPAY_WEBHOOK_SECRET'),
+        // 'sandbox' ou 'live'
+        'environment' => env('FEDAPAY_ENVIRONMENT', 'sandbox'),
+    ],
+
+    'cinetpay' => [
+        'api_key' => env('CINETPAY_API_KEY'),
+        'site_id' => env('CINETPAY_SITE_ID'),
+        'secret_key' => env('CINETPAY_SECRET_KEY'),
+        'base_url' => env('CINETPAY_BASE_URL', 'https://api-checkout.cinetpay.com/v2'),
+        'environment' => env('CINETPAY_ENVIRONMENT', 'sandbox'),
+    ],
+
 ];

@@ -1,158 +1,170 @@
 {{--
-    Variables attendues (à fournir par le contrôleur, ex: AffiliateDashboardController@index) :
-
-    $affiliate      App\Models\User   — l'affilié connecté
-    $wallet         array|object      — ['balance_available' => float, 'balance_pending' => float,
-                                          'total_earned' => float, 'currency' => string]
-    $referralLink   string            — ex: https://malkuthar.com/ref/JEAN125
-    $team           array             — 3 entrées : [
-                                            ['level' => 1, 'members' => int, 'active' => int,
-                                             'revenue' => float, 'rate' => 15],
-                                            ... niveau 2 (rate 10), niveau 3 (rate 5)
-                                          ]
-
-    Les valeurs par défaut ci-dessous sont des zéros de sécurité, pas des
-    données de démonstration — si elles s'affichent, c'est que le
-    contrôleur ne passe pas encore les bonnes variables.
+    Variables (AffiliateDashboardController@index) :
+    $affiliate  App\Models\User
+    $wallet     array ['balance_available', 'balance_pending', 'total_earned', 'currency']
+    $referralLink  string
+    $team       array<int, ['level', 'members', 'active', 'revenue', 'rate']>
 --}}
-@extends('layouts.affiliate')
+@extends('layouts.app')
 
-@section('title', 'Mon espace affilié')
+@section('title', 'Espace affilié')
+@section('sidebar')<x-layout.sidebar-app space="affiliate" />@endsection
 
 @section('content')
-    @php
-        $currency = $wallet['currency'] ?? 'FCFA';
-        $formatMoney = fn ($amount) => number_format((float) ($amount ?? 0), 0, ',', ' ');
+@php
+    $currency = $wallet['currency'] ?? 'FCFA';
+    $money = fn ($n) => number_format((float) ($n ?? 0), 0, ',', ' ');
+    $levelAccent = [1 => 'text-accent', 2 => 'text-emerald-300', 3 => 'text-amber'];
+    $available = (float) ($wallet['balance_available'] ?? 0);
+@endphp
 
-        $levelColors = [
-            1 => ['dot' => 'bg-brand-gold', 'chip' => 'bg-brand-gold/15 text-brand-gold'],
-            2 => ['dot' => 'bg-brand-green', 'chip' => 'bg-brand-green/15 text-brand-green'],
-            3 => ['dot' => 'bg-brand-violet', 'chip' => 'bg-brand-violet/15 text-brand-violet'],
-        ];
-    @endphp
-
-    <div class="mx-auto w-full max-w-md px-4 pb-12 pt-5">
-
-        {{-- Barre supérieure --}}
-        <header class="mb-6 flex items-center justify-between">
-            <div>
-                <p class="font-display text-lg font-semibold tracking-tight text-paper">MALKUTHAR</p>
-                <p class="text-sm text-ink-soft">Bonjour {{ $affiliate->first_name ?? 'Affilié' }}</p>
-            </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-surface font-display text-sm font-semibold text-paper">
-                {{ strtoupper(substr($affiliate->first_name ?? 'M', 0, 1)) }}
-            </div>
-        </header>
-
-        {{-- ============================================================
-             BLOC 1 — Solde disponible (carte "ticket", claire sur fond sombre)
-        ============================================================ --}}
-        <section class="relative overflow-hidden rounded-2xl bg-paper px-5 pb-6 pt-5 text-ink shadow-[0_1px_0_theme(colors.surface-line)]">
-            <p class="text-sm text-ink/60">Solde disponible</p>
-            <p class="mt-1 font-display text-4xl font-semibold tracking-tight">
-                {{ $formatMoney($wallet['balance_available'] ?? 0) }}
-                <span class="text-xl font-medium text-ink/50">{{ $currency }}</span>
-            </p>
-
-            <button
-                type="button"
-                x-data
-                onclick="alert('Ouvrir le flux de retrait Mobile Money')"
-                class="mt-4 w-full rounded-xl bg-ink py-3 text-center font-display text-sm font-semibold text-paper transition active:scale-[0.98]"
-            >
-                Retirer mes gains
-            </button>
-
-            {{-- Bord perforé façon ticket --}}
-            <div
-                class="absolute inset-x-0 bottom-0 h-3"
-                style="background-image: radial-gradient(circle at 6px 0, theme(colors.ink) 3px, transparent 3px); background-size: 12px 6px; background-position: bottom;"
-                aria-hidden="true"
-            ></div>
-        </section>
-
-        {{-- ============================================================
-             BLOC 2 & 3 — Commissions en attente / Total gagné
-        ============================================================ --}}
-        <section class="mt-3 grid grid-cols-2 gap-3">
-            <div class="rounded-2xl bg-surface p-4">
-                <p class="text-sm text-ink-soft">Commissions en attente</p>
-                <p class="mt-1 font-display text-xl font-semibold text-brand-violet">
-                    {{ $formatMoney($wallet['balance_pending'] ?? 0) }}
-                    <span class="text-sm font-medium text-ink-soft">{{ $currency }}</span>
-                </p>
-            </div>
-            <div class="rounded-2xl bg-surface p-4">
-                <p class="text-sm text-ink-soft">Total gagné</p>
-                <p class="mt-1 font-display text-xl font-semibold text-brand-green">
-                    {{ $formatMoney($wallet['total_earned'] ?? 0) }}
-                    <span class="text-sm font-medium text-ink-soft">{{ $currency }}</span>
-                </p>
-            </div>
-        </section>
-
-        {{-- ============================================================
-             BLOC 4 — Lien d'affiliation + bouton copier
-        ============================================================ --}}
-        <section
-            x-data="{
-                link: @js($referralLink ?? ''),
-                copied: false,
-                copy() {
-                    navigator.clipboard.writeText(this.link).then(() => {
-                        this.copied = true;
-                        setTimeout(() => (this.copied = false), 2000);
-                    });
-                },
-            }"
-            class="mt-3 rounded-2xl border border-surface-line bg-surface p-4"
-        >
-            <p class="text-sm text-ink-soft">Mon lien d'affiliation</p>
-            <p class="mt-1 truncate font-display text-base font-medium text-paper" x-text="link"></p>
-
-            <button
-                type="button"
-                @click="copy()"
-                class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-surface-line py-2.5 text-sm font-semibold text-paper transition active:scale-[0.98]"
-                :class="copied ? 'border-brand-green text-brand-green' : ''"
-            >
-                <span x-show="!copied">Copier le lien</span>
-                <span x-show="copied" x-cloak>Lien copié</span>
-            </button>
-        </section>
-
-        {{-- ============================================================
-             BLOC 5 — Arbre d'équipe sur 3 niveaux (élément signature)
-        ============================================================ --}}
-        <section class="mt-6">
-            <p class="mb-3 font-display text-base font-semibold text-paper">Mon équipe</p>
-
-            <ol class="relative">
-                @foreach (($team ?? []) as $i => $level)
-                    @php $colors = $levelColors[$level['level']] ?? $levelColors[1]; @endphp
-                    <li
-                        class="relative border-l-2 border-surface-line pb-6 pl-6 last:border-transparent last:pb-0"
-                        style="margin-left: {{ $i * 18 }}px"
-                    >
-                        <span class="absolute -left-[9px] top-0 h-4 w-4 rounded-full border-2 border-ink {{ $colors['dot'] }}"></span>
-
-                        <div class="flex items-center gap-2">
-                            <p class="font-display text-sm font-semibold text-paper">Niveau {{ $level['level'] }}</p>
-                            <span class="rounded-full px-2 py-0.5 text-xs font-semibold {{ $colors['chip'] }}">
-                                {{ $level['rate'] }}%
-                            </span>
-                        </div>
-
-                        <p class="mt-0.5 text-sm text-ink-soft">
-                            {{ $level['members'] ?? 0 }} filleuls · {{ $level['active'] ?? 0 }} actifs
-                        </p>
-                        <p class="text-sm text-ink-soft">
-                            {{ $formatMoney($level['revenue'] ?? 0) }} {{ $currency }} générés
-                        </p>
-                    </li>
-                @endforeach
-            </ol>
-        </section>
-
+<div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">Espace affilié</p>
+        <h1 class="mt-1 font-display text-2xl font-bold tracking-[-0.01em] text-ink sm:text-3xl">Bonjour {{ $affiliate->first_name ?? 'Affilié' }}</h1>
     </div>
+    <span class="rounded-full border border-black/10 bg-black/[0.04] px-3 py-1 font-mono text-xs text-ink-2">{{ $affiliate->affiliate_id }}</span>
+</div>
+
+<div x-data="withdrawForm(@js($available), @js($currency))">
+    {{-- Soldes --}}
+    <div class="mt-6 grid gap-3 sm:grid-cols-3">
+        <x-ui.stat-tile label="Solde disponible" :value="$money($available)" :currency="$currency" :emphasis="true">
+            <x-slot:action>
+                <button type="button" x-on:click="toggle()" @disabled($available <= 0)
+                        class="inline-flex h-9 items-center rounded-lg bg-accent px-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px] shadow-black/10 disabled:opacity-40">
+                    Retirer mes gains
+                </button>
+            </x-slot:action>
+        </x-ui.stat-tile>
+        <x-ui.stat-tile label="Commissions en attente" :value="$money($wallet['balance_pending'] ?? 0)" :currency="$currency" />
+        <x-ui.stat-tile label="Total gagné" :value="$money($wallet['total_earned'] ?? 0)" :currency="$currency" />
+    </div>
+
+    {{-- Panneau retrait --}}
+    <div x-show="open" x-cloak x-transition.origin.top
+         class="mt-3 rounded-2xl border border-black/10 bg-surface p-5">
+        <div class="flex items-center justify-between">
+            <p class="font-display font-semibold text-ink">Demander un retrait</p>
+            <button type="button" x-on:click="open = false" class="text-ink-3 hover:text-ink" aria-label="Fermer">✕</button>
+        </div>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <x-ui.field name="wd_amount" label="Montant" type="number" x-model.number="amount" :hint="'Disponible : '.$money($available).' '.$currency" />
+            <x-ui.select name="wd_method" label="Moyen de retrait" x-model="method"
+                :options="['mobile_money' => 'Mobile Money', 'bank_account' => 'Compte bancaire', 'e_wallet' => 'Portefeuille électronique']" />
+        </div>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2" x-show="method === 'mobile_money'" x-cloak>
+            <x-ui.field name="wd_mm_number" label="Numéro Mobile Money" x-model="fields.mobile_money_number" />
+            <x-ui.field name="wd_mm_operator" label="Opérateur" x-model="fields.mobile_money_operator" hint="MTN, Moov, Orange…" />
+        </div>
+        <div class="mt-4 grid gap-4 sm:grid-cols-3" x-show="method === 'bank_account'" x-cloak>
+            <x-ui.field name="wd_bank_name" label="Banque" x-model="fields.bank_name" />
+            <x-ui.field name="wd_bank_number" label="N° de compte / IBAN" x-model="fields.bank_account_number" />
+            <x-ui.field name="wd_bank_holder" label="Titulaire" x-model="fields.bank_account_holder" />
+        </div>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2" x-show="method === 'e_wallet'" x-cloak>
+            <x-ui.field name="wd_ew_provider" label="Fournisseur" x-model="fields.e_wallet_provider" />
+            <x-ui.field name="wd_ew_id" label="Identifiant du portefeuille" x-model="fields.e_wallet_id" />
+        </div>
+
+        <p x-show="error" x-cloak class="mt-3 text-sm text-rust" x-text="error"></p>
+        <p x-show="success" x-cloak class="mt-3 text-sm text-emerald-300" x-text="success"></p>
+
+        <div class="mt-4">
+            <button type="button" x-on:click="submit()" :disabled="loading"
+                    class="inline-flex h-11 items-center rounded-xl bg-accent px-5 text-sm font-semibold text-white shadow-[0_10px_34px_-10px] shadow-black/10 disabled:opacity-40 sm:h-10">
+                <span x-show="!loading">Confirmer la demande</span>
+                <span x-show="loading" x-cloak>Traitement…</span>
+            </button>
+        </div>
+        <p class="mt-3 text-xs text-ink-3">
+            Besoin de changer de numéro ? Passez par
+            <a href="{{ route('affiliate.withdrawal-method.store') }}" class="text-accent hover:underline">Moyen de paiement</a>
+            (vérification par code, §56).
+        </p>
+    </div>
+</div>
+
+{{-- Lien d'affiliation --}}
+<div class="mt-8 rounded-2xl border border-black/10 bg-surface p-5">
+    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-3">Mon lien d'affiliation</p>
+    <div class="mt-2 flex flex-wrap items-center gap-3">
+        <code class="min-w-0 flex-1 truncate rounded-lg border border-black/10 bg-ground/60 px-3 py-2.5 font-mono text-sm text-ink">{{ $referralLink }}</code>
+        <x-ui.copy-button :value="$referralLink" label="Copier le lien" />
+    </div>
+    <p class="mt-2 text-xs text-ink-3">Lien unique et permanent (§33). Toute inscription ou vente issue de ce lien vous est attribuée.</p>
+</div>
+
+{{-- Équipe / lignée --}}
+<div class="mt-8">
+    <h2 class="mb-3 font-display text-lg font-semibold text-ink">Mon équipe</h2>
+    <div class="grid gap-3 sm:grid-cols-3">
+        @foreach (($team ?? []) as $level)
+            <div class="rounded-2xl border border-black/10 bg-surface p-4">
+                <div class="flex items-center justify-between">
+                    <p class="font-display text-sm font-semibold text-ink">Niveau {{ $level['level'] }}</p>
+                    <span class="rounded-full border border-black/10 bg-black/[0.04] px-2 py-0.5 text-xs font-semibold {{ $levelAccent[$level['level']] ?? 'text-ink-2' }}">{{ $level['rate'] }} %</span>
+                </div>
+                <dl class="mt-3 space-y-1.5 text-sm">
+                    <div class="flex justify-between"><dt class="text-ink-3">Filleuls</dt><dd class="text-ink">{{ $level['members'] ?? 0 }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-ink-3">Actifs</dt><dd class="text-ink">{{ $level['active'] ?? 0 }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-ink-3">Ventes</dt><dd class="text-ink">{{ $level['sales'] ?? 0 }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-ink-3">CA généré</dt><dd class="text-ink">{{ $money($level['revenue'] ?? 0) }} {{ $currency }}</dd></div>
+                </dl>
+            </div>
+        @endforeach
+    </div>
+    <p class="mt-3 text-xs text-ink-3">Seuls des agrégats sont affichés : les données personnelles de votre réseau restent privées (§46).</p>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('withdrawForm', (max, currency) => ({
+            open: false,
+            loading: false,
+            error: '',
+            success: '',
+            amount: max,
+            method: 'mobile_money',
+            fields: {
+                mobile_money_number: '', mobile_money_operator: '',
+                bank_name: '', bank_account_number: '', bank_account_holder: '',
+                e_wallet_provider: '', e_wallet_id: '',
+            },
+            toggle() {
+                this.open = ! this.open;
+                if (this.open) { this.error = ''; this.success = ''; }
+            },
+            async submit() {
+                this.loading = true; this.error = ''; this.success = '';
+                try {
+                    const res = await fetch(@js(route('affiliate.withdrawals.store')), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
+                        },
+                        body: JSON.stringify({ amount: this.amount, method: this.method, ...this.fields }),
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (! res.ok) {
+                        this.error = data.message || 'La demande a été refusée.';
+                    } else {
+                        this.success = (data.message || 'Demande enregistrée.') + ' Actualisation…';
+                        setTimeout(() => window.location.reload(), 1500);
+                    }
+                } catch (e) {
+                    this.error = 'Erreur réseau. Réessayez.';
+                } finally {
+                    this.loading = false;
+                }
+            },
+        }));
+    });
+</script>
+@endpush

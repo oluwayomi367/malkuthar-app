@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    @include('partials.head')
+</head>
+<body class="min-h-screen bg-ground font-sans text-ink antialiased">
+    <x-layout.navbar-admin />
+
+    @include('partials.flash')
+
+    <div class="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:flex lg:gap-10 lg:py-10">
+        <x-layout.sidebar-admin />
+
+        <main class="min-w-0 flex-1 pb-16">
+            <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    @hasSection('eyebrow')
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">@yield('eyebrow')</p>
+                    @endif
+                    <h1 class="mt-1 font-display text-2xl font-bold tracking-[-0.01em] text-ink sm:text-3xl">@yield('heading', 'Administration')</h1>
+                </div>
+                @hasSection('actions')
+                    <div class="flex flex-wrap gap-2">@yield('actions')</div>
+                @endif
+            </div>
+
+            @yield('content')
+        </main>
+    </div>
+
+    @stack('scripts')
+</body>
+</html>

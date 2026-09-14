@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * §48-§49 - Ligne immuable du registre financier. Ne doit jamais être
@@ -28,6 +29,8 @@ class LedgerEntry extends Model
         'order_item_id',
         'withdrawal_id',
         'level',
+        'commission_rate',
+        'commission_campaign_id',
         'amount',
         'currency',
         'status',
@@ -43,6 +46,7 @@ class LedgerEntry extends Model
         return [
             'amount' => 'decimal:2',
             'level' => 'integer',
+            'commission_rate' => 'decimal:4',
             'metadata' => 'array',
             'available_at' => 'datetime',
         ];
@@ -95,6 +99,50 @@ class LedgerEntry extends Model
     | Scopes
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * §41 — journal des changements de statut de cette écriture.
+     */
+    public function statusChanges(): HasMany
+    {
+        return $this->hasMany(LedgerEntryStatusChange::class)->orderBy('created_at');
+    }
+
+    /**
+     * §41 — change le statut ET enregistre la transition. À utiliser
+     * partout à la place d'un `update(['status' => ...])` direct.
+     */
+    public function transitionTo(string $status, ?string $context = null, ?string $reason = null, ?string $adminId = null): bool
+    {
+        if ($this->status === $status) {
+            return false;
+        }
+
+        $from = $this->status;
+        $this->forceFill(['status' => $status])->save();
+
+        $this->statusChanges()->create([
+            'from_status' => $from,
+            'to_status' => $status,
+            'context' => $context,
+            'reason' => $reason,
+            'admin_id' => $adminId,
+        ]);
+
+        return true;
+    }
+
+    protected static function booted(): void
+    {
+        // §41 — le statut initial d'une écriture est lui aussi consigné.
+        static::created(function (LedgerEntry $entry) {
+            $entry->statusChanges()->create([
+                'from_status' => null,
+                'to_status' => $entry->status,
+                'context' => 'created',
+            ]);
+        });
+    }
 
     public function scopeAvailable($query)
     {

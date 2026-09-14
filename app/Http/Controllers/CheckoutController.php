@@ -2,34 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InsufficientStockException;
+use App\Exceptions\ServiceBookingException;
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Order;
 use App\Services\CheckoutService;
+use App\Services\Payments\PaymentInitiationService;
+use App\Services\ReferralResolver;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
 /**
  * CheckoutController — reçoit un panier (potentiellement mixte digital /
  * physique / service), délègue la validation dynamique à CheckoutRequest
- * (§21 - checkout intelligent) et la création de la commande à
- * CheckoutService.
- *
- * Le contrôleur reste volontairement fin : toute la logique métier vit
- * dans CheckoutService, conformément aux règles du projet.
+ * (§21) et la création de la commande à CheckoutService, puis initie le
+ * paiement auprès du PSP choisi (§26).
  */
 class CheckoutController extends Controller
 {
     public function __construct(
-        private readonly CheckoutService $checkoutService
-    ) {
-    }
+        private readonly CheckoutService $checkoutService,
+        private readonly ReferralResolver $referralResolver,
+        private readonly PaymentInitiationService $paymentInitiation,
+    ) {}
 
     /**
      * POST /checkout
-     *
-     * Crée la commande à partir du panier validé. Le paiement lui-même
-     * n'est PAS confirmé ici : la commande est créée avec
-     * payment_status=pending, en attente de la redirection/du webhook du
-     * PSP choisi (FedaPay/CinetPay - Phase 3, §26).
      */
     public function store(CheckoutRequest $request): JsonResponse
     {
@@ -38,7 +36,14 @@ class CheckoutController extends Controller
                 data: $request->validated(),
                 user: $request->user(),
                 productsById: $request->productsById(),
+                referringAffiliate: $this->referralResolver->fromRequest(
+                    $request,
+                    $request->validated()['referral_code'] ?? null,
+                ),
+                utmData: $request->session()->get('utm'),
             );
+        } catch (InsufficientStockException|ServiceBookingException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
         } catch (Throwable $e) {
             report($e);
 
@@ -47,8 +52,14 @@ class CheckoutController extends Controller
             ], 422);
         }
 
+        $payment = $order->isCashOnDelivery()
+            // Paiement à la livraison : pas de redirection PSP. La commande
+            // reste `pending` jusqu'à ce qu'un administrateur encaisse.
+            ? ['status' => 'cod', 'provider' => 'cod']
+            : $this->initiatePayment($order, $request);
+
         return response()->json([
-            'message' => 'Commande créée avec succès. En attente de confirmation du paiement.',
+            'message' => 'Commande créée. Redirigez le client vers l\'URL de paiement.',
             'data' => [
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
@@ -57,11 +68,7 @@ class CheckoutController extends Controller
                 'shipping_fee' => $order->shipping_fee,
                 'total_amount' => $order->total_amount,
                 'payment_status' => $order->payment_status,
-                'cart_composition' => [
-                    'has_digital_items' => $request->hasDigitalItems(),
-                    'has_physical_items' => $request->hasPhysicalItems(),
-                    'has_service_items' => $request->hasServiceItems(),
-                ],
+                'payment' => $payment,
                 'items' => $order->items->map(fn ($item) => [
                     'product_id' => $item->product_id,
                     'product_name' => $item->product_name,
@@ -73,5 +80,34 @@ class CheckoutController extends Controller
                 ]),
             ],
         ], 201);
+    }
+
+    /**
+     * @return array{status: string, url?: string, provider?: string, error?: string}
+     */
+    private function initiatePayment(Order $order, CheckoutRequest $request): array
+    {
+        try {
+            $session = $this->paymentInitiation->initiate($order, [
+                'email' => $request->input('email') ?? $request->user()?->email,
+                'first_name' => $request->user()?->first_name ?? $request->input('shipping_address.first_name'),
+                'last_name' => $request->user()?->last_name ?? $request->input('shipping_address.last_name'),
+                'phone' => $request->input('shipping_address.phone'),
+            ]);
+
+            return [
+                'status' => 'initiated',
+                'provider' => $session->provider,
+                'url' => $session->paymentUrl,
+            ];
+        } catch (Throwable $e) {
+            report($e);
+
+            // La commande existe (pending) : le paiement pourra être relancé.
+            return [
+                'status' => 'initiation_failed',
+                'error' => "L'initiation du paiement a échoué. La commande est enregistrée et le paiement peut être relancé.",
+            ];
+        }
     }
 }

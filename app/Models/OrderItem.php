@@ -15,6 +15,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'product_variant_id',
         'product_name',
         'product_type',
         'is_affiliable_snapshot',
@@ -27,6 +28,8 @@ class OrderItem extends Model
         'variant_sku',
         'variant_options',
         'reservation_datetime',
+        'download_count',
+        'reminder_sent_at',
     ];
 
     protected function casts(): array
@@ -39,6 +42,8 @@ class OrderItem extends Model
             'commission_base_amount' => 'decimal:2',
             'variant_options' => 'array',
             'reservation_datetime' => 'datetime',
+            'download_count' => 'integer',
+            'reminder_sent_at' => 'datetime',
         ];
     }
 
@@ -56,6 +61,11 @@ class OrderItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
     /**

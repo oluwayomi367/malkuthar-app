@@ -4,29 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\WithdrawalException;
 use App\Http\Requests\WithdrawalRequest;
+use App\Services\Payments\ProcessWithdrawalPayout;
 use App\Services\WithdrawalService;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 /**
- * WithdrawalController — retrait autonome des affiliés (Phase 6 & 7, §50).
+ * WithdrawalController — retrait autonome des affiliés (§50-§58).
  * Contrôleur volontairement fin : toute la logique de débit du wallet et
- * de rollback vit dans WithdrawalService.
+ * de rollback vit dans WithdrawalService ; l'envoi effectif des fonds
+ * vit dans ProcessWithdrawalPayout (§54).
  */
 class WithdrawalController extends Controller
 {
     public function __construct(
         private readonly WithdrawalService $withdrawalService,
-    ) {
-    }
+        private readonly ProcessWithdrawalPayout $payoutProcessor,
+    ) {}
 
     /**
      * POST /affiliate/withdrawals
-     *
-     * L'affilié saisit un montant et son numéro Mobile Money. Le système
-     * vérifie que le montant est ≤ au solde disponible du wallet, crée
-     * une écriture de débit dans le ledger (le solde est recalculé
-     * instantanément via le wallet en cache) et place la demande au
-     * statut PROCESSING, en attente de confirmation par l'opérateur.
      */
     public function requestWithdrawal(WithdrawalRequest $request): JsonResponse
     {
@@ -36,19 +33,34 @@ class WithdrawalController extends Controller
                 data: $request->toWithdrawalData(),
             );
         } catch (WithdrawalException $e) {
-            // Solde insuffisant ou montant sous le minimum configuré :
-            // erreur métier prévisible, pas une panne serveur.
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
+            // Solde insuffisant, montant hors bornes, ou cooldown de
+            // sécurité actif (§56) : erreur métier prévisible.
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
+        try {
+            // §54 - tentative d'automatisation immédiate. Si elle échoue,
+            // les fonds restent réservés (ledger) : rien n'est perdu, un
+            // administrateur peut traiter le retrait manuellement.
+            $this->payoutProcessor->process($withdrawal);
+        } catch (Throwable $e) {
+            report($e);
+        }
+
+        $withdrawal->refresh();
+
         return response()->json([
-            'message' => 'Votre demande de retrait a été enregistrée et est en cours de traitement.',
+            'message' => match ($withdrawal->status) {
+                'paid' => 'Votre retrait a été effectué.',
+                'failed' => 'Votre retrait n\'a pas pu être effectué. Les fonds ont été recrédités sur votre solde.',
+                default => 'Votre demande de retrait a été enregistrée et est en cours de traitement.',
+            },
             'data' => [
                 'withdrawal_id' => $withdrawal->id,
                 'reference' => $withdrawal->reference,
                 'amount' => $withdrawal->amount,
+                'fee' => $withdrawal->fee,
+                'net_amount' => $withdrawal->net_amount,
                 'currency' => $withdrawal->currency,
                 'method' => $withdrawal->method,
                 'status' => $withdrawal->status,

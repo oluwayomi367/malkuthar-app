@@ -1,2 +1,13 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /affiliate/
+Disallow: /vendeur/
+Disallow: /checkout
+Disallow: /place-de-marche/panier
+Disallow: /place-de-marche/commander
+Disallow: /login
+Disallow: /register
+Allow: /
+
+Sitemap: /sitemap.xml
+Sitemap: /sitemap-marketplace.xml
