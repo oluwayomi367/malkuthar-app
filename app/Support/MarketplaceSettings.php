@@ -23,6 +23,29 @@ class MarketplaceSettings
         );
     }
 
+    /**
+     * Taux du palier « Growth » (page Tarifs). Non appliqué automatiquement :
+     * un administrateur l'active vendeur par vendeur via
+     * Admin\Marketplace\VendorController::commission une fois le seuil
+     * atteint — voir config/marketplace.php.
+     */
+    public static function growthCommissionRate(): float
+    {
+        return (float) Setting::get(
+            'marketplace.growth_commission_rate',
+            config('marketplace.commission.tiers.growth.rate'),
+        );
+    }
+
+    /** Chiffre d'affaires cumulé (généré, avant commission) à partir duquel le palier Growth s'applique. */
+    public static function growthThresholdAmount(): float
+    {
+        return (float) Setting::get(
+            'marketplace.growth_threshold_amount',
+            config('marketplace.commission.tiers.starter.ceiling_amount'),
+        );
+    }
+
     public static function settlementHoldDays(): int
     {
         return (int) Setting::get(

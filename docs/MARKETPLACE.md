@@ -22,12 +22,28 @@ Tout le module est masqué tant que le drapeau `marketplace.enabled` est faux.
 | `marketplace.payout_account_cooldown_hours` | Délai de sécurité après changement d'un moyen de versement. | `24` |
 | `marketplace.vendor_self_publish` | Si faux, toute mise en ligne repasse en revue. | `false` |
 | `marketplace.auto_approve_trusted_vendors` | Court-circuite la revue pour les vendeurs `is_trusted`. | `false` |
+| `marketplace.growth_commission_rate` | Taux du palier « Growth » (page Tarifs) — voir §6bis. | `0.10` |
+| `marketplace.growth_threshold_amount` | Seuil de CA cumulé à partir duquel le palier Growth est proposé. | `3 000 000` |
 
-Activer en production :
+Activer/désactiver et régler les paliers depuis l'admin : **`/admin/marketplace/settings`**
+(`Admin\Marketplace\SettingsController`, lien sidebar « Réglages MP ») — préférer
+cet écran à une écriture directe en base, pour garder l'audit (§68).
+Équivalent programmatique :
 
 ```php
 App\Models\Setting::put('marketplace.enabled', '1');
 ```
+
+### ⚠️ Avant un lancement public réel
+
+Le module est fonctionnellement complet, mais le **paiement du panier
+marketplace n'est aujourd'hui que `cod`** (encaissement manuel côté admin,
+`/admin/marketplace/orders`) — il n'y a **pas encore** de redirection vers
+FedaPay/CinetPay comme pour la boutique maison (`PaymentGateway` §7 les gère
+déjà pour les commandes `Order`, mais le contrat n'a pas été élargi aux
+`MarketplaceOrder`). Ouvrir la place de marché à de vrais clients suppose donc
+soit d'accepter le COD comme seul mode de paiement, soit d'élargir
+`PaymentGateway`/`ProcessPaymentWebhook` aux commandes marketplace avant.
 
 Planification : `marketplace:release-earnings` tourne toutes les heures
 (`bootstrap/app.php`) — libère les revenus vendeurs échus.
@@ -117,6 +133,16 @@ auto-approuvée.
 4. `marketplace.default_commission_rate`.
 
 Le taux **et** la règle sont figés sur `marketplace_suborders` à l'achat.
+
+### 6bis. Page publique « Tarifs vendeur »
+
+`/marketplace` (`MarketplaceLandingController`) affiche, une fois le module
+ouvert, trois paliers — Starter (taux par défaut), Growth (taux réduit, seuil
+de CA), Scale (négocié). **Seul Starter est appliqué automatiquement** par le
+résolveur ci-dessus. Growth/Scale passent toujours par une action manuelle
+d'un administrateur (`/admin/marketplace/vendors/{vendor}` → override de taux),
+cohérent avec le reste du module (validation admin systématique) : un vendeur
+qui atteint le seuil ne bascule pas seul, il est recontacté puis basculé.
 
 ---
 

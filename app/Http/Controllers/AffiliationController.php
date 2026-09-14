@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Services\CommissionRateResolver;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * Page publique « Programme d'affiliation » — explique le FONCTIONNEMENT du
@@ -18,12 +20,35 @@ use Illuminate\View\View;
  */
 class AffiliationController extends Controller
 {
-    public function __invoke(CommissionRateResolver $rateResolver): View
+    public function __invoke(CommissionRateResolver $rateResolver): Response
     {
         // §27 — taux en vigueur (campagne éventuelle) plutôt que la config brute.
         $pct = $rateResolver->percentages();
 
-        return view('storefront.affiliation', [
+        // Aperçu du catalogue affiliable : produits digitaux réels, pas une
+        // maquette — le gain affiché (niveau 1) est calculé avec le même
+        // taux que celui présenté juste au-dessus.
+        $showcase = Product::query()
+            ->affiliable()
+            ->where('status', 'published')
+            ->where('is_available', true)
+            ->latest('created_at')
+            ->take(4)
+            ->get(['id', 'name', 'slug', 'main_image', 'price', 'promotional_price', 'currency'])
+            ->map(function (Product $product) use ($pct) {
+                $price = (float) ($product->promotional_price ?? $product->price);
+
+                return [
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'image' => $product->main_image,
+                    'price' => $price,
+                    'currency' => $product->currency ?: 'FCFA',
+                    'gain' => round($price * $pct[1] / 100, 2),
+                ];
+            });
+
+        return Inertia::render('Affiliation', [
             'rateL1' => $pct[1],
             'rateL2' => $pct[2],
             'rateL3' => $pct[3],
@@ -34,6 +59,7 @@ class AffiliationController extends Controller
             'referralPath' => (string) config('malkuthar.affiliation.referral_path', 'ref'),
             'minWithdrawal' => (float) config('malkuthar.withdrawals.minimum_amount', 1000),
             'cooldownHours' => (int) config('malkuthar.withdrawals.cooldown_after_account_change_hours', 24),
+            'showcase' => $showcase,
         ]);
     }
 }

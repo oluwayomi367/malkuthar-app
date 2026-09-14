@@ -21,6 +21,33 @@ return [
     'commission' => [
         // Taux plateforme par défaut (fraction) si aucune règle ne s'applique.
         'default_rate' => (float) env('MARKETPLACE_DEFAULT_COMMISSION', 0.15),
+
+        // Paliers affichés sur la page publique « Tarifs vendeur ». Le palier
+        // Growth n'est PAS appliqué automatiquement : un administrateur
+        // l'active manuellement (Admin\Marketplace\VendorController::commission,
+        // VendorOnboardingService::setCommissionOverride) une fois le seuil de
+        // chiffre d'affaires cumulé atteint — cohérent avec le reste du module
+        // où toute évolution du compte vendeur passe par une validation admin.
+        // Le palier Scale n'a pas de taux fixe : toujours négocié au support.
+        'tiers' => [
+            'starter' => [
+                'label' => 'Starter',
+                'rate' => (float) env('MARKETPLACE_DEFAULT_COMMISSION', 0.15),
+                'ceiling_amount' => (float) env('MARKETPLACE_GROWTH_THRESHOLD', 3_000_000),
+                'pitch' => 'Pour démarrer votre boutique, sans engagement.',
+            ],
+            'growth' => [
+                'label' => 'Growth',
+                'rate' => (float) env('MARKETPLACE_GROWTH_RATE', 0.10),
+                'floor_amount' => (float) env('MARKETPLACE_GROWTH_THRESHOLD', 3_000_000),
+                'pitch' => 'Pour les boutiques déjà établies.',
+            ],
+            'scale' => [
+                'label' => 'Scale',
+                'rate' => null,
+                'pitch' => 'Volume important ? Un taux négocié avec le support.',
+            ],
+        ],
     ],
 
     'settlement' => [

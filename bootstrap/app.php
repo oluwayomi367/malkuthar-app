@@ -4,6 +4,7 @@ use App\Http\Middleware\CaptureUtmParameters;
 use App\Http\Middleware\EnsureMarketplaceEnabled;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
@@ -46,6 +47,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             CaptureUtmParameters::class,
+            // Vitrine publique React/Inertia — sans effet sur les réponses
+            // Blade classiques (admin, espace vendeur/affilié, checkout).
+            HandleInertiaRequests::class,
         ]);
 
         // §60-§68 — routes d'administration.

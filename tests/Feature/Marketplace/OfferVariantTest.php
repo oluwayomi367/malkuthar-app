@@ -12,6 +12,7 @@ use App\Services\Marketplace\MarketplacePaymentConfirmationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class OfferVariantTest extends TestCase
@@ -108,10 +109,11 @@ class OfferVariantTest extends TestCase
 
         $this->get(route('marketplace.shop.offer', $offer->slug))
             ->assertOk()
-            ->assertSee('name="variant_id"', false)
-            ->assertSee('in axes', false)          // le sélecteur d'options Alpine
-            ->assertSee('Couleur', false)          // axe présent dans le blob JSON
-            ->assertSee('Taille', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Marketplace/Offer')
+                ->where('offer.variants.0.options.Couleur', 'Écru')
+                ->where('offer.variants.0.options.Taille', 'M')
+                ->has('offer.variants', 2));
     }
 
     public function test_cart_requires_a_variant_for_a_variant_offer(): void

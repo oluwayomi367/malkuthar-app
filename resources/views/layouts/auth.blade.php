@@ -20,9 +20,14 @@
                 <a href="{{ url('/') }}" class="font-display text-[15px] font-semibold tracking-[0.2em] text-ink">MALKUTHAR</a>
                 <div>
                     <p class="font-display text-2xl font-semibold leading-snug text-ink">
-                        L'aube d'un chemin intérieur.
+                        @hasSection('auth_tagline') @yield('auth_tagline') @else L'aube d'un chemin intérieur. @endif
                     </p>
-                    <p class="mt-2 text-sm text-ink-2">Sagesse spirituelle &amp; éveil mystique.</p>
+                    <p class="mt-2 text-sm text-ink-2">
+                        @hasSection('auth_subtitle') @yield('auth_subtitle') @else Sagesse spirituelle &amp; éveil mystique. @endif
+                    </p>
+                    @hasSection('auth_panel_extra')
+                        <div class="mt-5">@yield('auth_panel_extra')</div>
+                    @endif
                 </div>
             </div>
         </aside>

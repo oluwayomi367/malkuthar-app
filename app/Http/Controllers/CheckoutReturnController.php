@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Services\Payments\PaymentConfirmationService;
 use App\Services\Payments\PaymentGatewayManager;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 /**
@@ -21,17 +22,14 @@ class CheckoutReturnController extends Controller
         private readonly PaymentConfirmationService $confirmation,
     ) {}
 
-    public function __invoke(Order $order): View
+    public function __invoke(Order $order): Response
     {
         $status = $order->payment_status;
 
         // Paiement à la livraison : aucun PSP à ré-interroger, la commande
         // reste « en attente » jusqu'à l'encaissement par un administrateur.
         if ($order->isCashOnDelivery()) {
-            return view('storefront.checkout.return', [
-                'order' => $order,
-                'status' => $status,
-            ]);
+            return $this->render($order, $status);
         }
 
         if ($order->payment_status !== 'paid' && $order->payment_reference && $order->payment_provider) {
@@ -50,9 +48,23 @@ class CheckoutReturnController extends Controller
             }
         }
 
-        return view('storefront.checkout.return', [
-            'order' => $order->fresh(),
+        return $this->render($order->fresh(), $status);
+    }
+
+    private function render(Order $order, string $status): Response
+    {
+        return Inertia::render('CheckoutReturn', [
+            'order' => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'total_amount' => $order->total_amount,
+                'currency' => $order->currency,
+                'payment_status' => $order->payment_status,
+                'payment_provider' => $order->payment_provider,
+            ],
             'status' => $status,
+            'isLocal' => app()->environment('local'),
+            'csrfToken' => csrf_token(),
         ]);
     }
 }

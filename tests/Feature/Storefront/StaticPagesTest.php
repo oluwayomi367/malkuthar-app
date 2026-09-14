@@ -3,27 +3,53 @@
 namespace Tests\Feature\Storefront;
 
 use App\Mail\ContactMessage;
+use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
+/**
+ * Vitrine publique rendue via Inertia/React (voir resources/js/Pages) — les
+ * assertions portent sur les props transmises au composant, pas sur du HTML
+ * rendu côté serveur (pas de SSR ici : React hydrate côté client).
+ */
 class StaticPagesTest extends TestCase
 {
     use RefreshDatabase;
 
     public function test_about_and_contact_pages_load(): void
     {
-        $this->get('/a-propos')->assertOk()->assertSee('trois métiers');
-        $this->get('/contact')->assertOk()->assertSee('Envoyer le message');
+        $this->get('/a-propos')->assertOk()->assertInertia(fn (Assert $page) => $page->component('About'));
+
+        $this->get('/contact')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Contact')
+            ->where('contact.email', config('malkuthar.contact.email')));
     }
 
     public function test_affiliation_page_explains_the_program_and_links_to_terms(): void
     {
         $this->get('/affiliation')
             ->assertOk()
-            ->assertSee('Comment ça marche')
-            ->assertSee('Du clic au versement')
-            ->assertSee(route('affiliate.program-terms'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Affiliation')
+                ->where('rateL1', 15)
+                ->where('rateL2', 10)
+                ->where('rateL3', 5)
+                ->has('validationDelayDays'));
+    }
+
+    public function test_affiliation_page_shows_a_real_affiliable_product_with_its_computed_gain(): void
+    {
+        $product = Product::factory()->digitalAffiliable()->create(['name' => 'Guide de méditation', 'price' => 10000]);
+
+        $this->get('/affiliation')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('showcase.0.name', 'Guide de méditation')
+                ->where('showcase.0.slug', $product->slug)
+                ->where('showcase.0.gain', 1500));
     }
 
     public function test_affiliation_page_is_separate_from_the_terms_page(): void
@@ -39,18 +65,30 @@ class StaticPagesTest extends TestCase
     {
         $this->get('/marketplace')
             ->assertOk()
-            ->assertSee('Rejoindre la liste d\'attente', false)
-            ->assertSee('Comment ça marchera')
-            ->assertSee('name="subject" value="vendeur"', false)
-            ->assertSee(route('contact.store'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Marketplace/Landing')
+                ->where('enabled', false)
+                ->where('stats', null));
+    }
+
+    public function test_marketplace_landing_page_shows_pricing_tiers_once_live(): void
+    {
+        Setting::put('marketplace.enabled', '1');
+
+        $this->get('/marketplace')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('enabled', true)
+                ->has('stats')
+                ->where('starterRate', 15)
+                ->where('growthRate', 10));
     }
 
     public function test_home_page_teases_the_marketplace(): void
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('place de marché', false)
-            ->assertSee(route('marketplace'));
+            ->assertInertia(fn (Assert $page) => $page->component('Home')->where('marketplaceEnabled', false));
     }
 
     public function test_marketplace_vendor_terms_page_loads(): void

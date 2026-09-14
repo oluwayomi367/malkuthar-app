@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ServiceTimeOffController;
 use App\Http\Controllers\Admin\Marketplace\CategoryController as AdminMarketplaceCategoryController;
 use App\Http\Controllers\Admin\Marketplace\CategoryFieldController as AdminMarketplaceCategoryFieldController;
 use App\Http\Controllers\Admin\Marketplace\OfferModerationController as AdminMarketplaceOfferController;
+use App\Http\Controllers\Admin\Marketplace\SettingsController as AdminMarketplaceSettingsController;
 use App\Http\Controllers\Admin\Marketplace\VendorController as AdminMarketplaceVendorController;
 use App\Http\Controllers\Admin\WalletAdjustmentController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
@@ -47,9 +48,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [CatalogController::class, 'home'])->name('home');
 Route::get('/boutique', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/produits/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
-Route::view('/panier', 'storefront.checkout.index')->name('cart');
-Route::view('/a-propos', 'storefront.about')->name('about');
-Route::view('/marketplace', 'storefront.marketplace')->name('marketplace');
+Route::inertia('/panier', 'Cart')->name('cart');
+Route::inertia('/a-propos', 'About')->name('about');
+Route::get('/marketplace', App\Http\Controllers\Marketplace\MarketplaceLandingController::class)->name('marketplace');
 Route::view('/conditions-vendeurs', 'legal.marketplace-vendor-terms')->name('marketplace.vendor-terms');
 
 // Boutique publique de la place de marché — masquée tant que le module est
@@ -324,6 +325,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin/marketplace')->name('admin.marketplace.')->group(function () {
+    Route::get('/settings', [AdminMarketplaceSettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [AdminMarketplaceSettingsController::class, 'update'])->name('settings.update');
+
     Route::get('/vendors', [AdminMarketplaceVendorController::class, 'index'])->name('vendors.index');
     Route::get('/vendors/{vendor}', [AdminMarketplaceVendorController::class, 'show'])->name('vendors.show');
     Route::post('/vendors/{vendor}/approve', [AdminMarketplaceVendorController::class, 'approve'])->name('vendors.approve');

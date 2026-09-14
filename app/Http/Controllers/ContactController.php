@@ -7,13 +7,16 @@ use App\Mail\ContactMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ContactController extends Controller
 {
-    public function show(): View
+    public function show(): Response
     {
-        return view('storefront.contact');
+        return Inertia::render('Contact', [
+            'contact' => config('malkuthar.contact'),
+        ]);
     }
 
     public function store(ContactRequest $request): RedirectResponse
