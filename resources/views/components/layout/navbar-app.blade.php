@@ -5,7 +5,10 @@
 
 <header class="sticky top-0 z-40 border-b border-black/[0.06] bg-ground/70 backdrop-blur-xl">
     <div class="mx-auto flex h-14 max-w-[1180px] items-center justify-between px-4 sm:px-6">
-        <a href="{{ url('/') }}" class="font-display text-[15px] font-bold tracking-[0.18em] text-ink">MALKUTHAR</a>
+        <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5 font-display text-[15.5px] font-bold tracking-[0.18em] text-ink">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo MALKUTHAR" class="h-8 w-8 object-contain">
+            <span>MALKUTHAR</span>
+        </a>
 
         <div class="flex items-center gap-2" x-data="{ open: false }">
             <a href="{{ route('cart') }}" class="relative inline-flex h-11 w-11 items-center justify-center text-ink" aria-label="Panier">

@@ -63,6 +63,8 @@ class StaticPagesTest extends TestCase
 
     public function test_marketplace_landing_page_loads_with_waitlist_form(): void
     {
+        Setting::put('marketplace.enabled', '0');
+
         $this->get('/marketplace')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
@@ -84,11 +86,22 @@ class StaticPagesTest extends TestCase
                 ->where('growthRate', 10));
     }
 
-    public function test_home_page_teases_the_marketplace(): void
+    public function test_home_page_teases_the_marketplace_when_disabled(): void
     {
+        Setting::put('marketplace.enabled', '0');
+
         $this->get('/')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Home')->where('marketplaceEnabled', false));
+    }
+
+    public function test_home_page_shows_the_live_marketplace_when_enabled(): void
+    {
+        Setting::put('marketplace.enabled', '1');
+
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Home')->where('marketplaceEnabled', true));
     }
 
     public function test_marketplace_vendor_terms_page_loads(): void

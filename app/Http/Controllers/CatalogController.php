@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Support\Catalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -25,7 +26,9 @@ class CatalogController extends Controller
      */
     public function home(): Response
     {
-        return Inertia::render('Home');
+        return Inertia::render('Home', [
+            'categories' => Catalog::categories(),
+        ]);
     }
 
     /**
@@ -36,15 +39,33 @@ class CatalogController extends Controller
         $type = $request->query('type');
         $category = $request->query('category');
         $sort = $request->query('sort', 'recent');
+        $q = $request->query('q');
 
         $products = Product::query()
             ->where('status', 'published')
             ->where('is_available', true)
-            ->when(in_array($type, ['digital', 'physical', 'service'], true), fn ($q) => $q->where('type', $type))
-            ->when($category, fn ($q) => $q->where('category', $category))
-            ->when($sort === 'price_asc', fn ($q) => $q->orderByRaw('COALESCE(promotional_price, price) asc'))
-            ->when($sort === 'price_desc', fn ($q) => $q->orderByRaw('COALESCE(promotional_price, price) desc'))
-            ->when($sort === 'recent', fn ($q) => $q->orderByDesc('created_at'))
+            ->with(['variants:id,product_id,options,is_active'])
+            ->when(in_array($type, ['digital', 'physical', 'service'], true), fn ($query) => $query->where('type', $type))
+            ->when($category, fn ($query) => $query->where('category', $category))
+            ->when($q, fn ($query) => $query->where(fn ($sub) => $sub->where('name', 'like', "%{$q}%")
+                ->orWhere('description', 'like', "%{$q}%")
+                ->orWhere('category', 'like', "%{$q}%")))
+            ->when($request->filled('prix_min'), fn ($query) => $query->whereRaw('COALESCE(promotional_price, price) >= ?', [(float) $request->query('prix_min')]))
+            ->when($request->filled('prix_max'), fn ($query) => $query->whereRaw('COALESCE(promotional_price, price) <= ?', [(float) $request->query('prix_max')]))
+            ->when($request->query('dispo') === 'promo', fn ($query) => $query->whereNotNull('promotional_price')->whereRaw('promotional_price < price'))
+            ->when($request->filled('couleur'), fn ($query) => $query->whereHas('variants', function ($v) use ($request) {
+                $color = $request->query('couleur');
+                $v->where('is_active', true)
+                    ->where(function ($sub) use ($color) {
+                        $sub->where('options->couleur', $color)
+                            ->orWhere('options->Couleur', $color)
+                            ->orWhere('options->color', $color)
+                            ->orWhere('options->Color', $color);
+                    });
+            }))
+            ->when($sort === 'price_asc', fn ($query) => $query->orderByRaw('COALESCE(promotional_price, price) asc'))
+            ->when($sort === 'price_desc', fn ($query) => $query->orderByRaw('COALESCE(promotional_price, price) desc'))
+            ->when($sort === 'recent', fn ($query) => $query->orderByDesc('created_at'))
             ->paginate(24)
             ->withQueryString()
             ->through(fn (Product $p) => $this->cardPayload($p));
@@ -56,12 +77,40 @@ class CatalogController extends Controller
             ->orderBy('category')
             ->pluck('category');
 
+        $categoriesWithCount = Product::query()
+            ->where('status', 'published')
+            ->whereNotNull('category')
+            ->groupBy('category')
+            ->selectRaw('category, count(*) as count')
+            ->pluck('count', 'category')
+            ->all();
+
+        $priceBounds = [
+            'min' => (int) (Product::where('status', 'published')->min('price') ?: 0),
+            'max' => (int) (Product::where('status', 'published')->max('price') ?: 100000),
+        ];
+
+        $availableColors = \App\Models\ProductVariant::query()
+            ->whereHas('product', fn ($q) => $q->where('status', 'published')->where('is_available', true))
+            ->where('is_active', true)
+            ->get()
+            ->map(fn ($v) => $v->options['couleur'] ?? $v->options['Couleur'] ?? $v->options['color'] ?? $v->options['Color'] ?? null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
         return Inertia::render('Shop/Index', [
             'products' => $products,
             'categories' => $categories,
+            'categoriesWithCount' => $categoriesWithCount,
+            'priceBounds' => $priceBounds,
+            'availableColors' => $availableColors,
             'type' => $type,
             'category' => $category,
             'sort' => $sort,
+            'q' => $q,
+            'query' => $request->only(['q', 'prix_min', 'prix_max', 'dispo', 'type', 'category', 'sort', 'couleur']),
         ]);
     }
 
@@ -94,6 +143,16 @@ class CatalogController extends Controller
 
     private function cardPayload(Product $p): array
     {
+        $colors = $p->relationLoaded('variants')
+            ? $p->variants
+                ->where('is_active', true)
+                ->map(fn ($v) => $v->options['couleur'] ?? $v->options['Couleur'] ?? $v->options['color'] ?? $v->options['Color'] ?? null)
+                ->filter()
+                ->unique()
+                ->values()
+                ->all()
+            : [];
+
         return [
             'id' => $p->id,
             'slug' => $p->slug,
@@ -105,6 +164,7 @@ class CatalogController extends Controller
             'promotional_price' => $p->promotional_price,
             'currency' => $p->currency,
             'is_affiliable' => $p->is_affiliable,
+            'colors' => $colors,
         ];
     }
 

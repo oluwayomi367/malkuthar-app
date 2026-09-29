@@ -9,6 +9,8 @@ use App\Services\Marketplace\VendorPayoutService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * MARKETPLACE — file des versements + synthèse de règlement (admin).
@@ -17,7 +19,7 @@ class PayoutController extends Controller
 {
     public function __construct(private readonly VendorPayoutService $payouts) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $status = (string) $request->query('status', 'requested');
 
@@ -38,7 +40,7 @@ class PayoutController extends Controller
             'vendor_paid' => (float) VendorPayout::where('status', 'paid')->sum('net_amount'),
         ];
 
-        return view('admin.marketplace.payouts.index', compact('payouts', 'status', 'summary'));
+        return Inertia::render('Admin/Marketplace/Payouts/Index', compact('payouts', 'status', 'summary'));
     }
 
     public function approve(Request $request, VendorPayout $payout): RedirectResponse

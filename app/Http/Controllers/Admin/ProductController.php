@@ -15,6 +15,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * §6-§18, §60 — administration du catalogue : création / modification des
@@ -32,7 +34,7 @@ class ProductController extends Controller
         private readonly ProductSalesReport $salesReport,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $type = $request->query('type');
         $status = $request->query('status');
@@ -60,7 +62,22 @@ class ProductController extends Controller
 
         $reports = $this->salesReport->forProductIds($products->pluck('id'));
 
-        return view('admin.products.index', compact('products', 'lowStock', 'reports', 'type', 'status', 'q'));
+        return Inertia::render('Admin/Products/Index', [
+            'products' => $products,
+            'lowStock' => $lowStock,
+            'reports' => $reports,
+            'type' => $type,
+            'status' => $status,
+            'q' => $q,
+            'actions' => [
+                'new_product' => '+ Nouveau produit',
+            ],
+            'columns' => [
+                'sales' => 'Ventes',
+                'commissions' => 'Commissions',
+                'stock' => 'Stock',
+            ],
+        ]);
     }
 
     public function create(): View

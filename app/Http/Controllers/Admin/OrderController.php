@@ -40,7 +40,7 @@ class OrderController extends Controller
         private readonly CouponService $coupons,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): \Inertia\Response
     {
         $paymentStatus = $request->query('payment_status');
         $provider = $request->query('provider');
@@ -77,7 +77,9 @@ class OrderController extends Controller
             ->where('payment_status', 'pending')
             ->where('status', '!=', 'cancelled');
 
-        return view('admin.orders.index', [
+        return \Inertia\Inertia::render('Admin/Orders/Index', [
+            'heading' => 'Commandes',
+            'eyebrow' => 'Boutique',
             'orders' => $orders,
             'filters' => compact('paymentStatus', 'provider', 'status', 'q'),
             'kpi' => [
@@ -96,7 +98,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(Order $order): View
+    public function show(Order $order): \Inertia\Response
     {
         $order->load([
             'items.product',
@@ -109,9 +111,17 @@ class OrderController extends Controller
 
         $commissions = $order->ledgerEntries
             ->whereIn('source_type', ['commission', 'commission_reversal'])
-            ->sortBy(['level', fn ($e) => $e->created_at]);
+            ->sortBy(['level', fn ($e) => $e->created_at])
+            ->values();
 
-        return view('admin.orders.show', [
+        return \Inertia\Inertia::render('Admin/Orders/Show', [
+            'heading' => "Commande {$order->order_number}",
+            'eyebrow' => 'Commandes',
+            'labels' => [
+                'collect_cod' => 'Encaisser',
+                'cancel' => 'Annuler',
+                'refund' => 'Rembourser',
+            ],
             'order' => $order,
             'commissions' => $commissions,
             'fulfilmentSteps' => self::FULFILMENT_STEPS,

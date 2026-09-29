@@ -164,4 +164,39 @@ class ShopTest extends TestCase
             ->assertSee('Offre du vendeur')
             ->assertDontSee('Produit du proprietaire');
     }
+
+    public function test_marketplace_extracts_dynamic_colors_and_filters_by_color(): void
+    {
+        $offerNoir = $this->liveOffer(['title' => 'Tunique Noire', 'type' => 'physical']);
+        \App\Models\Marketplace\MarketplaceOfferVariant::create([
+            'offer_id' => $offerNoir->id,
+            'name' => 'Tunique Noire L',
+            'sku' => 'TUN-NOIR-L',
+            'stock' => 5,
+            'is_active' => true,
+            'option_values' => ['couleur' => 'Noir', 'taille' => 'L'],
+        ]);
+
+        $offerDore = $this->liveOffer(['title' => 'Bague Dorée', 'type' => 'physical']);
+        \App\Models\Marketplace\MarketplaceOfferVariant::create([
+            'offer_id' => $offerDore->id,
+            'name' => 'Bague Dorée',
+            'sku' => 'BAG-DOR',
+            'stock' => 3,
+            'is_active' => true,
+            'option_values' => ['couleur' => 'Doré'],
+        ]);
+
+        $res = $this->get('/place-de-marche')->assertOk();
+        $res->assertInertia(fn ($page) => $page
+            ->component('Marketplace/Shop')
+            ->has('availableColors', 2)
+            ->where('availableColors', ['Noir', 'Doré'])
+        );
+
+        // Filtrage par couleur
+        $filterRes = $this->get('/place-de-marche?couleur=Noir')->assertOk();
+        $filterRes->assertSee('Tunique Noire');
+        $filterRes->assertDontSee('Bague Dorée');
+    }
 }

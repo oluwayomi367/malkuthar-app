@@ -105,6 +105,80 @@ class ReferralAttributionTest extends TestCase
         $this->assertNull($a->fresh()->parent_id);
     }
 
+    public function test_client_registration_locks_referral_code_when_visiting_with_cookie(): void
+    {
+        $this->affiliate(['code_parrainage' => 'JEAN125']);
+
+        $response = $this->withCookie(ReferralCookie::NAME, 'JEAN125')
+            ->get(route('register.client'))
+            ->assertOk();
+
+        $response->assertSee('readonly');
+        $response->assertSee('JEAN125');
+        $response->assertSee('Lien détecté — Verrouillé');
+        $response->assertSee('Non modifiable');
+    }
+
+    public function test_client_registration_locks_referral_code_when_visiting_with_ref_query_param(): void
+    {
+        $this->affiliate(['code_parrainage' => 'JEAN125']);
+
+        $response = $this->get('/register?ref=JEAN125')
+            ->assertOk();
+
+        $response->assertSee('readonly');
+        $response->assertSee('JEAN125');
+        $response->assertSee('Non modifiable');
+        $response->assertCookie(ReferralCookie::NAME, 'JEAN125');
+    }
+
+    public function test_registration_allows_editing_when_no_referral_link(): void
+    {
+        $response = $this->get(route('register.client'))->assertOk();
+
+        $response->assertDontSee('Lien détecté — Verrouillé');
+        $response->assertDontSee('Non modifiable');
+    }
+
+    public function test_affiliate_registration_locks_referral_code_when_link_used(): void
+    {
+        $this->affiliate(['code_parrainage' => 'JEAN125']);
+
+        $response = $this->get(route('register.affiliate', ['ref' => 'JEAN125']))
+            ->assertOk();
+
+        $response->assertSee('readonly');
+        $response->assertSee('JEAN125');
+        $response->assertSee('Non modifiable');
+    }
+
+    public function test_vendor_registration_locks_referral_code_when_link_used(): void
+    {
+        \App\Models\Setting::put('marketplace.enabled', '1');
+        $this->affiliate(['code_parrainage' => 'JEAN125']);
+
+        $response = $this->get(route('register.vendor', ['ref' => 'JEAN125']))
+            ->assertOk();
+
+        $response->assertSee('readonly');
+        $response->assertSee('JEAN125');
+        $response->assertSee('Non modifiable');
+    }
+
+    public function test_sponsor_from_cookie_is_protected_against_client_tampering(): void
+    {
+        $sponsor1 = $this->affiliate(['code_parrainage' => 'JEAN125']);
+        $sponsor2 = $this->affiliate(['code_parrainage' => 'TAMPERED99']);
+
+        // Le client a le cookie JEAN125 mais essaie d'envoyer TAMPERED99
+        $this->withCookie(ReferralCookie::NAME, 'JEAN125')
+            ->post('/register', $this->registrationPayload(['referral_code' => 'TAMPERED99']))
+            ->assertRedirect(route('account.dashboard'));
+
+        $newUser = User::where('email', 'newbie@example.com')->firstOrFail();
+        $this->assertSame($sponsor1->id, $newUser->parent_id);
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

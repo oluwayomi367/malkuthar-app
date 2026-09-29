@@ -25,7 +25,7 @@ class AffiliateController extends Controller
         private readonly AuditLogger $audit,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): \Inertia\Response
     {
         $q = trim((string) $request->query('q', ''));
 
@@ -45,23 +45,43 @@ class AffiliateController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.affiliates.index', compact('affiliates', 'q'));
+        return \Inertia\Inertia::render('Admin/Affiliates/Index', [
+            'heading' => 'Affiliés',
+            'eyebrow' => 'Gestion',
+            'open_label' => 'Ouvrir',
+            'affiliates' => $affiliates,
+            'q' => $q,
+        ]);
     }
 
-    public function show(User $user): View
+    public function show(User $user): \Inertia\Response
     {
         abort_unless($user->isAffiliate(), 404);
 
         $user->load('parent:id,first_name,last_name,affiliate_id,status', 'wallet');
 
-        return view('admin.affiliates.show', [
+        return \Inertia\Inertia::render('Admin/Affiliates/Show', [
+            'heading' => trim("{$user->first_name} {$user->last_name}"),
+            'eyebrow' => 'Affilié',
+            'labels' => [
+                'profile' => 'Profil',
+                'sponsor' => 'Parrain',
+                'lineage' => 'Lignée',
+                'level1' => 'Niveau 1',
+                'level3' => 'Niveau 3',
+                'sales' => 'Ventes',
+                'commissions' => 'Commissions',
+                'withdrawals' => 'Retraits',
+                'wallet_adjustment' => 'Ajustement du solde',
+                'suspension' => "Suspension de {$user->first_name}",
+            ],
             'affiliate' => $user,
             'lineage' => $this->lineage->levels($user),
             'children' => User::query()
                 ->where('parent_id', $user->id)
                 ->orderByDesc('created_at')
                 ->get(['id', 'first_name', 'last_name', 'affiliate_id', 'status', 'created_at']),
-            'sales' => Order::query()
+            'orders' => Order::query()
                 ->where('referring_affiliate_id', $user->id)
                 ->withCount('items')
                 ->latest()

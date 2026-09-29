@@ -116,12 +116,25 @@ Route::get('/programme-affiliation/conditions', AffiliateProgramTermsController:
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
+    // Inscription Client (défaut)
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::get('/inscription', [RegisteredUserController::class, 'create'])->name('register.client');
+    Route::get('/inscription/client', [RegisteredUserController::class, 'create']);
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.client.store');
+    Route::post('/inscription/client', [RegisteredUserController::class, 'store']);
+
+    // Inscription Affilié
+    Route::get('/inscription/affilie', [RegisteredUserController::class, 'createAffiliate'])->name('register.affiliate');
+    Route::post('/inscription/affilie', [RegisteredUserController::class, 'storeAffiliate'])->name('register.affiliate.store');
 
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
+
+// Inscription Vendeur (accessible à tous : aiguille intelligemment les membres connectés)
+Route::get('/inscription/vendeur', [App\Http\Controllers\Marketplace\VendorRegistrationController::class, 'create'])->name('register.vendor');
+Route::get('/devenir-vendeur', [App\Http\Controllers\Marketplace\VendorRegistrationController::class, 'create'])->name('marketplace.become-vendor');
+Route::post('/inscription/vendeur', [App\Http\Controllers\Marketplace\VendorRegistrationController::class, 'store'])->name('register.vendor.store');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
@@ -327,6 +340,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::middleware(['auth', 'admin'])->prefix('admin/marketplace')->name('admin.marketplace.')->group(function () {
     Route::get('/settings', [AdminMarketplaceSettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [AdminMarketplaceSettingsController::class, 'update'])->name('settings.update');
+    Route::put('/settings/announcement', [AdminMarketplaceSettingsController::class, 'updateAnnouncement'])->name('settings.announcement.update');
 
     Route::get('/vendors', [AdminMarketplaceVendorController::class, 'index'])->name('vendors.index');
     Route::get('/vendors/{vendor}', [AdminMarketplaceVendorController::class, 'show'])->name('vendors.show');
@@ -355,6 +369,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin/marketplace')->name('admin.m
     Route::post('/offers/{offer}/request-changes', [AdminMarketplaceOfferController::class, 'requestChanges'])->name('offers.request-changes');
     Route::post('/offers/{offer}/suspend', [AdminMarketplaceOfferController::class, 'suspend'])->name('offers.suspend');
     Route::post('/offers/{offer}/unsuspend', [AdminMarketplaceOfferController::class, 'unsuspend'])->name('offers.unsuspend');
+    Route::put('/offers/{offer}/commission', [AdminMarketplaceOfferController::class, 'commission'])->name('offers.commission');
 
     // Commandes
     Route::get('/orders', [App\Http\Controllers\Admin\Marketplace\OrderController::class, 'index'])->name('orders.index');

@@ -12,7 +12,7 @@ use Illuminate\View\View;
  */
 class AuditLogController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): \Inertia\Response
     {
         $action = $request->query('action');
 
@@ -26,6 +26,12 @@ class AuditLogController extends Controller
 
         $actions = AuditLog::query()->distinct()->orderBy('action')->pluck('action');
 
-        return view('admin.audit-logs.index', compact('logs', 'actions', 'action'));
+        return \Inertia\Inertia::render('Admin/AuditLogs/Index', [
+            'heading' => "Journal d'audit",
+            'eyebrow' => 'Traçabilité',
+            'logs' => $logs,
+            'actions' => $actions,
+            'action' => $action,
+        ]);
     }
 }

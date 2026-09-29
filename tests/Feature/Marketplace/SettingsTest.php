@@ -59,4 +59,30 @@ class SettingsTest extends TestCase
             ])
             ->assertForbidden();
     }
+
+    public function test_admin_can_update_announcement_ticker(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->put(route('admin.marketplace.settings.announcement.update'), [
+            'announcement_ticker' => '✨ Nouvelle collection en ligne · ⚡ Livraison express',
+            'announcement_ticker_enabled' => '1',
+        ])->assertRedirect();
+
+        $this->assertSame(
+            '✨ Nouvelle collection en ligne · ⚡ Livraison express',
+            \App\Support\StorefrontSettings::announcementTicker()
+        );
+        $this->assertTrue(\App\Support\StorefrontSettings::announcementTickerEnabled());
+        $this->assertTrue(AuditLog::query()->where('action', 'storefront.announcement_updated')->exists());
+    }
+
+    public function test_non_admin_cannot_update_announcement_ticker(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->put(route('admin.marketplace.settings.announcement.update'), [
+                'announcement_ticker' => 'Hacked text',
+            ])
+            ->assertForbidden();
+    }
 }

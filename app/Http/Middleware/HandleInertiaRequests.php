@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\CommissionRateResolver;
 use App\Support\Catalog;
 use App\Support\MarketplaceSettings;
+use App\Support\StorefrontSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -48,6 +49,8 @@ class HandleInertiaRequests extends Middleware
             // §27 — taux en vigueur (campagne éventuelle), pour le badge
             // « produit affiliable » comme pour la page /affiliation.
             'commissionRates' => app(CommissionRateResolver::class)->percentages(),
+            'announcementTicker' => StorefrontSettings::announcementTicker(),
+            'announcementTickerEnabled' => StorefrontSettings::announcementTickerEnabled(),
         ];
     }
 }

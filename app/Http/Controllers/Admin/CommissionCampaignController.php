@@ -22,15 +22,25 @@ class CommissionCampaignController extends Controller
 {
     public function __construct(private readonly AuditLogger $audit) {}
 
-    public function index(CommissionRateResolver $resolver): View
+    public function index(CommissionRateResolver $resolver): \Inertia\Response
     {
-        return view('admin.commission-campaigns.index', [
+        $resolution = $resolver->resolve();
+        $current = $resolution['rates'] ?? [1 => 0.15, 2 => 0.10, 3 => 0.05];
+        $r1 = (int) round(($current[1] ?? 0.15) * 100);
+        $r2 = (int) round(($current[2] ?? 0.10) * 100);
+        $r3 = (int) round(($current[3] ?? 0.05) * 100);
+
+        return \Inertia\Inertia::render('Admin/CommissionCampaigns/Index', [
+            'heading' => 'Taux de commission',
+            'eyebrow' => 'Affiliation',
+            'applied_rates_label' => 'Taux appliqués en ce moment',
+            'current_rates_formatted' => "{$r1} % · {$r2} % · {$r3} %",
             'campaigns' => CommissionCampaign::query()
                 ->orderByDesc('is_default')
                 ->orderByDesc('priority')
                 ->orderByDesc('created_at')
                 ->get(),
-            'resolution' => $resolver->resolve(),
+            'resolution' => $resolution,
             // §42 — période de validation en vigueur.
             'validationDelayDays' => (int) Setting::get(
                 'affiliation.validation_delay_days',

@@ -18,8 +18,22 @@
 <h1 class="mt-1 font-display text-2xl font-bold tracking-[-0.01em] text-ink sm:text-3xl">Ouvrir un espace vendeur</h1>
 <p class="mt-2 text-sm text-ink-2">
     Votre compte MALKUTHAR devient aussi votre compte vendeur — aucun second compte.
-    Après vérification par notre équipe, vous pourrez publier vos offres.
 </p>
+
+<div class="mt-4 rounded-xl border border-accent/25 bg-accent-soft/40 p-4 text-xs text-ink-2">
+    <div class="flex items-start gap-2.5">
+        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-white text-[10px] font-bold">1</span>
+        <div>
+            <p class="font-semibold text-ink">Étape 1 : Demande d'activation de votre espace vendeur</p>
+            <p class="mt-0.5 leading-relaxed">
+                Ce formulaire sert uniquement à renseigner l'identité de votre boutique. <strong class="text-ink">Vous n'avez aucun produit à saisir maintenant.</strong>
+            </p>
+            <p class="mt-1.5 border-t border-accent/20 pt-1.5 text-ink-3">
+                👉 Vos produits seront créés séparément depuis votre espace vendeur, une fois cette demande validée manuellement par l'administrateur (24h à 48h).
+            </p>
+        </div>
+    </div>
+</div>
 
 <form method="POST" action="{{ route('vendor.application.store') }}" class="mt-6 grid gap-4">
     @csrf

@@ -8,6 +8,8 @@ use App\Services\Marketplace\OfferModerationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * MARKETPLACE — file de modération des offres.
@@ -16,7 +18,7 @@ class OfferModerationController extends Controller
 {
     public function __construct(private readonly OfferModerationService $moderation) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $status = (string) $request->query('status', 'pending_review');
 
@@ -30,7 +32,7 @@ class OfferModerationController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.marketplace.offers.index', [
+        return Inertia::render('Admin/Marketplace/Offers/Index', [
             'offers' => $offers,
             'status' => $status,
             'counts' => MarketplaceOffer::query()
@@ -38,14 +40,19 @@ class OfferModerationController extends Controller
         ]);
     }
 
-    public function show(MarketplaceOffer $offer): View
+    public function show(MarketplaceOffer $offer): Response
     {
         $offer->load('vendor.user', 'category', $offer->type, 'reviews.reviewer', 'approver');
 
         $pendingRevision = $offer->revisions()->where('state', 'pending')->latest('version')->first();
         $liveRevision = $offer->revisions()->where('state', 'approved')->latest('version')->first();
 
-        return view('admin.marketplace.offers.show', compact('offer', 'pendingRevision', 'liveRevision'));
+        return Inertia::render('Admin/Marketplace/Offers/Show', [
+            'offer' => $offer,
+            'pendingRevision' => $pendingRevision,
+            'liveRevision' => $liveRevision,
+            'decision_heading' => 'Décision',
+        ]);
     }
 
     public function approve(Request $request, MarketplaceOffer $offer): RedirectResponse
@@ -85,5 +92,26 @@ class OfferModerationController extends Controller
         $this->moderation->unsuspend($offer, $request->user());
 
         return back()->with('success', 'Offre rétablie.');
+    }
+
+    public function commission(Request $request, MarketplaceOffer $offer): RedirectResponse
+    {
+        $data = $request->validate([
+            'commission_rate_percent' => ['nullable', 'numeric', 'min:0', 'max:90'],
+        ]);
+
+        $rate = ($data['commission_rate_percent'] === null || $data['commission_rate_percent'] === '')
+            ? null
+            : round((float) $data['commission_rate_percent'] / 100, 4);
+
+        $old = $offer->commission_rate;
+        $offer->forceFill(['commission_rate' => $rate])->save();
+
+        app(\App\Services\AuditLogger::class)->record($request->user(), 'marketplace.offer.commission_updated', $offer, [
+            'from' => $old,
+            'to' => $rate,
+        ]);
+
+        return back()->with('success', 'Le taux de commission spécifique à ce produit a été mis à jour.');
     }
 }

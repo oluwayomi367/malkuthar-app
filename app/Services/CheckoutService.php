@@ -24,7 +24,10 @@ class CheckoutService
         private readonly StockService $stock,
         private readonly ServiceAvailabilityService $availability,
         private readonly CouponService $coupons,
-    ) {}
+        private ?AffiliateOnboardingService $onboarding = null,
+    ) {
+        $this->onboarding = $onboarding ?? app(AffiliateOnboardingService::class);
+    }
 
     /**
      * @param  User|null  $referringAffiliate  affilié dont le lien a amené
@@ -37,8 +40,9 @@ class CheckoutService
         Collection $productsById,
         ?User $referringAffiliate = null,
         ?array $utmData = null,
+        bool $hasReferralInput = false,
     ): Order {
-        return DB::transaction(function () use ($data, $user, $productsById, $referringAffiliate, $utmData) {
+        return DB::transaction(function () use ($data, $user, $productsById, $referringAffiliate, $utmData, $hasReferralInput) {
             // §79 - coupon éventuel, résolu et consommé dans la transaction.
             $coupon = $this->coupons->resolve($data['coupon_code'] ?? null);
             if ($coupon && ! $this->coupons->consume($coupon)) {
@@ -47,7 +51,7 @@ class CheckoutService
 
             $order = Order::create([
                 'user_id' => $user?->id,
-                'referring_affiliate_id' => $this->resolveReferringAffiliateId($user, $referringAffiliate),
+                'referring_affiliate_id' => $this->resolveReferringAffiliateId($user, $referringAffiliate, $hasReferralInput),
                 'coupon_id' => $coupon?->id,
                 'coupon_code' => $coupon?->code,
                 'order_number' => $this->generateOrderNumber(),
@@ -218,20 +222,50 @@ class CheckoutService
     /**
      * §38-§39 — N'attribue la vente à l'affilié référent que s'il est un
      * affilié actif ET différent de l'acheteur (blocage auto-parrainage).
+     * Si aucun code ou cookie n'a été fourni, le parrain direct du client
+     * ou à défaut le Système devient l'affilié référent d'office.
      */
-    private function resolveReferringAffiliateId(?User $buyer, ?User $referringAffiliate): ?string
+    private function resolveReferringAffiliateId(?User $buyer, ?User $referringAffiliate, bool $hasReferralInput = false): ?string
     {
-        if (! $referringAffiliate
-            || ! $referringAffiliate->isAffiliate()
-            || $referringAffiliate->status !== 'active') {
+        if ($hasReferralInput) {
+            // Un code ou cookie a été explicitement fourni
+            if (! $referringAffiliate
+                || ! $referringAffiliate->isAffiliate()
+                || $referringAffiliate->status !== 'active') {
+                return null;
+            }
+
+            if ($buyer && $buyer->getKey() === $referringAffiliate->getKey()) {
+                return null; // auto-parrainage interdit
+            }
+
+            return $referringAffiliate->getKey();
+        }
+
+        // Aucun code ou cookie n'a été fourni :
+        // 1. Si un affilié référent est tout de même résolu
+        if ($referringAffiliate
+            && $referringAffiliate->isAffiliate()
+            && $referringAffiliate->status === 'active'
+            && (! $buyer || $buyer->getKey() !== $referringAffiliate->getKey())) {
+            return $referringAffiliate->getKey();
+        }
+
+        // 2. Si le client a un parrain direct éligible
+        if ($buyer && $buyer->parent_id) {
+            $parent = $buyer->parent;
+            if ($parent && $parent->isAffiliate() && $parent->status === 'active' && $parent->getKey() !== $buyer->getKey()) {
+                return $parent->getKey();
+            }
+        }
+
+        // 3. À défaut de parrain, le Système devient d'office le parrain
+        $system = $this->onboarding->systemUser();
+        if ($buyer && $buyer->getKey() === $system->getKey()) {
             return null;
         }
 
-        if ($buyer && $buyer->getKey() === $referringAffiliate->getKey()) {
-            return null;
-        }
-
-        return $referringAffiliate->getKey();
+        return $system->getKey();
     }
 
     private function resolveCurrency(Collection $productsById): string

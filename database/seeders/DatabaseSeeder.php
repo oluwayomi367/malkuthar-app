@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ---- Comptes ----
+        app(\App\Services\AffiliateOnboardingService::class)->systemUser();
+
         User::factory()->admin()->create([
             'first_name' => 'Admin', 'last_name' => 'MALKUTHAR', 'email' => 'admin@malkuthar.test',
         ]);

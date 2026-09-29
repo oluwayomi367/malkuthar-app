@@ -8,14 +8,15 @@ use App\Models\LedgerEntry;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Withdrawal;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * §60 — Tableau de bord administrateur.
  */
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
         $newSince = now()->subDays(30);
 
@@ -60,6 +61,35 @@ class DashboardController extends Controller
 
         $recentAudit = AuditLog::query()->with('admin:id,first_name,last_name')->latest('created_at')->limit(8)->get();
 
-        return view('admin.dashboard', compact('stats', 'pendingWithdrawals', 'recentAffiliates', 'recentAudit'));
+        $m = fn ($n) => number_format((float) $n, 0, ',', ' ');
+
+        return Inertia::render('Admin/Dashboard', [
+            'heading' => 'Tableau de bord',
+            'eyebrow' => 'MALKUTHAR',
+            'labels' => [
+                'affiliates' => 'Affiliés',
+                'revenue' => "Chiffre d'affaires",
+            ],
+            'formatted_stats' => [
+                'revenue' => $m($stats['revenue']),
+                'commissions_pending' => $m($stats['commissions_pending']),
+                'commissions_available' => $m($stats['commissions_available']),
+                'commissions_generated' => $m($stats['commissions_generated']),
+                'cod_to_collect_amount' => $m($stats['cod_to_collect_amount']),
+                'affiliates_total' => $m($stats['affiliates_total']),
+                'affiliates_active' => $m($stats['affiliates_active']),
+                'affiliates_new' => $m($stats['affiliates_new']),
+                'affiliates_suspended' => $m($stats['affiliates_suspended']),
+                'orders_paid' => $m($stats['orders_paid']),
+                'withdrawals_requested' => $m($stats['withdrawals_requested']),
+                'withdrawals_processing' => $m($stats['withdrawals_processing']),
+                'withdrawals_paid' => $m($stats['withdrawals_paid']),
+                'withdrawals_failed' => $m($stats['withdrawals_failed']),
+            ],
+            'stats' => $stats,
+            'pendingWithdrawals' => $pendingWithdrawals,
+            'recentAffiliates' => $recentAffiliates,
+            'recentAudit' => $recentAudit,
+        ]);
     }
 }

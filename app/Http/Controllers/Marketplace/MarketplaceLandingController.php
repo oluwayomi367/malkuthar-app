@@ -30,12 +30,19 @@ class MarketplaceLandingController extends Controller
             ];
         }
 
+        $user = request()->user();
+        $vendorProfile = $user?->vendorProfile;
+
         return Inertia::render('Marketplace/Landing', [
             'enabled' => $enabled,
             'stats' => $stats,
             'starterRate' => MarketplaceSettings::defaultCommissionRate() * 100,
             'growthRate' => MarketplaceSettings::growthCommissionRate() * 100,
             'growthThreshold' => MarketplaceSettings::growthThresholdAmount(),
+            'userVendor' => $vendorProfile ? [
+                'status' => $vendorProfile->status,
+                'displayName' => $vendorProfile->display_name,
+            ] : null,
         ]);
     }
 }

@@ -9,6 +9,8 @@ use App\Services\Marketplace\MarketplacePaymentConfirmationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * MARKETPLACE — suivi des commandes en administration + encaissement manuel
@@ -21,7 +23,7 @@ class OrderController extends Controller
         private readonly AuditLogger $audit,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $orders = MarketplaceOrder::query()
             ->withCount('suborders')
@@ -33,18 +35,20 @@ class OrderController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.marketplace.orders.index', [
+        return Inertia::render('Admin/Marketplace/Orders/Index', [
             'orders' => $orders,
             'counts' => MarketplaceOrder::query()
                 ->selectRaw('payment_status, count(*) as total')->groupBy('payment_status')->pluck('total', 'payment_status'),
+            'payment_status' => (string) $request->query('payment_status', ''),
+            'q' => (string) $request->query('q', ''),
         ]);
     }
 
-    public function show(MarketplaceOrder $order): View
+    public function show(MarketplaceOrder $order): Response
     {
         $order->load('buyer', 'suborders.vendor', 'suborders.items.offer');
 
-        return view('admin.marketplace.orders.show', compact('order'));
+        return Inertia::render('Admin/Marketplace/Orders/Show', compact('order'));
     }
 
     public function markPaid(Request $request, MarketplaceOrder $order): RedirectResponse

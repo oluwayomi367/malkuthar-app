@@ -75,4 +75,40 @@ class CatalogTest extends TestCase
         $this->get('/produits/cache')->assertNotFound();
         $this->get('/produits/inexistant')->assertNotFound();
     }
+
+    public function test_catalog_extracts_dynamic_colors_and_filters_by_color(): void
+    {
+        $prodNoir = Product::factory()->physical()->create(['name' => 'Monture Ébène', 'status' => 'published', 'is_available' => true]);
+        \App\Models\ProductVariant::create([
+            'product_id' => $prodNoir->id,
+            'name' => 'Noir',
+            'sku' => 'MONT-NOIR',
+            'stock_available' => 4,
+            'is_active' => true,
+            'options' => ['couleur' => 'Noir'],
+        ]);
+
+        $prodBlanc = Product::factory()->physical()->create(['name' => 'Monture Ivoire', 'status' => 'published', 'is_available' => true]);
+        \App\Models\ProductVariant::create([
+            'product_id' => $prodBlanc->id,
+            'name' => 'Blanc',
+            'sku' => 'MONT-BLANC',
+            'stock_available' => 2,
+            'is_active' => true,
+            'options' => ['couleur' => 'Blanc'],
+        ]);
+
+        $res = $this->get('/boutique')->assertOk();
+        $res->assertInertia(fn (Assert $page) => $page
+            ->component('Shop/Index')
+            ->has('availableColors', 2)
+            ->where('availableColors', ['Noir', 'Blanc'])
+        );
+
+        $filterRes = $this->get('/boutique?couleur=Noir')->assertOk();
+        $filterRes->assertInertia(fn (Assert $page) => $page
+            ->has('products.data', 1)
+            ->where('products.data.0.name', 'Monture Ébène')
+        );
+    }
 }

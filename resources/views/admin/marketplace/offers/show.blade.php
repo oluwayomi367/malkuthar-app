@@ -98,6 +98,44 @@
                 <button class="h-10 w-full rounded-xl border border-brand-green/40 bg-brand-green/10 text-sm font-semibold text-brand-green">Rétablir l'offre</button>
             </form>
         @endif
+
+        {{-- Configuration de la commission spécifique à ce produit --}}
+        <section class="rounded-2xl border border-black/10 bg-surface p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-display text-base font-semibold text-ink">Commission produit</h2>
+                @if ($offer->commission_rate !== null)
+                    <span class="inline-flex items-center rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent">
+                        {{ rtrim(rtrim(number_format($offer->commission_rate * 100, 2), '0'), '.') }} % (spécifique)
+                    </span>
+                @else
+                    <span class="inline-flex items-center rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-ink-3">
+                        Barème standard
+                    </span>
+                @endif
+            </div>
+            <p class="mt-1 text-xs text-ink-3">
+                Pourcentage perçu par la plateforme sur ce produit spécifique. Prioritaire sur les règles vendeur et catégorie. Laissez vide pour appliquer le barème standard.
+            </p>
+            <form method="POST" action="{{ route('admin.marketplace.offers.commission', $offer) }}" class="mt-3 flex gap-2">
+                @csrf
+                @method('PUT')
+                <div class="relative flex-1">
+                    <input name="commission_rate_percent" type="number" step="0.01" min="0" max="90"
+                           value="{{ $offer->commission_rate !== null ? number_format($offer->commission_rate * 100, 2, '.', '') : '' }}"
+                           placeholder="Ex : 15"
+                           class="h-10 w-full rounded-xl border border-black/10 bg-surface px-3 pr-8 text-sm text-ink focus:border-accent focus:ring-1 focus:ring-accent">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-ink-3">%</span>
+                </div>
+                <button type="submit" class="h-10 rounded-xl border border-black/10 bg-ground-alt px-4 text-sm font-semibold text-ink hover:bg-ground hover:border-accent/40 transition-colors">
+                    Enregistrer
+                </button>
+            </form>
+            @if ($offer->commission_rate !== null)
+                <p class="mt-2 text-[11px] text-accent">
+                    ✓ Surcharge active : <strong>{{ number_format($offer->commission_rate * 100, 2) }} %</strong> prélevés sur chaque vente de cette offre.
+                </p>
+            @endif
+        </section>
     </div>
 </div>
 

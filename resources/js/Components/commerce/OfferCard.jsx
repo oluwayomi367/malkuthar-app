@@ -1,50 +1,217 @@
-import { Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { Link, router } from '@inertiajs/react';
 import { money } from '../../lib/format';
+import RosetteBadge from './RosetteBadge';
+import { isFavorite, toggleFavorite } from '../../lib/wishlist';
+import { getColorHex } from '../../lib/colors';
 
-const TYPE_LABELS = { physical: 'Produit', digital: 'Digital', service: 'Service', training: 'Formation' };
+const TYPE_LABELS = {
+    physical: 'Produit',
+    digital: 'Digital',
+    service: 'Service',
+    training: 'Formation',
+};
 
-/** `offer` : forme pré-sérialisée par le contrôleur (voir MarketplaceShopController)
- *  — `main_image_url` déjà résolu (Storage::url côté serveur). */
 export default function OfferCard({ offer }) {
     const hasSale = offer.sale_price !== null && Number(offer.sale_price) < Number(offer.price);
     const off = hasSale ? Math.round(100 - (offer.sale_price / offer.price) * 100) : 0;
+    
+    const favId = `offer_${offer.id}`;
+    const [fav, setFav] = useState(false);
+    const [adding, setAdding] = useState(false);
+    const [added, setAdded] = useState(false);
+
+    useEffect(() => {
+        setFav(isFavorite(favId));
+        const handleWishlist = () => setFav(isFavorite(favId));
+        window.addEventListener('mal-wishlist-changed', handleWishlist);
+        return () => window.removeEventListener('mal-wishlist-changed', handleWishlist);
+    }, [favId]);
+
+    const handleToggleFav = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const next = toggleFavorite(favId);
+        setFav(next);
+    };
+
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Si c'est un produit physique avec variantes possibles ou service sur RDV, rediriger vers la fiche
+        if (offer.type === 'physical' || offer.type === 'service') {
+            router.visit(route('marketplace.shop.offer', offer.slug));
+            return;
+        }
+
+        setAdding(true);
+        router.post(
+            route('marketplace.cart.add'),
+            { offer_id: offer.id, quantity: 1 },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setAdding(false);
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 2000);
+                },
+                onError: () => {
+                    setAdding(false);
+                    router.visit(route('marketplace.shop.offer', offer.slug));
+                },
+            }
+        );
+    };
 
     return (
-        <Link href={route('marketplace.shop.offer', offer.slug)}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-all duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_16px_40px_-24px_rgba(46,44,40,0.32)]">
-            <div className="relative aspect-[4/3] overflow-hidden bg-ground-alt">
+        <div className="group relative flex flex-col rounded-2xl border border-line/80 bg-surface p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_16px_36px_-12px_rgba(46,44,40,0.12),0_2px_6px_rgba(46,44,40,0.04)]">
+            {/* Top Bar: Rosette Badge & Wishlist Heart */}
+            <div className="flex items-start justify-between min-h-[44px] w-full">
+                <div>
+                    {hasSale ? (
+                        <RosetteBadge discount={off} />
+                    ) : (
+                        <span className="inline-flex items-center rounded-full border border-line bg-ground-alt/60 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">
+                            {TYPE_LABELS[offer.type] ?? offer.type}
+                        </span>
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleToggleFav}
+                    aria-label="Ajouter aux favoris"
+                    className={`inline-flex h-8 w-8 items-center justify-center rounded-full border transition-all ${
+                        fav
+                            ? 'border-rust/40 bg-rust/10 text-rust'
+                            : 'border-transparent text-ink-3 hover:border-line hover:bg-ground-alt hover:text-ink'
+                    }`}
+                >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill={fav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                </button>
+            </div>
+
+            {/* Product Image Area */}
+            <Link
+                href={route('marketplace.shop.offer', offer.slug)}
+                className="relative my-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-white p-3"
+            >
                 {offer.main_image_url ? (
-                    <img src={offer.main_image_url} alt={offer.title} loading="lazy"
-                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                    <img
+                        src={offer.main_image_url}
+                        alt={offer.title}
+                        loading="lazy"
+                        className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                    />
                 ) : (
-                    <div className="flex h-full items-center justify-center text-line-strong">
-                        <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7" /></svg>
+                    <div className="flex h-full w-full items-center justify-center bg-ground-alt/40 text-line-strong rounded-lg">
+                        <svg className="h-12 w-12 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                            <path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7" />
+                        </svg>
                     </div>
                 )}
-                <span className="absolute left-2 top-2 rounded-full bg-ground/90 px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-ink-2 backdrop-blur">
-                    {TYPE_LABELS[offer.type] ?? offer.type}
-                </span>
-                {off > 0 && <span className="absolute right-2 top-2 rounded-full bg-rust px-2 py-0.5 text-[11px] font-bold text-white">−{off}%</span>}
+            </Link>
+
+            {/* Brand / Vendor Label */}
+            <div className="mt-1">
+                <Link
+                    href={offer.vendor?.slug ? route('marketplace.shop', { vendeur: offer.vendor.slug }) : route('marketplace.shop.offer', offer.slug)}
+                    className="inline-block text-[11px] font-bold uppercase tracking-[0.16em] text-ink-3 hover:text-accent transition-colors"
+                >
+                    {offer.vendor?.display_name ?? 'ATELIER MALKUTHAR'}
+                </Link>
             </div>
-            <div className="flex flex-1 flex-col p-3.5">
-                <p className="truncate text-[11px] text-ink-3">{offer.vendor?.display_name}</p>
-                <p className="mt-0.5 line-clamp-2 font-display text-[15px] font-semibold leading-snug text-ink">{offer.title}</p>
 
-                {offer.rating_count > 0 && (
-                    <p className="mt-1 flex items-center gap-1 text-[11px] text-ink-3">
-                        <span className="text-accent">
-                            {'★'.repeat(Math.round(offer.rating_avg))}
-                            <span className="text-line-strong">{'★'.repeat(5 - Math.round(offer.rating_avg))}</span>
+            {/* Title */}
+            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] font-display text-[13.5px] font-bold leading-snug text-ink transition-colors group-hover:text-accent">
+                <Link href={route('marketplace.shop.offer', offer.slug)}>
+                    {offer.title}
+                </Link>
+            </h3>
+
+            {/* Variation Indicators / Swatches / Rating */}
+            <div className="my-2 flex items-center justify-center gap-1.5 min-h-[16px]">
+                {offer.colors && offer.colors.length > 0 ? (
+                    <div className="flex items-center gap-1">
+                        {offer.colors.slice(0, 5).map((col, idx) => (
+                            <span
+                                key={idx}
+                                title={col}
+                                className="h-2 w-2 rounded-full border border-black/15 shadow-2xs"
+                                style={{ backgroundColor: getColorHex(col) }}
+                            />
+                        ))}
+                        {offer.colors.length > 5 && (
+                            <span className="text-[10px] text-ink-3">+{offer.colors.length - 5}</span>
+                        )}
+                    </div>
+                ) : offer.rating_count > 0 ? (
+                    <div className="flex items-center gap-1 text-[11px] text-ink-3">
+                        <span className="text-accent font-semibold">★ {offer.rating_avg.toFixed(1)}</span>
+                        <span>({offer.rating_count})</span>
+                    </div>
+                ) : null}
+            </div>
+
+            {/* Price Block */}
+            <div className="mt-auto pt-1 pb-3">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                    {hasSale && (
+                        <span className="text-xs text-ink-3 line-through">
+                            {money(offer.price)} {offer.currency}
                         </span>
-                        <span>{offer.rating_avg.toFixed(1).replace('.', ',')} · {offer.rating_count}</span>
-                    </p>
-                )}
-
-                <div className="mt-auto flex items-baseline gap-2 pt-3">
-                    <span className="font-display font-semibold text-ink">{money(offer.effective_price)} {offer.currency}</span>
-                    {hasSale && <span className="text-xs text-ink-3 line-through">{money(offer.price)}</span>}
+                    )}
+                    <span className={`font-display text-[15.5px] font-bold tracking-tight ${hasSale ? 'text-rust' : 'text-ink'}`}>
+                        {money(offer.effective_price)} {offer.currency}
+                    </span>
                 </div>
             </div>
-        </Link>
+
+            {/* Bottom Actions Row: + Ajouter au panier & Wishlist */}
+            <div className="flex items-center gap-2 border-t border-line/60 pt-3">
+                <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    disabled={adding}
+                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-full border py-2 px-3 text-xs font-semibold tracking-wide transition-all shadow-2xs ${
+                        added
+                            ? 'border-emerald-600 bg-emerald-600 text-white'
+                            : 'border-line/90 bg-surface text-ink hover:border-ink hover:bg-ink hover:text-white active:scale-[0.98]'
+                    }`}
+                >
+                    {added ? (
+                        <>
+                            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <path d="M3 8.5l3.5 3.5 6.5-7" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <span>Ajouté !</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="text-sm font-bold leading-none">+</span>
+                            <span>Ajouter au panier</span>
+                        </>
+                    )}
+                </button>
+
+                <button
+                    type="button"
+                    onClick={handleToggleFav}
+                    aria-label="Favoris"
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all ${
+                        fav
+                            ? 'border-rust/40 bg-rust/10 text-rust'
+                            : 'border-line/90 bg-surface text-ink-2 hover:border-ink hover:text-rust'
+                    }`}
+                >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill={fav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
     );
 }

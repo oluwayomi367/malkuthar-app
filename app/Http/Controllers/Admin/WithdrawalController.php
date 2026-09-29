@@ -21,7 +21,7 @@ class WithdrawalController extends Controller
         private readonly AuditLogger $audit,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): \Inertia\Response
     {
         $status = $request->query('status');
 
@@ -32,7 +32,12 @@ class WithdrawalController extends Controller
             ->paginate(30)
             ->withQueryString();
 
-        return view('admin.withdrawals.index', compact('withdrawals', 'status'));
+        return \Inertia\Inertia::render('Admin/Withdrawals/Index', [
+            'heading' => 'Demandes de retrait',
+            'eyebrow' => 'Finances',
+            'withdrawals' => $withdrawals,
+            'status' => $status,
+        ]);
     }
 
     public function markPaid(Request $request, Withdrawal $withdrawal): RedirectResponse

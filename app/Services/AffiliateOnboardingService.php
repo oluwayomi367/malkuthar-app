@@ -54,16 +54,71 @@ class AffiliateOnboardingService
                 ['currency' => $user->currency ?? 'XOF'],
             );
 
+            // Si l'utilisateur n'a pas encore de parrain, le Système devient d'office son parrain
+            if (! $user->parent_id && $user->getKey() !== $this->systemUser()->getKey()) {
+                $this->attributeSponsor($user);
+            }
+
             return $user->refresh();
         });
     }
 
     /**
+     * Résout ou crée le compte parrain officiel « Système » de MALKUTHAR.
+     */
+    public function systemUser(): User
+    {
+        $email = (string) config('malkuthar.affiliation.system_email', 'system@malkuthar.com');
+        $code = (string) config('malkuthar.affiliation.system_referral_code', 'MALKUTHAR');
+
+        $system = User::query()->where('email', $email)->first();
+
+        if ($system) {
+            if (! $system->isAffiliate()) {
+                $system->forceFill([
+                    'affiliate_id' => 'MAL-AFF-000000',
+                    'code_parrainage' => $code,
+                    'affiliate_activated_at' => now(),
+                    'status' => 'active',
+                ])->save();
+
+                Wallet::firstOrCreate(
+                    ['user_id' => $system->id],
+                    ['currency' => $system->currency ?? 'XOF'],
+                );
+            }
+
+            return $system;
+        }
+
+        $system = User::create([
+            'first_name' => 'Système',
+            'last_name' => 'MALKUTHAR',
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(32)),
+            'role' => 'admin',
+            'status' => 'active',
+            'currency' => 'XOF',
+            'affiliate_id' => 'MAL-AFF-000000',
+            'code_parrainage' => $code,
+            'affiliate_activated_at' => now(),
+        ]);
+
+        Wallet::firstOrCreate(
+            ['user_id' => $system->id],
+            ['currency' => 'XOF'],
+        );
+
+        return $system;
+    }
+
+    /**
      * §35-§38 — Rattache définitivement $user au parrain $sponsor.
+     * Si aucun parrain n'est fourni ($sponsor === null), le Système
+     * devient d'office son parrain.
      *
      * Ne fait rien (sans lever d'exception) si le rattachement est
      * impossible ou interdit :
-     *  - pas de parrain fourni ;
      *  - $user a déjà un parrain (immuable, §35) ;
      *  - auto-parrainage (§38) ;
      *  - parrain non actif ou non affilié ;
@@ -71,25 +126,39 @@ class AffiliateOnboardingService
      *
      * @return bool true si le rattachement a été effectué.
      */
-    public function attributeSponsor(User $user, ?User $sponsor): bool
+    public function attributeSponsor(User $user, ?User $sponsor = null): bool
     {
-        if (! $sponsor || $user->parent_id) {
+        if ($user->parent_id) {
             return false;
         }
 
-        if ($sponsor->getKey() === $user->getKey()) {
-            return false; // §38 — auto-parrainage
+        if ($sponsor !== null) {
+            if ($sponsor->getKey() === $user->getKey()) {
+                return false; // §38 — auto-parrainage
+            }
+
+            if ($sponsor->status !== 'active' || ! $sponsor->isAffiliate()) {
+                return false;
+            }
+
+            if ($this->wouldCreateCycle($user, $sponsor)) {
+                return false; // §38 — manipulation de l'arbre
+            }
+
+            $effectiveSponsor = $sponsor;
+        } else {
+            $effectiveSponsor = $this->systemUser();
+
+            if ($effectiveSponsor->getKey() === $user->getKey()) {
+                return false;
+            }
+
+            if ($this->wouldCreateCycle($user, $effectiveSponsor)) {
+                return false;
+            }
         }
 
-        if ($sponsor->status !== 'active' || ! $sponsor->isAffiliate()) {
-            return false;
-        }
-
-        if ($this->wouldCreateCycle($user, $sponsor)) {
-            return false; // §38 — manipulation de l'arbre
-        }
-
-        $user->forceFill(['parent_id' => $sponsor->getKey()])->save();
+        $user->forceFill(['parent_id' => $effectiveSponsor->getKey()])->save();
 
         return true;
     }

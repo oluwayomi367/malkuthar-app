@@ -17,7 +17,10 @@
             <div class="absolute inset-0 bg-gradient-to-t from-ground/80 via-transparent to-transparent"></div>
 
             <div class="relative flex h-full flex-col justify-between p-10 xl:p-12">
-                <a href="{{ url('/') }}" class="font-display text-[15px] font-semibold tracking-[0.2em] text-ink">MALKUTHAR</a>
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5 font-display text-[15.5px] font-semibold tracking-[0.2em] text-ink">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo MALKUTHAR" class="h-9 w-9 object-contain">
+                    <span>MALKUTHAR</span>
+                </a>
                 <div>
                     <p class="font-display text-2xl font-semibold leading-snug text-ink">
                         @hasSection('auth_tagline') @yield('auth_tagline') @else L'aube d'un chemin intérieur. @endif
@@ -35,7 +38,10 @@
         {{-- ===================== Colonne formulaire (droite) ===================== --}}
         <div class="flex min-h-screen flex-col px-5 py-8 sm:px-10 lg:h-screen lg:overflow-y-auto lg:px-14 xl:px-20">
             <header class="flex items-center justify-between">
-                <a href="{{ url('/') }}" class="font-display text-[14px] font-bold tracking-[0.2em] text-ink lg:hidden">MALKUTHAR</a>
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-2 font-display text-[14px] font-bold tracking-[0.2em] text-ink lg:hidden">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo MALKUTHAR" class="h-8 w-8 object-contain">
+                    <span>MALKUTHAR</span>
+                </a>
                 <a href="{{ url('/') }}" class="ml-auto text-xs text-ink-3 transition-colors hover:text-ink">← Retour à la boutique</a>
             </header>
 

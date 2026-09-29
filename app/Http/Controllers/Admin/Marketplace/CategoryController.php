@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * MARKETPLACE — gestion de l'arbre des catégories du catalogue.
@@ -20,7 +22,7 @@ class CategoryController extends Controller
 {
     public function __construct(private readonly AuditLogger $audit) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $categories = MarketplaceCategory::query()
             ->withCount('fields')
@@ -32,7 +34,7 @@ class CategoryController extends Controller
             $editing = MarketplaceCategory::with('fields')->find($request->query('edit'));
         }
 
-        return view('admin.marketplace.categories.index', [
+        return Inertia::render('Admin/Marketplace/Categories/Index', [
             'categories' => $categories,
             'tree' => $this->tree($categories),
             'editing' => $editing,

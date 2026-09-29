@@ -49,6 +49,7 @@ class MarketplaceOffer extends Model
         'review_note',
         'seo_title',
         'seo_description',
+        'commission_rate',
     ];
 
     protected function casts(): array
@@ -56,6 +57,7 @@ class MarketplaceOffer extends Model
         return [
             'price' => 'decimal:2',
             'sale_price' => 'decimal:2',
+            'commission_rate' => 'decimal:4',
             'gallery' => 'array',
             'custom_fields' => 'array',
             'is_online' => 'boolean',

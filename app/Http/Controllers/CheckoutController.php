@@ -32,15 +32,19 @@ class CheckoutController extends Controller
     public function store(CheckoutRequest $request): JsonResponse
     {
         try {
+            $explicitCode = $request->validated()['referral_code'] ?? null;
+            $hasReferralInput = ! empty($explicitCode) || $request->hasCookie(\App\Support\ReferralCookie::NAME);
+
             $order = $this->checkoutService->createOrderFromCheckout(
                 data: $request->validated(),
                 user: $request->user(),
                 productsById: $request->productsById(),
                 referringAffiliate: $this->referralResolver->fromRequest(
                     $request,
-                    $request->validated()['referral_code'] ?? null,
+                    $explicitCode,
                 ),
                 utmData: $request->session()->get('utm'),
+                hasReferralInput: $hasReferralInput,
             );
         } catch (InsufficientStockException|ServiceBookingException $e) {
             return response()->json(['message' => $e->getMessage()], 409);

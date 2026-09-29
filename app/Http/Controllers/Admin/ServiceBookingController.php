@@ -28,7 +28,7 @@ class ServiceBookingController extends Controller
         private readonly AuditLogger $audit,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): \Inertia\Response
     {
         $productId = $request->query('product');
         $scope = $request->query('scope', 'upcoming');
@@ -50,7 +50,14 @@ class ServiceBookingController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'duration_minutes', 'status']);
 
-        return view('admin.calendar.index', compact('bookings', 'services', 'productId', 'scope'));
+        return \Inertia\Inertia::render('Admin/Calendar/Index', [
+            'heading' => 'Calendrier',
+            'eyebrow' => 'Services',
+            'bookings' => $bookings,
+            'services' => $services,
+            'productId' => $productId,
+            'scope' => $scope,
+        ]);
     }
 
     public function reschedule(Request $request, OrderItem $orderItem): RedirectResponse

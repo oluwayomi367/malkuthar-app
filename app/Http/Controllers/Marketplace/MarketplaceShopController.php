@@ -28,6 +28,27 @@ class MarketplaceShopController extends Controller
 
     public function index(Request $request): Response
     {
+        $pole = $request->query('pole');
+        $poleMap = [
+            'fashion_beauty' => 'mode-beaute-cosmetiques',
+            'mode-beaute' => 'mode-beaute-cosmetiques',
+            'mode' => 'mode-beaute-cosmetiques',
+            'real_estate_hospitality' => 'residences-guest-houses-immobilier',
+            'immobilier-sejours' => 'residences-guest-houses-immobilier',
+            'immobilier' => 'residences-guest-houses-immobilier',
+            'services_wellness' => 'services-praticiens-specialises',
+            'services-praticiens' => 'services-praticiens-specialises',
+            'services' => 'services-praticiens-specialises',
+            'digital_academy' => 'savoirs-formations-en-ligne',
+            'savoirs-formations' => 'savoirs-formations-en-ligne',
+            'academy' => 'savoirs-formations-en-ligne',
+        ];
+
+        $activePoleSlug = $pole ? ($poleMap[$pole] ?? $pole) : null;
+        $activePoleCategory = $activePoleSlug
+            ? MarketplaceCategory::active()->roots()->where('slug', $activePoleSlug)->first()
+            : null;
+
         $category = $request->filled('categorie')
             ? MarketplaceCategory::active()->where('slug', $request->query('categorie'))->first()
             : null;
@@ -37,10 +58,14 @@ class MarketplaceShopController extends Controller
 
         $offers = MarketplaceOffer::query()
             ->publiclyVisible()
-            ->with('vendor:id,display_name,slug,region', 'category:id,name,slug')
+            ->with(['vendor:id,display_name,slug,region', 'category:id,name,slug', 'variants:id,offer_id,option_values,is_active'])
             ->when($category, fn (Builder $q) => $q->whereIn(
                 'category_id',
                 MarketplaceCategory::query()->inSubtree($category)->pluck('id'),
+            ))
+            ->when(! $category && $activePoleCategory, fn (Builder $q) => $q->whereIn(
+                'category_id',
+                MarketplaceCategory::query()->inSubtree($activePoleCategory)->pluck('id'),
             ))
             ->when($type, fn (Builder $q) => $q->where('type', $type))
             ->when($request->filled('region'), fn (Builder $q) => $q->whereHas(
@@ -56,7 +81,21 @@ class MarketplaceShopController extends Controller
             ))
             ->when($request->filled('prix_max'), fn (Builder $q) => $q->whereRaw(
                 'coalesce(sale_price, price) <= cast(? as decimal)', [(float) $request->query('prix_max')],
-            ));
+            ))
+            ->when($request->filled('vendeur'), fn (Builder $q) => $q->whereHas(
+                'vendor', fn (Builder $v) => $v->where('slug', $request->query('vendeur'))->orWhere('id', $request->query('vendeur'))
+            ))
+            ->when($request->query('dispo') === 'promo', fn (Builder $q) => $q->whereNotNull('sale_price')->whereRaw('sale_price < price'))
+            ->when($request->filled('couleur'), fn (Builder $q) => $q->whereHas('variants', function (Builder $v) use ($request) {
+                $color = $request->query('couleur');
+                $v->where('is_active', true)
+                    ->where(function ($sub) use ($color) {
+                        $sub->where('option_values->couleur', $color)
+                            ->orWhere('option_values->Couleur', $color)
+                            ->orWhere('option_values->color', $color)
+                            ->orWhere('option_values->Color', $color);
+                    });
+            }));
 
         // Facettes : uniquement les clés déclarées « filtrables » sur la catégorie choisie.
         $filterableKeys = $category ? $this->schema->filterableKeys($category) : [];
@@ -73,17 +112,97 @@ class MarketplaceShopController extends Controller
             default => $offers->latest('first_published_at'),
         };
 
-        $rootCategories = MarketplaceCategory::active()->roots()->orderBy('position')->get();
+        // Si un pôle est sélectionné, on expose ses sous-catégories directes dans le filtre
+        $displayedCategories = $activePoleCategory
+            ? $activePoleCategory->children()->active()->orderBy('position')->get()
+            : MarketplaceCategory::active()->roots()->orderBy('position')->get();
+
         $facetFields = $category ? $this->schema->schemaFor($category)->where('is_filterable', true)->values() : collect();
+        $vendors = VendorProfile::active()->select('id', 'display_name', 'slug')->orderBy('display_name')->get();
+
+        $categoryCounts = MarketplaceOffer::publiclyVisible()
+            ->groupBy('category_id')
+            ->selectRaw('category_id, count(*) as count')
+            ->pluck('count', 'category_id')
+            ->all();
+
+        $priceBounds = [
+            'min' => (int) (MarketplaceOffer::publiclyVisible()->min('price') ?: 0),
+            'max' => (int) (MarketplaceOffer::publiclyVisible()->max('price') ?: 150000),
+        ];
+
+        $availableColors = MarketplaceOfferVariant::query()
+            ->whereHas('offer', fn ($q) => $q->publiclyVisible())
+            ->where('is_active', true)
+            ->get()
+            ->map(fn ($v) => $v->option_values['couleur'] ?? $v->option_values['Couleur'] ?? $v->option_values['color'] ?? $v->option_values['Color'] ?? null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $poles = [
+            [
+                'key' => 'all',
+                'slug' => null,
+                'label' => 'Tous les univers',
+                'icon' => '✦',
+                'badge' => 'Catalogue complet',
+            ],
+            [
+                'key' => 'fashion_beauty',
+                'slug' => 'mode-beaute-cosmetiques',
+                'label' => 'Mode, Beauté & Cosmétiques',
+                'icon' => '👗',
+                'badge' => 'Prêt-à-porter & Soins bio',
+            ],
+            [
+                'key' => 'real_estate_hospitality',
+                'slug' => 'residences-guest-houses-immobilier',
+                'label' => 'Résidences, Guest Houses & Immobilier',
+                'icon' => '🏡',
+                'badge' => 'Hébergements & Domaines',
+            ],
+            [
+                'key' => 'services_wellness',
+                'slug' => 'services-praticiens-specialises',
+                'label' => 'Services & Praticiens',
+                'icon' => '💼',
+                'badge' => 'Consultations & Soins',
+            ],
+            [
+                'key' => 'digital_academy',
+                'slug' => 'savoirs-formations-en-ligne',
+                'label' => 'Savoirs & Formations',
+                'icon' => '📚',
+                'badge' => 'Ebooks & Masterclasses',
+            ],
+        ];
 
         return Inertia::render('Marketplace/Shop', [
             'offers' => $offers->paginate(18)->withQueryString()->through(fn (MarketplaceOffer $o) => $this->cardPayload($o)),
-            'rootCategories' => $rootCategories->map(fn ($c) => ['id' => $c->id, 'slug' => $c->slug, 'name' => $c->name]),
+            'rootCategories' => $displayedCategories->map(fn ($c) => [
+                'id' => $c->id,
+                'slug' => $c->slug,
+                'name' => $c->name,
+                'count' => $categoryCounts[$c->id] ?? 0,
+            ]),
             'category' => $category ? ['id' => $category->id, 'slug' => $category->slug, 'name' => $category->name, 'description' => $category->description] : null,
+            'poles' => $poles,
+            'activePole' => $activePoleSlug,
+            'activePoleCategory' => $activePoleCategory ? [
+                'id' => $activePoleCategory->id,
+                'name' => $activePoleCategory->name,
+                'slug' => $activePoleCategory->slug,
+                'description' => $activePoleCategory->description,
+            ] : null,
             'facetFields' => $facetFields->map(fn ($f) => ['key' => $f->key, 'label' => $f->label, 'options' => $f->options ?? []])->values(),
             'activeType' => $type,
             'activeFacets' => $facets,
-            'query' => $request->only(['q', 'prix_min', 'prix_max', 'region', 'tri']),
+            'vendors' => $vendors->map(fn ($v) => ['id' => $v->id, 'name' => $v->display_name, 'slug' => $v->slug]),
+            'priceBounds' => $priceBounds,
+            'availableColors' => $availableColors,
+            'query' => $request->only(['q', 'prix_min', 'prix_max', 'region', 'vendeur', 'dispo', 'tri', 'couleur', 'pole']),
         ]);
     }
 
@@ -164,6 +283,16 @@ class MarketplaceShopController extends Controller
     /** Forme envoyée pour chaque carte d'offre (grille boutique, vendeur, offres liées). */
     private function cardPayload(MarketplaceOffer $offer): array
     {
+        $colors = $offer->relationLoaded('variants')
+            ? $offer->variants
+                ->where('is_active', true)
+                ->map(fn ($v) => $v->option_values['couleur'] ?? $v->option_values['Couleur'] ?? $v->option_values['color'] ?? $v->option_values['Color'] ?? null)
+                ->filter()
+                ->unique()
+                ->values()
+                ->all()
+            : [];
+
         return [
             'id' => $offer->id,
             'slug' => $offer->slug,
@@ -176,6 +305,7 @@ class MarketplaceShopController extends Controller
             'main_image_url' => $offer->main_image_path ? Storage::url($offer->main_image_path) : null,
             'rating_avg' => (float) $offer->rating_avg,
             'rating_count' => $offer->rating_count,
+            'colors' => $colors,
             'vendor' => $offer->vendor ? [
                 'display_name' => $offer->vendor->display_name,
                 'slug' => $offer->vendor->slug,

@@ -4,6 +4,7 @@ namespace App\Services\Marketplace;
 
 use App\Models\Marketplace\MarketplaceCategory;
 use App\Models\Marketplace\MarketplaceCommissionRule;
+use App\Models\Marketplace\MarketplaceOffer;
 use App\Models\Marketplace\VendorProfile;
 use App\Support\MarketplaceSettings;
 use Illuminate\Support\Carbon;
@@ -12,7 +13,9 @@ use Illuminate\Support\Carbon;
  * MARKETPLACE — point d'entrée UNIQUE pour connaître le taux de commission
  * plateforme à appliquer. Ordre de résolution :
  *
- *  1. l'override du vendeur (`vendor_profiles.commission_rate_override`) ;
+ *  0. l'override spécifique du produit (`marketplace_offers.commission_rate`),
+ *     configuré par l'administrateur ;
+ *  1. sinon l'override du vendeur (`vendor_profiles.commission_rate_override`) ;
  *  2. sinon la règle `marketplace_commission_rules` active couvrant la date,
  *     la plus spécifique (vendor > category > offer_type > platform) puis la
  *     plus prioritaire puis la plus récente ;
@@ -33,8 +36,17 @@ class MarketplaceCommissionResolver
         MarketplaceCategory $category,
         string $offerType,
         ?Carbon $at = null,
+        ?MarketplaceOffer $offer = null,
     ): array {
         $at ??= Carbon::now();
+
+        if ($offer !== null && $offer->commission_rate !== null) {
+            return [
+                'rate' => (float) $offer->commission_rate,
+                'rule' => null,
+                'source' => 'offer_override',
+            ];
+        }
 
         if ($vendor->commission_rate_override !== null) {
             return [
@@ -63,9 +75,14 @@ class MarketplaceCommissionResolver
         ];
     }
 
-    public function rate(VendorProfile $vendor, MarketplaceCategory $category, string $offerType, ?Carbon $at = null): float
-    {
-        return $this->resolve($vendor, $category, $offerType, $at)['rate'];
+    public function rate(
+        VendorProfile $vendor,
+        MarketplaceCategory $category,
+        string $offerType,
+        ?Carbon $at = null,
+        ?MarketplaceOffer $offer = null,
+    ): float {
+        return $this->resolve($vendor, $category, $offerType, $at, $offer)['rate'];
     }
 
     /**
@@ -80,8 +97,9 @@ class MarketplaceCommissionResolver
         string $offerType,
         float $base,
         ?Carbon $at = null,
+        ?MarketplaceOffer $offer = null,
     ): array {
-        $resolved = $this->resolve($vendor, $category, $offerType, $at);
+        $resolved = $this->resolve($vendor, $category, $offerType, $at, $offer);
         $amount = round($base * $resolved['rate'], 2);
 
         if ($resolved['rule']) {

@@ -16,7 +16,7 @@ return [
 
     // Drapeau maître. Tant qu'il est faux : routes publiques, entrées de nav
     // et espace vendeur renvoient 404 / sont masqués.
-    'enabled' => (bool) env('MARKETPLACE_ENABLED', false),
+    'enabled' => (bool) env('MARKETPLACE_ENABLED', true),
 
     'commission' => [
         // Taux plateforme par défaut (fraction) si aucune règle ne s'applique.

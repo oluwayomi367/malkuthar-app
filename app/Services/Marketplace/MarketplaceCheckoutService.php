@@ -145,7 +145,7 @@ class MarketplaceCheckoutService
                 $gross = round($itemsTotal, 2);
                 $first = $vendorRows->first()['offer'];
 
-                $fee = $this->commission->computeFee($vendor, $first->category, $first->type, $gross);
+                $fee = $this->commission->computeFee($vendor, $first->category, $first->type, $gross, null, $first);
 
                 $sub->fill([
                     'items_total' => $gross,

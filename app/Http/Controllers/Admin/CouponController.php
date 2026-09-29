@@ -17,11 +17,15 @@ class CouponController extends Controller
 {
     public function __construct(private readonly AuditLogger $audit) {}
 
-    public function index(): View
+    public function index(): \Inertia\Response
     {
         $coupons = Coupon::query()->latest()->paginate(50);
 
-        return view('admin.coupons.index', compact('coupons'));
+        return \Inertia\Inertia::render('Admin/Coupons/Index', [
+            'heading' => 'Coupons',
+            'eyebrow' => 'Marketing',
+            'coupons' => $coupons,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

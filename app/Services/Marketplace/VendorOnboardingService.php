@@ -44,6 +44,7 @@ class VendorOnboardingService
             'contact_email' => $data['contact_email'] ?? $user->email,
             'phone' => $data['phone'] ?? $user->phone,
             'payout_currency' => $data['payout_currency'] ?? $user->currency ?? 'XOF',
+            'metadata' => $data['metadata'] ?? null,
             'status' => 'pending',
         ]);
         $profile->user()->associate($user);

@@ -8,6 +8,8 @@ use App\Services\Marketplace\VendorOnboardingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * MARKETPLACE — gestion des comptes vendeurs en administration.
@@ -16,7 +18,7 @@ class VendorController extends Controller
 {
     public function __construct(private readonly VendorOnboardingService $onboarding) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $q = trim((string) $request->query('q', ''));
         $status = (string) $request->query('status', '');
@@ -39,7 +41,7 @@ class VendorController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.marketplace.vendors.index', [
+        return Inertia::render('Admin/Marketplace/Vendors/Index', [
             'vendors' => $vendors,
             'q' => $q,
             'status' => $status,
@@ -51,11 +53,11 @@ class VendorController extends Controller
         ]);
     }
 
-    public function show(VendorProfile $vendor): View
+    public function show(VendorProfile $vendor): Response
     {
         $vendor->load('user', 'documents.reviewer', 'approver');
 
-        return view('admin.marketplace.vendors.show', ['vendor' => $vendor]);
+        return Inertia::render('Admin/Marketplace/Vendors/Show', ['vendor' => $vendor]);
     }
 
     public function approve(Request $request, VendorProfile $vendor): RedirectResponse

@@ -39,6 +39,10 @@ return [
 
         // §35 — durée de vie du cookie d'attribution du parrain (jours).
         'referral_cookie_days' => (int) env('MALKUTHAR_REFERRAL_COOKIE_DAYS', 30),
+
+        // Parrain par défaut (Système)
+        'system_email' => env('MALKUTHAR_SYSTEM_EMAIL', 'system@malkuthar.com'),
+        'system_referral_code' => env('MALKUTHAR_SYSTEM_REFERRAL_CODE', 'MALKUTHAR'),
     ],
 
     'digital_delivery' => [

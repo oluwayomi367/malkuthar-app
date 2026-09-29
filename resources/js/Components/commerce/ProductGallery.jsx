@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Badge from '../ui/Badge';
+import RosetteBadge from './RosetteBadge';
 
 const TYPE_LABELS = { digital: 'Digital', physical: 'Physique', service: 'Service' };
 
@@ -8,14 +9,17 @@ export default function ProductGallery({ product, className = '' }) {
         .filter((v, i, a) => a.indexOf(v) === i);
     const [current, setCurrent] = useState(images.length ? 0 : null);
 
+    const hasSale = product.promotional_price !== null && product.promotional_price !== undefined && Number(product.promotional_price) < Number(product.price);
+    const discountPercent = hasSale ? Math.round(100 - (product.promotional_price / product.price) * 100) : 0;
+
     return (
         <div className={className}>
-            <div className="relative overflow-hidden rounded-lg border border-line bg-ground-alt">
-                <div className="aspect-[4/5]">
+            <div className="relative overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-xs">
+                <div className="aspect-[4/5] flex items-center justify-center overflow-hidden rounded-xl">
                     {images.length ? (
                         images.map((img, i) => (
                             <img key={img} src={img} alt={product.name} hidden={current !== i}
-                                 className="h-full w-full object-cover" />
+                                 className="max-h-full max-w-full object-contain" />
                         ))
                     ) : (
                         <div className="flex h-full w-full items-center justify-center text-ink-3">
@@ -28,6 +32,11 @@ export default function ProductGallery({ product, className = '' }) {
                 <span className="absolute left-3 top-3">
                     <Badge tone="ink" className="bg-ground/90 backdrop-blur">{TYPE_LABELS[product.type] ?? product.type}</Badge>
                 </span>
+                {hasSale && (
+                    <div className="absolute right-3 top-3">
+                        <RosetteBadge discount={discountPercent} />
+                    </div>
+                )}
             </div>
 
             {images.length > 1 && (
