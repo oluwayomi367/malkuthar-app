@@ -33,33 +33,43 @@
     ];
 @endphp
 
-<div class="mx-auto max-w-3xl">
-    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">Espace vendeur</p>
-    <h1 class="quote mt-1 text-[26px] leading-tight text-ink sm:text-4xl">Quel type d'offre créez-vous ?</h1>
-    <p class="mt-2 text-sm text-ink-2">Ce choix détermine les informations demandées. Il ne pourra pas être changé ensuite.</p>
+<div class="mx-auto max-w-4xl">
+    <a href="{{ route('vendor.offers.index') }}" class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Mes offres
+    </a>
+    <header class="mt-2">
+        <h1 class="font-display text-[32px] font-semibold leading-tight text-ink sm:text-[40px]">Nouvelle offre</h1>
+        <p class="mt-2 text-[15px] leading-relaxed text-ink-2">Quel type d'offre créez-vous ? Ce choix détermine les informations demandées. Il ne pourra pas être changé ensuite.</p>
+    </header>
 
-    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2">
         @foreach ($types as $key => $t)
-            <a href="{{ route('vendor.offers.create', ['type' => $key]) }}"
-               class="group flex flex-col rounded-2xl border border-line bg-surface p-5 transition-all hover:-translate-y-0.5 hover:border-accent hover:shadow-[0_16px_40px_-24px_rgba(46,44,40,0.3)]">
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-accent">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $t['icon'] }}"/></svg>
-                </span>
-                <span class="mt-3 font-display text-[15px] font-semibold text-ink">{{ $t['label'] }}</span>
-                <span class="mt-1 text-[13px] leading-snug text-ink-2">{{ $t['desc'] }}</span>
-                <ul class="mt-3 space-y-1 text-[12px] text-ink-3">
-                    @foreach ($t['points'] as $p)
-                        <li class="flex items-center gap-1.5">
-                            <svg class="h-3 w-3 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
-                            {{ $p }}
-                        </li>
-                    @endforeach
-                </ul>
-                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">Créer <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span></span>
-            </a>
+            <li>
+                <a href="{{ route('vendor.offers.create', ['type' => $key]) }}"
+                   class="group flex h-full min-h-11 flex-col rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04)] transition-colors hover:border-space-vendor focus-visible:border-space-vendor sm:p-6">
+                    <span class="flex items-center gap-3">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-space-vendor-soft text-space-vendor">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ $t['icon'] }}"/></svg>
+                        </span>
+                        <span class="text-lg font-semibold text-ink">{{ $t['label'] }}</span>
+                    </span>
+                    <span class="mt-3 text-sm leading-relaxed text-ink-2">{{ $t['desc'] }}</span>
+                    <ul class="mt-4 space-y-1.5 border-t border-line pt-4 text-[13px] text-ink-2">
+                        @foreach ($t['points'] as $p)
+                            <li class="flex items-start gap-2">
+                                <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-space-vendor" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>
+                                {{ $p }}
+                            </li>
+                        @endforeach
+                    </ul>
+                    <span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-space-vendor">
+                        Créer un {{ $key === 'training' ? 'parcours' : ($key === 'service' ? 'service' : 'produit') }}
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
+                </a>
+            </li>
         @endforeach
-    </div>
-
-    <p class="mt-6 text-sm"><a href="{{ route('vendor.offers.index') }}" class="text-ink-3 hover:text-ink">← Retour à mes offres</a></p>
+    </ul>
 </div>
 @endsection

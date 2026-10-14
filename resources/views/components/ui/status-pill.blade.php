@@ -22,20 +22,30 @@
         'changes_requested'  => ['À corriger',      'wait'],
         'published'  => ['En ligne',      'ok'],
         'archived'   => ['Archivé',       'neut'],
+        // Marketplace — préparation & règlement des sous-commandes
+        'unfulfilled' => ['À traiter',    'wait'],
+        'shipped'    => ['Expédié',       'neut'],
+        'delivered'  => ['Livré',         'ok'],
+        'completed'  => ['Terminé',       'ok'],
+        'on_hold'    => ['Bloqué',        'wait'],
+        'in_payout'  => ['En versement',  'neut'],
+        'refunded'   => ['Remboursé',     'bad'],
+        'partially_refunded' => ['Remboursé en partie', 'wait'],
+        'hidden'     => ['Masqué',        'neut'],
     ];
     [$label, $tone] = $map[$status] ?? [ucfirst((string) $status), 'neut'];
 
     $tones = [
-        'wait' => 'border-amber/30 bg-amber/10 text-amber',
-        'ok'   => 'border-brand-green/30 bg-brand-green/10 text-brand-green',
-        'neut' => 'border-black/12 bg-black/[0.04] text-ink-2',
-        'bad'  => 'border-rust/30 bg-rust/10 text-rust',
+        'wait' => 'border-amber/25 bg-amber-tint text-amber',
+        'ok'   => 'border-sage/25 bg-sage-soft text-sage',
+        'neut' => 'border-line-strong bg-ground-alt text-ink-2',
+        'bad'  => 'border-rust/25 bg-rust-tint text-rust',
     ];
 @endphp
 
 <span {{ $attributes->merge([
-    'class' => 'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 '
-        .'text-[11.5px] font-semibold '.$tones[$tone],
+    'class' => 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 '
+        .'text-xs font-semibold '.$tones[$tone],
 ]) }}>
-    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>{{ $label }}
+    <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-current" aria-hidden="true"></span>{{ $label }}
 </span>

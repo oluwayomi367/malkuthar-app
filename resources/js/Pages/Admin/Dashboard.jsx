@@ -2,6 +2,84 @@ import React from 'react';
 import { Link, Head } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
+const formatNumber = (num) => {
+    if (num === null || num === undefined) return '0';
+    return Number(num).toLocaleString('fr-FR');
+};
+
+const formatDateTime = (value) =>
+    value
+        ? new Date(value).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+        : '—';
+
+/** Carte « file de décision » : un compteur cliquable vers la page qui permet d'agir. */
+function DecisionQueue({ href, label, count, display, detail, tone = 'amber', emptyText = 'Rien en attente' }) {
+    const pending = Number(count) > 0;
+    const tones = {
+        amber: 'bg-amber-tint',
+        rust: 'bg-rust-tint',
+    };
+
+    return (
+        <Link
+            href={href}
+            className="group flex flex-col justify-between rounded-2xl border border-night-line bg-night-2 p-5 transition-colors hover:border-accent-light/50"
+        >
+            <div className="flex items-start justify-between gap-3">
+                <span className="text-sm font-medium text-night-ink-2">{label}</span>
+                <svg className="h-4 w-4 shrink-0 text-night-ink-2 transition-colors group-hover:text-accent-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+            </div>
+            <p className={`mt-3 font-display text-4xl font-semibold leading-none ${pending ? 'text-night-ink' : 'text-night-ink-2'}`}>
+                {display ?? formatNumber(count)}
+            </p>
+            <p className="mt-3 flex items-center gap-2 text-xs text-night-ink-2">
+                {pending ? (
+                    <>
+                        <span className={`h-1.5 w-1.5 rounded-full ${tones[tone]}`} aria-hidden="true" />
+                        <span className="font-semibold text-night-ink">À traiter</span>
+                        {detail && <span>· {detail}</span>}
+                    </>
+                ) : (
+                    <span>{emptyText}</span>
+                )}
+            </p>
+        </Link>
+    );
+}
+
+function Kpi({ label, value, unit, children }) {
+    return (
+        <div className="flex flex-col justify-between rounded-2xl border border-night-line bg-night-2 p-5">
+            <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-night-ink-2">{label}</p>
+                <p className="mt-3 flex items-baseline gap-2">
+                    <span className="font-display text-3xl font-semibold text-night-ink">{value}</span>
+                    {unit && <span className="text-xs font-semibold text-night-ink-2">{unit}</span>}
+                </p>
+            </div>
+            <div className="mt-4 border-t border-night-line pt-3 text-sm leading-relaxed text-night-ink-2">{children}</div>
+        </div>
+    );
+}
+
+function SectionHead({ title, href, linkLabel }) {
+    return (
+        <div className="mb-3 flex items-baseline justify-between gap-4">
+            <h2 className="font-display text-2xl font-semibold text-night-ink">{title}</h2>
+            {href && (
+                <Link href={href} className="inline-flex min-h-11 items-center text-sm font-semibold text-accent-light hover:text-night-ink">
+                    {linkLabel}
+                </Link>
+            )}
+        </div>
+    );
+}
+
+const TH = 'px-4 py-3 font-semibold';
+const TD = 'px-4 py-3';
+
 export default function Dashboard({
     stats = {},
     formatted_stats = {},
@@ -12,291 +90,214 @@ export default function Dashboard({
     recentAffiliates = [],
     recentAudit = [],
 }) {
-    const formatNumber = (num) => {
-        if (num === null || num === undefined) return '0';
-        return Number(num).toLocaleString('fr-FR');
-    };
+    const f = (key) => formatted_stats[key] || formatNumber(stats[key]);
 
     return (
         <AdminLayout title="Tableau de bord" eyebrow={eyebrow} heading={heading}>
             <Head title="Administration — Tableau de bord" />
 
-            {/* GRILLE DES KPIS PRINCIPAUX */}
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {/* 1. Affiliés */}
-                <div className="flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-                    <div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                {labels.affiliates || 'Affiliés'}
-                            </span>
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600">
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <div className="mt-3 flex items-baseline gap-2">
-                            <span className="font-display text-3xl font-extrabold tracking-tight text-zinc-900">
-                                {formatted_stats.affiliates_total || formatNumber(stats.affiliates_total)}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="mt-4 border-t border-zinc-100 pt-3 text-xs text-zinc-600">
-                        <span className="font-medium text-emerald-600">
-                            {formatted_stats.affiliates_active || formatNumber(stats.affiliates_active)} actifs
-                        </span>{' '}
-                        · {formatted_stats.affiliates_new || formatNumber(stats.affiliates_new)} ce mois
+            {/* FILES DE DÉCISION — uniquement à partir des compteurs déjà fournis */}
+            <section aria-labelledby="queues-title">
+                <h2 id="queues-title" className="sr-only">À traiter</h2>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <DecisionQueue
+                        href={route('admin.withdrawals.index', { status: 'processing' })}
+                        label="Retraits à verser"
+                        count={stats.withdrawals_processing}
+                        display={f('withdrawals_processing')}
+                        detail="demandes en cours"
+                    />
+                    <DecisionQueue
+                        href={route('admin.orders.index', { provider: 'cod', payment_status: 'pending' })}
+                        label="Paiements à la livraison"
+                        count={stats.cod_to_collect_count}
+                        display={formatNumber(stats.cod_to_collect_count)}
+                        detail={`${f('cod_to_collect_amount')} FCFA à encaisser`}
+                    />
+                    <DecisionQueue
+                        href={route('admin.withdrawals.index', { status: 'failed' })}
+                        label="Retraits échoués"
+                        count={stats.withdrawals_failed}
+                        display={f('withdrawals_failed')}
+                        detail="à vérifier"
+                        tone="rust"
+                        emptyText="Aucun échec"
+                    />
+                    <DecisionQueue
+                        href={route('admin.affiliates.index')}
+                        label="Affiliés suspendus"
+                        count={stats.affiliates_suspended}
+                        display={f('affiliates_suspended')}
+                        detail="comptes à réexaminer"
+                        tone="rust"
+                        emptyText="Aucun compte suspendu"
+                    />
+                </div>
+            </section>
+
+            {/* INDICATEURS */}
+            <section className="mt-10">
+                <SectionHead title="Indicateurs" />
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <Kpi label={labels.affiliates || 'Affiliés'} value={f('affiliates_total')}>
+                        <span className="font-semibold text-sage-soft">{f('affiliates_active')} actifs</span>
+                        {' · '}
+                        {f('affiliates_new')} ce mois
                         {stats.affiliates_suspended > 0 && (
-                            <span className="ml-1 text-rose-600">
-                                · {formatted_stats.affiliates_suspended || formatNumber(stats.affiliates_suspended)} suspendus
-                            </span>
+                            <span className="text-rust-tint"> · {f('affiliates_suspended')} suspendus</span>
                         )}
-                    </div>
-                </div>
+                    </Kpi>
 
-                {/* 2. Chiffre d'affaires */}
-                <div className="flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-                    <div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                {labels.revenue || "Chiffre d'affaires"}
-                            </span>
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <div className="mt-3 flex items-baseline gap-2">
-                            <span className="font-display text-3xl font-extrabold tracking-tight text-zinc-900">
-                                {formatted_stats.revenue || formatNumber(stats.revenue)}
-                            </span>
-                            <span className="text-xs font-semibold text-zinc-500">FCFA</span>
-                        </div>
-                    </div>
-                    <div className="mt-4 border-t border-zinc-100 pt-3 text-xs text-zinc-600">
-                        <span>{formatted_stats.orders_paid || formatNumber(stats.orders_paid)} commandes payées</span>
+                    <Kpi label={labels.revenue || "Chiffre d'affaires"} value={f('revenue')} unit="FCFA">
+                        {f('orders_paid')} commandes payées
                         {stats.cod_to_collect_count > 0 && (
-                            <Link
-                                href={route('admin.orders.index', { provider: 'cod', payment_status: 'pending' })}
-                                className="ml-1 text-amber-700 font-medium hover:underline"
-                            >
-                                · {formatted_stats.cod_to_collect_amount || formatNumber(stats.cod_to_collect_amount)} à encaisser (COD)
-                            </Link>
-                        )}
-                    </div>
-                </div>
-
-                {/* 3. Commissions générées */}
-                <div className="flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-                    <div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                Commissions générées
-                            </span>
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <div className="mt-3 flex items-baseline gap-2">
-                            <span className="font-display text-3xl font-extrabold tracking-tight text-zinc-900">
-                                {formatted_stats.commissions_generated || formatNumber(stats.commissions_generated)}
-                            </span>
-                            <span className="text-xs font-semibold text-zinc-500">FCFA</span>
-                        </div>
-                    </div>
-                    <div className="mt-4 border-t border-zinc-100 pt-3 text-xs text-zinc-600">
-                        <span className="text-amber-700 font-medium">
-                            {formatted_stats.commissions_pending || formatNumber(stats.commissions_pending)} en attente
-                        </span>{' '}
-                        ·{' '}
-                        <span className="text-emerald-600 font-medium">
-                            {formatted_stats.commissions_available || formatNumber(stats.commissions_available)} disponibles
-                        </span>
-                    </div>
-                </div>
-
-                {/* 4. Retraits */}
-                <div className="flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-                    <div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                Retraits
-                            </span>
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <div className="mt-3 flex items-baseline gap-2">
-                            <span className="font-display text-3xl font-extrabold tracking-tight text-zinc-900">
-                                {formatted_stats.withdrawals_requested || formatNumber(stats.withdrawals_requested)}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="mt-4 border-t border-zinc-100 pt-3 text-xs text-zinc-600">
-                        <span className="text-amber-700 font-medium">
-                            {formatted_stats.withdrawals_processing || formatNumber(stats.withdrawals_processing)} à traiter
-                        </span>{' '}
-                        · {formatted_stats.withdrawals_paid || formatNumber(stats.withdrawals_paid)} payés
-                        {stats.withdrawals_failed > 0 && (
-                            <span className="ml-1 text-rose-600">
-                                · {formatted_stats.withdrawals_failed || formatNumber(stats.withdrawals_failed)} échoués
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* DEUX COLONNES : RETRAITS À TRAITER & DERNIERS AFFILIÉS */}
-            <div className="mt-8 grid gap-8 lg:grid-cols-2">
-                {/* 1. Retraits à traiter */}
-                <section className="flex flex-col">
-                    <div className="mb-3.5 flex items-center justify-between">
-                        <h2 className="font-display text-base font-bold text-zinc-900">
-                            Retraits à traiter
-                        </h2>
-                        <Link
-                            href={route('admin.withdrawals.index')}
-                            className="text-xs font-semibold text-accent hover:text-accent-2 transition-colors"
-                        >
-                            Tout voir →
-                        </Link>
-                    </div>
-
-                    <div className="flex-1 space-y-2">
-                        {pendingWithdrawals && pendingWithdrawals.length > 0 ? (
-                            pendingWithdrawals.map((w) => (
-                                <div
-                                    key={w.id || w.reference}
-                                    className="flex items-center justify-between rounded-xl border border-zinc-200/80 bg-white px-4 py-3 text-sm shadow-2xs transition-colors hover:border-zinc-300"
+                            <>
+                                {' · '}
+                                <Link
+                                    href={route('admin.orders.index', { provider: 'cod', payment_status: 'pending' })}
+                                    className="font-semibold text-amber-tint underline decoration-amber-tint/40 underline-offset-2 hover:decoration-amber-tint"
                                 >
-                                    <div>
-                                        <p className="font-mono text-xs font-semibold text-zinc-900">
-                                            {w.reference}
-                                        </p>
-                                        <p className="text-xs text-zinc-500">
-                                            {w.user?.affiliate_id || '—'} · {w.method}
-                                        </p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="font-semibold text-zinc-900">
-                                            {formatNumber(w.amount)} {w.currency || 'FCFA'}
-                                        </p>
-                                        <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
-                                            En cours
-                                        </span>
-                                    </div>
-                                </div>
-                            ))
+                                    {f('cod_to_collect_amount')} à encaisser (COD)
+                                </Link>
+                            </>
+                        )}
+                    </Kpi>
+
+                    <Kpi label="Commissions générées" value={f('commissions_generated')} unit="FCFA">
+                        <span className="font-semibold text-amber-tint">{f('commissions_pending')} en attente</span>
+                        {' · '}
+                        <span className="font-semibold text-sage-soft">{f('commissions_available')} disponibles</span>
+                    </Kpi>
+
+                    <Kpi label="Retraits" value={f('withdrawals_requested')}>
+                        <span className="font-semibold text-amber-tint">{f('withdrawals_processing')} à traiter</span>
+                        {' · '}
+                        {f('withdrawals_paid')} payés
+                        {stats.withdrawals_failed > 0 && (
+                            <span className="text-rust-tint"> · {f('withdrawals_failed')} échoués</span>
+                        )}
+                    </Kpi>
+                </div>
+            </section>
+
+            {/* RETRAITS À TRAITER & DERNIERS AFFILIÉS */}
+            <div className="mt-10 grid gap-10 xl:grid-cols-2">
+                <section className="min-w-0">
+                    <SectionHead title="Retraits à traiter" href={route('admin.withdrawals.index')} linkLabel="Tout voir" />
+                    <div className="overflow-x-auto rounded-2xl border border-night-line bg-night-2">
+                        {pendingWithdrawals && pendingWithdrawals.length > 0 ? (
+                            <table className="w-full text-left text-sm">
+                                <thead className="border-b border-night-line text-xs uppercase tracking-[0.08em] text-night-ink-2">
+                                    <tr>
+                                        <th className={TH}>Référence</th>
+                                        <th className={TH}>Affilié</th>
+                                        <th className={`${TH} text-right`}>Montant</th>
+                                        <th className={TH}>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-night-line">
+                                    {pendingWithdrawals.map((w) => (
+                                        <tr key={w.id || w.reference} className="hover:bg-night-line/40">
+                                            <td className={`${TD} font-mono text-night-ink`}>{w.reference}</td>
+                                            <td className={`${TD} text-night-ink-2`}>
+                                                <span className="font-mono">{w.user?.affiliate_id || '—'}</span>
+                                                <span className="block text-xs">{w.method}</span>
+                                            </td>
+                                            <td className={`${TD} whitespace-nowrap text-right font-semibold text-night-ink`}>
+                                                {formatNumber(w.amount)} {w.currency || 'FCFA'}
+                                            </td>
+                                            <td className={TD}>
+                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
+                                                    En cours
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         ) : (
-                            <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-4 py-8 text-center text-xs text-zinc-500">
-                                Aucun retrait en attente.
-                            </div>
+                            <p className="px-4 py-10 text-center text-sm text-night-ink-2">Aucun retrait en attente.</p>
                         )}
                     </div>
                 </section>
 
-                {/* 2. Derniers affiliés */}
-                <section className="flex flex-col">
-                    <div className="mb-3.5 flex items-center justify-between">
-                        <h2 className="font-display text-base font-bold text-zinc-900">
-                            Derniers affiliés
-                        </h2>
-                        <Link
-                            href={route('admin.affiliates.index')}
-                            className="text-xs font-semibold text-accent hover:text-accent-2 transition-colors"
-                        >
-                            Tout voir →
-                        </Link>
-                    </div>
-
-                    <div className="flex-1 space-y-2">
+                <section className="min-w-0">
+                    <SectionHead title="Derniers affiliés" href={route('admin.affiliates.index')} linkLabel="Tout voir" />
+                    <div className="overflow-x-auto rounded-2xl border border-night-line bg-night-2">
                         {recentAffiliates && recentAffiliates.length > 0 ? (
-                            recentAffiliates.map((a) => (
-                                <Link
-                                    key={a.id}
-                                    href={route('admin.affiliates.show', a.id)}
-                                    className="flex items-center justify-between rounded-xl border border-zinc-200/80 bg-white px-4 py-3 text-sm shadow-2xs transition-all hover:border-accent hover:shadow-xs"
-                                >
-                                    <div>
-                                        <p className="font-semibold text-zinc-900">
-                                            {[a.first_name, a.last_name].filter(Boolean).join(' ') || 'Affilié'}
-                                        </p>
-                                        <p className="font-mono text-xs text-zinc-500">{a.affiliate_id}</p>
-                                    </div>
-                                    <div>
-                                        {a.status === 'active' ? (
-                                            <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
-                                                Actif
-                                            </span>
-                                        ) : (
-                                            <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-800">
-                                                {a.status || 'Inactif'}
-                                            </span>
-                                        )}
-                                    </div>
-                                </Link>
-                            ))
+                            <table className="w-full text-left text-sm">
+                                <thead className="border-b border-night-line text-xs uppercase tracking-[0.08em] text-night-ink-2">
+                                    <tr>
+                                        <th className={TH}>Nom</th>
+                                        <th className={TH}>Identifiant</th>
+                                        <th className={TH}>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-night-line">
+                                    {recentAffiliates.map((a) => (
+                                        <tr key={a.id} className="hover:bg-night-line/40">
+                                            <td className={TD}>
+                                                <Link
+                                                    href={route('admin.affiliates.show', a.id)}
+                                                    className="font-semibold text-night-ink hover:text-accent-light"
+                                                >
+                                                    {[a.first_name, a.last_name].filter(Boolean).join(' ') || 'Affilié'}
+                                                </Link>
+                                            </td>
+                                            <td className={`${TD} font-mono text-night-ink-2`}>{a.affiliate_id}</td>
+                                            <td className={TD}>
+                                                {a.status === 'active' ? (
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
+                                                        Actif
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
+                                                        {a.status === 'suspended' ? 'Suspendu' : a.status || 'Inactif'}
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         ) : (
-                            <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-4 py-8 text-center text-xs text-zinc-500">
-                                Aucun affilié enregistré.
-                            </div>
+                            <p className="px-4 py-10 text-center text-sm text-night-ink-2">Aucun affilié enregistré.</p>
                         )}
                     </div>
                 </section>
             </div>
 
             {/* ACTIVITÉ RÉCENTE (JOURNAL D'AUDIT) */}
-            <section className="mt-8">
-                <div className="mb-3.5 flex items-center justify-between">
-                    <h2 className="font-display text-base font-bold text-zinc-900">
-                        Activité récente
-                    </h2>
-                    <Link
-                        href={route('admin.audit-logs.index')}
-                        className="text-xs font-semibold text-accent hover:text-accent-2 transition-colors"
-                    >
-                        Journal complet →
-                    </Link>
-                </div>
-
-                <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xs">
+            <section className="mt-10">
+                <SectionHead title="Activité récente" href={route('admin.audit-logs.index')} linkLabel="Journal complet" />
+                <div className="overflow-x-auto rounded-2xl border border-night-line bg-night-2">
                     {recentAudit && recentAudit.length > 0 ? (
-                        <div className="divide-y divide-zinc-100">
-                            {recentAudit.map((log) => (
-                                <div
-                                    key={log.id}
-                                    className="flex items-start justify-between gap-4 px-4 py-3.5 text-sm transition-colors hover:bg-zinc-50/60"
-                                >
-                                    <div className="min-w-0 flex-1">
-                                        <p className="text-zinc-900 font-medium">{log.description}</p>
-                                        <p className="mt-0.5 font-mono text-[11px] text-zinc-500">{log.action}</p>
-                                    </div>
-                                    <div className="shrink-0 text-right text-xs text-zinc-500">
-                                        <p className="font-medium text-zinc-700">
-                                            {log.admin?.first_name || 'Admin'}
-                                        </p>
-                                        <p className="text-[11px] text-zinc-400">
-                                            {log.created_at ? new Date(log.created_at).toLocaleDateString('fr-FR', {
-                                                day: '2-digit',
-                                                month: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            }) : ''}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <table className="w-full text-left text-sm">
+                            <thead className="border-b border-night-line text-xs uppercase tracking-[0.08em] text-night-ink-2">
+                                <tr>
+                                    <th className={TH}>Action</th>
+                                    <th className={TH}>Par</th>
+                                    <th className={`${TH} text-right`}>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-night-line">
+                                {recentAudit.map((log) => (
+                                    <tr key={log.id} className="align-top hover:bg-night-line/40">
+                                        <td className={`${TD} min-w-[240px]`}>
+                                            <p className="text-night-ink">{log.description}</p>
+                                            <p className="mt-0.5 font-mono text-xs text-night-ink-2">{log.action}</p>
+                                        </td>
+                                        <td className={`${TD} whitespace-nowrap text-night-ink-2`}>{log.admin?.first_name || 'Admin'}</td>
+                                        <td className={`${TD} whitespace-nowrap text-right text-night-ink-2`}>{formatDateTime(log.created_at)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     ) : (
-                        <div className="px-4 py-8 text-center text-xs text-zinc-500">
-                            Aucune action enregistrée.
-                        </div>
+                        <p className="px-4 py-10 text-center text-sm text-night-ink-2">Aucune action enregistrée.</p>
                     )}
                 </div>
             </section>

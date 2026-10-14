@@ -8,60 +8,77 @@
 
 /*
 |--------------------------------------------------------------------------
-| Charte MALKUTHAR — « Sérénité contemplative »
+| Charte MALKUTHAR — refonte 2026
 |--------------------------------------------------------------------------
-| Référence : Science of Spirituality (sos.org). Calme, crédible,
-| institutionnel-doux. Fond crème neutre et chaud, encre anthracite,
-| un OR SOBRE en accent (illumination discrète, jamais criard). Beaucoup
-| de blanc, cartes nettes, ombres presque imperceptibles. Titres en sans
-| humaniste (Bricolage Grotesque), corps en Inter, citations en serif
-| (Fraunces italique) — la voix de la sagesse.
+| Crème chaud, encre profonde, or sobre. Une seule famille : Poppins,
+| pour les titres comme pour le texte et l'interface. Chaque espace a une teinte de repère
+| (--color-space-*) utilisée uniquement pour l'élément actif du menu, le
+| sélecteur d'espace et le bouton principal de l'espace.
 |
 | Les anciens noms de tokens (--color-forest, --color-gold…) restent des
 | alias pour ne pas casser les composants existants.
 */
 
 @theme {
-    --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* ---- Crème neutre & chaude ---- */
-    --color-ground: #f6f4ee;         /* fond de page — crème neutre */
-    --color-ground-alt: #efece2;     /* sections alternées */
-    --color-surface: #ffffff;        /* cartes — blanches nettes */
+    /* ---- Fonds ---- */
+    --color-ground: #f7f5f0;         /* fond de page — crème */
+    --color-ground-alt: #efebe1;     /* sections alternées */
+    --color-surface: #fffefb;        /* cartes */
 
-    --color-ink: #2e2c28;            /* texte principal — anthracite chaud */
-    --color-ink-2: #5b574e;          /* texte secondaire */
-    --color-ink-3: #8a857a;          /* texte discret / légendes */
+    /* ---- Encre (contraste ≥ 4,5:1 sur crème) ---- */
+    --color-ink: #1c1917;
+    --color-ink-2: #57534e;
+    --color-ink-3: #6b665e;
 
-    --color-line: #e6e1d4;           /* filets — sable pâle */
+    --color-line: #e4ded0;
     --color-line-strong: #cfc7b4;
 
-    /* ---- Or sobre (illumination discrète — conversion & points forts) ---- */
-    --color-accent: #8a6d2c;        /* or profond — porte le texte blanc */
-    --color-accent-2: #a98a3f;      /* or clair (dégradés très légers / halos) */
-    --color-accent-soft: #f0e8d3;   /* voile d'or pâle (pastilles) */
+    /* ---- Or sobre ---- */
+    --color-accent: #8a6d2c;         /* porte le texte blanc */
+    --color-accent-2: #6e5622;       /* survol / pressé */
+    --color-accent-soft: #f2ead6;    /* voile d'or */
+    --color-accent-light: #d9be7c;   /* or sur fond sombre */
+
+    /* ---- Teintes d'espace ---- */
+    --color-space-client: #1c1917;
+    --color-space-client-soft: #ece9e3;
+    --color-space-affiliate: #8a6d2c;
+    --color-space-affiliate-soft: #f2ead6;
+    --color-space-vendor: #3f5a45;
+    --color-space-vendor-soft: #e3ebe2;
+    --color-night: #14161b;
+    --color-night-2: #1c1f26;
+    --color-night-line: #2a2e37;
+    --color-night-ink: #ece8df;
+    --color-night-ink-2: #a6a095;
+
+    /* ---- Statuts ---- */
+    --color-sage: #3f5a45;
+    --color-sage-soft: #e3ebe2;
 
     /* ---- Alias de compatibilité (composants existants) ---- */
-    --color-forest: #8a6d2c;         /* = accent : bouton de conversion */
-    --color-forest-tint: #f0e8d3;
-    --color-gold: #8a6d2c;           /* pastille « premium » / affiliable */
-    --color-gold-tint: #f0e8d3;
-    --color-amber: #9a6b1c;          /* statut « en attente » — ambre */
+    --color-forest: #8a6d2c;
+    --color-forest-tint: #f2ead6;
+    --color-gold: #8a6d2c;
+    --color-gold-tint: #f2ead6;
+    --color-amber: #8a5a14;          /* statut « en attente » */
     --color-amber-tint: #f5e9d3;
-    --color-rust: #a13d2e;           /* statut « échoué » — terre de sienne brûlée */
+    --color-rust: #9b3a2b;           /* statut « échoué » */
     --color-rust-tint: #f3ddd7;
 
     /* ---- Hérité (styleguide local uniquement) ---- */
-    --color-paper: #ffffff;
-    --color-surface-line: #e6e1d4;
-    --color-ink-soft: #5b574e;
-    --color-brand-gold: #9a6b1c;
-    --color-brand-green: #4f6349;    /* vert-de-gris apaisé — statut « ok » */
-    --color-brand-violet: #6f6478;   /* gris-violet — accents secondaires */
-    --color-brand-red: #a13d2e;
+    --color-paper: #fffefb;
+    --color-surface-line: #e4ded0;
+    --color-ink-soft: #57534e;
+    --color-brand-gold: #8a5a14;
+    --color-brand-green: #3f5a45;
+    --color-brand-violet: #6f6478;
+    --color-brand-red: #9b3a2b;
 }
 
 @layer base {
@@ -83,12 +100,20 @@
         -webkit-font-smoothing: antialiased;
     }
 
-    /* Titres en Montserrat (var(--font-display)). */
-    h1, h2, h3, h4 {
+    /* Grands titres (h1, h2) et titres de blocs (h3, h4) en Poppins. */
+    h1, h2 {
         font-family: var(--font-display);
-        font-weight: 700;
-        line-height: 1.18;
-        letter-spacing: -0.015em;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+    }
+
+    h3, h4 {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        line-height: 1.3;
+        letter-spacing: -0.005em;
         text-wrap: balance;
     }
 
@@ -150,4 +175,23 @@
 
 .animate-marquee:hover {
     animation-play-state: paused;
+}
+
+/*
+| Thème nuit — console d'administration Blade. Redéfinit les tokens clairs
+| pour que les composants partagés (x-ui.field, x-ui.button…) restent
+| lisibles sur fond sombre sans variante dédiée.
+*/
+.theme-night {
+    --color-ground: #14161b;
+    --color-ground-alt: #1c1f26;
+    --color-surface: #1c1f26;
+    --color-ink: #ece8df;
+    --color-ink-2: #a6a095;
+    --color-ink-3: #a6a095;
+    --color-line: #2a2e37;
+    --color-line-strong: #3a3f4a;
+    --color-accent-soft: #2e2818;
+    --color-accent-2: #d9be7c;
+    color-scheme: dark;
 }

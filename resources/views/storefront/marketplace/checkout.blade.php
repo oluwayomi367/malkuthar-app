@@ -5,166 +5,140 @@
 @section('content')
 @php $money = fn ($n) => number_format((float) $n, 0, ',', ' '); @endphp
 
-<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-    {!!-- Header & Steps --!}
-    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line/80 pb-6">
+<div class="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 sm:py-14">
+    {{-- En-tête et étapes --}}
+    <div class="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
         <div>
-            <span class="text-[11px] font-semibold uppercase tracking-wider text-accent">Place de marché</span>
-            <h1 class="mt-1 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">Finaliser ma commande</h1>
+            <p class="text-sm text-ink-2">Place de marché</p>
+            <h1 class="mt-1 font-display text-[34px] font-semibold leading-tight text-ink sm:text-[40px]">Finaliser ma commande</h1>
         </div>
-        <div class="flex items-center gap-2 text-xs font-medium text-ink-3">
-            <a href="{{ route('marketplace.cart') }}" class="inline-flex items-center gap-1.5 text-accent hover:underline">
-                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-soft text-accent font-bold">✓</span>
-                <span>Panier</span>
-            </a>
-            <span class="text-line-strong">→</span>
-            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white font-bold">2</span>
-            <span class="font-semibold text-ink">Commande</span>
-        </div>
+        <ol class="flex items-center gap-3 text-sm text-ink-3" aria-label="Étapes de la commande">
+            <li>
+                <a href="{{ route('marketplace.cart') }}" class="flex min-h-11 items-center gap-2 text-ink-2 hover:text-ink">
+                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent-2">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    Panier
+                </a>
+            </li>
+            <li aria-hidden="true" class="h-px w-6 bg-line-strong"></li>
+            <li class="flex items-center gap-2 font-semibold text-ink" aria-current="step">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white">2</span>
+                Commande
+            </li>
+        </ol>
     </div>
 
-    <div class="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-        {!!-- Left: Form --!}
+    <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
+        {{-- Formulaire --}}
         <form method="POST" action="{{ route('marketplace.checkout.store') }}" class="space-y-6">
             @csrf
 
-            {!!-- Step 1: Contact --!}
-            <div class="rounded-3xl border border-line/90 bg-surface p-6 shadow-[0_4px_20px_-8px_rgba(46,44,40,0.05)]">
-                <div class="flex items-center gap-2.5 border-b border-line/70 pb-4">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent font-bold text-xs">1</span>
-                    <h2 class="font-display text-base font-bold text-ink">Vos coordonnées</h2>
-                </div>
-                <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                    <x-ui.field name="email" label="Adresse email" type="email" :required="true"
+            <section class="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+                <h2 class="flex items-center gap-3 font-sans text-lg font-semibold tracking-normal text-ink">
+                    <span aria-hidden="true" class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ground-alt text-sm">1</span>
+                    Vos coordonnées
+                </h2>
+                <div class="mt-5 grid gap-5 sm:grid-cols-2">
+                    <x-ui.field name="email" label="Adresse email" type="email" :required="true" autocomplete="email"
                                 :value="old('email', auth()->user()?->email)" placeholder="nom@exemple.com" />
-                    <x-ui.field name="phone" label="Numéro de téléphone" :required="true"
+                    <x-ui.field name="phone" label="Numéro de téléphone" :required="true" autocomplete="tel"
                                 :value="old('phone', auth()->user()?->phone)" placeholder="Ex. : +237 6XX XX XX XX" />
                 </div>
-            </div>
+            </section>
 
-            {!!-- Step 2: Shipping / Delivery Address --!}
-            <div class="rounded-3xl border border-line/90 bg-surface p-6 shadow-[0_4px_20px_-8px_rgba(46,44,40,0.05)]">
-                <div class="flex items-center gap-2.5 border-b border-line/70 pb-4">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent font-bold text-xs">2</span>
-                    <div>
-                        <h2 class="font-display text-base font-bold text-ink">Adresse de livraison</h2>
-                        <p class="text-xs text-ink-3">Nécessaire pour les commandes de produits physiques</p>
-                    </div>
-                </div>
-                <div class="mt-5 space-y-4">
-                    <x-ui.field name="address_line" label="Adresse ou repère précis"
+            <section class="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+                <h2 class="flex items-center gap-3 font-sans text-lg font-semibold tracking-normal text-ink">
+                    <span aria-hidden="true" class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ground-alt text-sm">2</span>
+                    Adresse de livraison
+                </h2>
+                <p class="mt-1 pl-10 text-sm text-ink-2">Nécessaire pour les produits physiques.</p>
+                <div class="mt-5 grid gap-5">
+                    <x-ui.field name="address_line" label="Adresse ou repère précis" autocomplete="street-address"
                                 :value="old('address_line')" placeholder="Quartier, rue, numéro de porte ou repère…" />
-                    <x-ui.field name="city" label="Ville & Région"
+                    <x-ui.field name="city" label="Ville & Région" autocomplete="address-level2"
                                 :value="old('city')" placeholder="Ex. : Douala, Yaoundé, Bafoussam…" />
                 </div>
-            </div>
+            </section>
 
-            {!!-- Step 3: Payment Method --!}
-            <div class="rounded-3xl border border-line/90 bg-surface p-6 shadow-[0_4px_20px_-8px_rgba(46,44,40,0.05)]">
-                <div class="flex items-center gap-2.5 border-b border-line/70 pb-4">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent font-bold text-xs">3</span>
-                    <h2 class="font-display text-base font-bold text-ink">Mode de règlement</h2>
-                </div>
+            <section class="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+                <h2 class="flex items-center gap-3 font-sans text-lg font-semibold tracking-normal text-ink">
+                    <span aria-hidden="true" class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ground-alt text-sm">3</span>
+                    Mode de règlement
+                </h2>
 
-                <div class="mt-5">
-                    <label class="flex cursor-pointer items-start gap-3.5 rounded-2xl border-2 border-accent bg-accent-soft/30 p-4 transition-all">
-                        <input type="radio" name="payment_method" value="cod" checked
-                               class="mt-1 h-4 w-4 border-line text-accent focus:ring-accent">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-bold text-ink">Paiement à la livraison ou sur place</span>
-                                <span class="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white uppercase">Recommandé</span>
-                            </div>
-                            <p class="mt-1 text-xs text-ink-2 leading-relaxed">
-                                Réglez votre commande directement auprès du livreur ou du praticien lors de la remise ou de la prestation.
-                            </p>
-                        </div>
-                    </label>
+                <label class="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 border-accent bg-accent-soft/50 p-4">
+                    <input type="radio" name="payment_method" value="cod" checked
+                           class="mt-0.5 h-5 w-5 shrink-0 border-line-strong text-accent focus:ring-accent/30">
+                    <span class="min-w-0">
+                        <span class="block text-[15px] font-semibold text-ink">Paiement à la livraison ou sur place</span>
+                        <span class="mt-1 block text-sm leading-relaxed text-ink-2">
+                            Vous réglez directement le livreur ou le praticien lors de la remise ou de la prestation, après avoir vérifié vos articles ou votre séance.
+                        </span>
+                    </span>
+                </label>
+            </section>
 
-                    <div class="mt-3 flex items-center gap-2 rounded-xl bg-ground-alt/60 p-3 text-xs text-ink-2">
-                        <svg class="h-4 w-4 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                        </svg>
-                        <span>Règlement direct garanti : vérifiez vos articles ou votre séance avant le paiement auprès du vendeur ou livreur.</span>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <x-ui.button type="submit" variant="primary" full class="h-13 text-xs font-semibold uppercase tracking-wider">
-                    <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 13l4 4L19 7" />
-                    </svg>
-                    Confirmer et valider ma commande
-                </x-ui.button>
-            </div>
+            <x-ui.button type="submit" variant="primary" :full="true">
+                Confirmer et valider ma commande
+            </x-ui.button>
         </form>
 
-        {!!-- Right: Order Recap --!}
+        {{-- Récapitulatif --}}
         <aside class="space-y-4 lg:sticky lg:top-24">
-            <div class="rounded-3xl border border-line/90 bg-surface p-6 shadow-[0_8px_30px_-12px_rgba(46,44,40,0.08)]">
-                <div class="flex items-center justify-between border-b border-line/70 pb-4">
-                    <h2 class="font-display text-base font-bold text-ink">Articles commandés</h2>
-                    <a href="{{ route('marketplace.cart') }}" class="text-xs font-semibold text-accent hover:underline">Modifier</a>
+            <div class="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+                <div class="flex items-center justify-between gap-4">
+                    <h2 class="font-display text-[26px] font-semibold text-ink">Votre commande</h2>
+                    <a href="{{ route('marketplace.cart') }}" class="inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-accent underline-offset-4 hover:text-accent-2">Modifier</a>
                 </div>
 
-                <div class="mt-4 space-y-4 divide-y divide-line/60">
+                <div class="mt-4 divide-y divide-line">
                     @foreach ($byVendor as $vendorName => $vendorLines)
-                        <div class="pt-3 first:pt-0">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-accent">{{ $vendorName }}</p>
-                            <div class="mt-2 space-y-2.5">
+                        <div class="py-4 first:pt-0">
+                            <h3 class="text-sm font-semibold text-ink-2">{{ $vendorName }}</h3>
+                            <ul class="mt-2 space-y-3">
                                 @foreach ($vendorLines as $line)
-                                    <div class="flex items-center justify-between gap-3 text-xs">
+                                    <li class="flex items-start justify-between gap-3 text-sm">
                                         <div class="min-w-0 flex-1">
-                                            <span class="font-medium text-ink line-clamp-1">{{ $line['offer']->title }}</span>
-                                            <span class="text-ink-3">{{ $line['quantity'] }} × {{ $money($line['unit_price']) }} {{ $line['offer']->currency }}</span>
+                                            <p class="line-clamp-2 font-medium text-ink">{{ $line['offer']->title }}</p>
                                             @if ($line['variant'])
-                                                <span class="block text-[10px] text-ink-3">({{ $line['variant']->optionsLabel() }})</span>
+                                                <p class="text-ink-3">{{ $line['variant']->optionsLabel() }}</p>
                                             @endif
+                                            <p class="text-ink-3">{{ $line['quantity'] }} × {{ $money($line['unit_price']) }} {{ $line['offer']->currency }}</p>
                                         </div>
-                                        <span class="font-display font-bold text-ink shrink-0">{{ $money($line['line_total']) }} FCFA</span>
-                                    </div>
+                                        <span class="shrink-0 font-semibold text-ink">{{ $money($line['line_total']) }} FCFA</span>
+                                    </li>
                                 @endforeach
-                            </div>
+                            </ul>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="mt-5 border-t border-line/80 pt-4 space-y-2">
-                    <div class="flex justify-between text-xs text-ink-2">
-                        <span>Sous-total</span>
-                        <span class="font-medium text-ink">{{ $money($subtotal) }} FCFA</span>
+                <dl class="mt-2 space-y-2 border-t border-line pt-4 text-[15px]">
+                    <div class="flex justify-between gap-4 text-ink-2">
+                        <dt>Sous-total</dt>
+                        <dd class="font-semibold text-ink">{{ $money($subtotal) }} FCFA</dd>
                     </div>
-                    <div class="flex justify-between text-xs text-ink-3">
-                        <span>Livraison</span>
-                        <span>À régler à la remise</span>
+                    <div class="flex justify-between gap-4 text-sm text-ink-3">
+                        <dt>Livraison</dt>
+                        <dd>À régler à la remise</dd>
                     </div>
-                    <div class="flex items-baseline justify-between border-t border-line/60 pt-3">
-                        <span class="font-display text-base font-bold text-ink">Total à régler</span>
-                        <div class="text-right">
-                            <span class="font-display text-2xl font-bold tracking-tight text-ink">
-                                {{ $money($subtotal) }}
-                            </span>
-                            <span class="text-xs font-semibold text-accent ml-1">FCFA</span>
-                        </div>
-                    </div>
+                </dl>
+                <div class="mt-4 flex items-baseline justify-between gap-4 border-t border-line pt-4">
+                    <span class="text-[15px] font-semibold text-ink">Total à régler</span>
+                    <span class="font-display text-[32px] font-semibold leading-none text-ink">
+                        {{ $money($subtotal) }} <span class="font-sans text-sm font-semibold text-ink-2">FCFA</span>
+                    </span>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-line/80 bg-ground-alt/40 p-4 text-xs text-ink-2">
-                <div class="flex items-center gap-2 text-ink font-semibold">
-                    <svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0110 0v4" />
-                    </svg>
-                    Sécurité & Engagement
-                </div>
-                <p class="mt-1.5 text-ink-3 leading-relaxed">
-                    Vos données sont confidentielles. Chaque commande génère des sous-commandes directes auprès de chaque créateur pour un suivi rigoureux.
+            <div class="rounded-2xl border border-line bg-ground-alt p-4 text-sm text-ink-2">
+                <p class="font-semibold text-ink">Une commande, plusieurs vendeurs</p>
+                <p class="mt-1 leading-relaxed">
+                    Chaque vendeur reçoit sa propre sous-commande et la suit séparément. Vos coordonnées ne servent qu'à la livraison et au suivi.
                 </p>
             </div>
         </aside>
     </div>
 </div>
 @endsection
-

@@ -10,6 +10,7 @@ import ProductDescription, { Breadcrumb } from '../../../Components/commerce/Pro
 import StickyCta from '../../../Components/layout/StickyCta';
 import { addToCart } from '../../../lib/cart';
 import { money } from '../../../lib/format';
+import ProductLayout, { ProductHeader, BuyBox, OptionGroup, QuantityInput } from '../../../Components/commerce/ProductLayout';
 
 const OPTION_LABELS = { taille: 'Taille', couleur: 'Couleur', modele: 'Modèle', format: 'Format', autre: 'Autre' };
 
@@ -74,50 +75,49 @@ export default function Physical({ product }) {
                 })}</script>
             </Head>
 
-            <div className="mx-auto max-w-[1180px] px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:py-10">
-                <div className="lg:sticky lg:top-20 lg:self-start">
-                    <Breadcrumb product={product} />
-                    <div className="relative mt-3">
-                        {current?.image ? (
-                            <img src={current.image} alt={current.name} className="aspect-[4/5] w-full rounded-lg border border-line object-cover" />
-                        ) : (
-                            <ProductGallery product={product} />
-                        )}
+            <ProductLayout
+                breadcrumb={<Breadcrumb product={product} />}
+                gallery={current?.image ? (
+                    <div className="overflow-hidden rounded-2xl border border-line bg-surface">
+                        <img src={current.image} alt={`${product.name} — ${current.name}`} className="aspect-square w-full object-contain" />
                     </div>
-                </div>
+                ) : (
+                    <ProductGallery product={product} />
+                )}
+                below={
+                    <ProductDescription product={product} accordions={[
+                        ['Dimensions & poids', (product.weight ? `${Number(product.weight).toFixed(2).replace('.', ',')} kg. ` : '') + "Détails complets sur la fiche d'expédition."],
+                        ['Livraison & retours', 'Expédition suivie sous 48 h à 7 jours selon la destination. Retour possible sous 14 jours pour un article non ouvert.'],
+                    ]} />
+                }
+            >
+                <ProductHeader title={product.name} seller={{ label: 'Maison MALKUTHAR', house: true }} typeLabel="Physique">
+                    {product.category && <span>{product.category}</span>}
+                    {product.sku && <span className="font-mono text-xs text-ink-3">Réf. {product.sku}</span>}
+                </ProductHeader>
 
-                <div className="mt-6 lg:mt-0">
-                    <h1 className="text-2xl font-bold tracking-[-0.01em] text-ink sm:text-[28px]">{product.name}</h1>
-                    {product.sku && <p className="mt-1 font-mono text-xs text-ink-3">Réf. {product.sku}</p>}
-
-                    <div className="mt-3">
-                        {current ? (
-                            <p className="text-2xl font-semibold text-ink">{money(price)} <span className="text-base text-ink-2">{product.currency}</span></p>
-                        ) : (
-                            <Price price={basePrice} compareAt={product.promotional_price ? product.price : null} currency={product.currency} size="lg" />
-                        )}
-                    </div>
+                <BuyBox>
+                    {current ? (
+                        <p className="font-display text-[32px] font-semibold leading-none text-ink">
+                            {money(price)} <span className="font-sans text-sm font-medium text-ink-3">{product.currency}</span>
+                        </p>
+                    ) : (
+                        <Price price={basePrice} compareAt={product.promotional_price ? product.price : null} currency={product.currency} size="display" />
+                    )}
 
                     {hasVariants && (
-                        <div className="mt-6 space-y-4">
+                        <div className="mt-6 space-y-5">
                             {Object.entries(optionGroups).map(([key, values]) => (
-                                <div key={key}>
-                                    <p className="mb-1.5 text-[13px] font-semibold text-ink-2">{OPTION_LABELS[key] ?? key[0].toUpperCase() + key.slice(1)}</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {values.map((val) => (
-                                            <button key={val} type="button" onClick={() => toggle(key, val)}
-                                                    className={['h-10 rounded-md border px-3 text-sm transition-colors', selection[key] === val ? 'border-ink bg-ink text-white' : 'border-line-strong text-ink hover:border-ink'].join(' ')}>
-                                                {val}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+                                <OptionGroup key={key}
+                                             label={OPTION_LABELS[key] ?? key[0].toUpperCase() + key.slice(1)}
+                                             values={values}
+                                             selected={selection[key]}
+                                             onSelect={(val) => toggle(key, val)} />
                             ))}
-                            {needsVariant && <p className="text-[13px] text-rust">Choisissez une variante pour continuer.</p>}
                             {current && (
-                                <p className="text-[13px] text-ink-2">
+                                <p className="text-sm text-ink-2">
                                     Sélection : <span className="font-semibold text-ink">{current.name}</span>
-                                    {current.sku && <span className="font-mono text-ink-3"> · {current.sku}</span>}
+                                    {current.sku && <span className="font-mono text-xs text-ink-3"> · {current.sku}</span>}
                                 </p>
                             )}
                         </div>
@@ -125,8 +125,9 @@ export default function Physical({ product }) {
 
                     <div className="mt-5">
                         {hasVariants ? (
-                            <p className={['text-[13px]', !current ? 'text-ink-2' : stock <= 0 ? 'text-rust' : stock <= 5 ? 'text-amber' : 'text-ink-2'].join(' ')}>
-                                {current ? (stock <= 0 ? 'Variante épuisée' : stock <= 5 ? `Plus que ${stock} en stock` : 'En stock') : 'Sélectionnez une variante'}
+                            <p className={['inline-flex items-center gap-2 text-sm', !current ? 'text-ink-2' : stock <= 0 ? 'font-medium text-rust' : stock <= 5 ? 'font-medium text-amber' : 'text-ink-2'].join(' ')}>
+                                {current && <span className={['h-2 w-2 rounded-full', stock <= 0 ? 'bg-rust' : stock <= 5 ? 'bg-amber' : 'bg-sage'].join(' ')} aria-hidden="true" />}
+                                {current ? (stock <= 0 ? 'Variante épuisée' : stock <= 5 ? `Plus que ${stock} en stock` : 'En stock') : 'Choisissez une variante pour continuer.'}
                             </p>
                         ) : (
                             <StockIndicator available={stock} />
@@ -134,27 +135,20 @@ export default function Physical({ product }) {
                     </div>
 
                     <div className="mt-5 flex items-center gap-4">
-                        <span className="text-[13px] font-semibold text-ink-2">Quantité</span>
-                        <div className="inline-flex items-center rounded-md border border-line-strong/25">
-                            <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="flex h-11 w-11 items-center justify-center text-ink" aria-label="Retirer">−</button>
-                            <span className="w-8 text-center text-sm font-semibold">{qty}</span>
-                            <button type="button" onClick={() => setQty((q) => q + 1)} className="flex h-11 w-11 items-center justify-center text-ink" aria-label="Ajouter">+</button>
-                        </div>
+                        <span className="text-sm font-semibold text-ink">Quantité</span>
+                        <QuantityInput value={qty}
+                                       onDec={() => setQty((q) => Math.max(1, q - 1))}
+                                       onInc={() => setQty((q) => q + 1)}
+                                       decDisabled={qty <= 1} />
                     </div>
 
                     <div className="mt-6 hidden lg:block">
                         <Button variant="primary" full onClick={add} disabled={!canAdd}>{buttonLabel}</Button>
                     </div>
-                </div>
-            </div>
 
-            <div className="mx-auto max-w-[1180px] px-4 pb-12 sm:px-6">
-                <ProductDescription product={product} accordions={[
-                    ['Dimensions & poids', (product.weight ? `${Number(product.weight).toFixed(2).replace('.', ',')} kg. ` : '') + "Détails complets sur la fiche d'expédition."],
-                    ['Livraison & retours', 'Expédition suivie sous 48 h à 7 jours selon la destination. Retour possible sous 14 jours pour un article non ouvert.'],
-                ]} />
-                <Reassurance variant="physical" className="mt-10 border-t border-line pt-8" />
-            </div>
+                    <Reassurance variant="physical" layout="stack" className="mt-6 border-t border-line pt-5" />
+                </BuyBox>
+            </ProductLayout>
 
             <StickyCta info={<span className="font-semibold text-ink">{money(price)} {product.currency}</span>}>
                 <Button variant="primary" full onClick={add} disabled={!canAdd}>{buttonLabel}</Button>

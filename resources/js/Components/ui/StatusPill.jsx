@@ -18,19 +18,22 @@ const MAP = {
     archived: ['Archivé', 'neut'],
 };
 
+// Le libellé porte l'information ; la pastille de couleur ne fait que la doubler.
 const TONES = {
-    wait: 'border-amber/30 bg-amber/10 text-amber',
-    ok: 'border-brand-green/30 bg-brand-green/10 text-brand-green',
-    neut: 'border-black/12 bg-black/[0.04] text-ink-2',
-    bad: 'border-rust/30 bg-rust/10 text-rust',
+    wait: ['bg-amber-tint text-amber', 'bg-amber'],
+    ok: ['bg-sage-soft text-sage', 'bg-sage'],
+    neut: ['bg-ground-alt text-ink-2', 'bg-ink-3'],
+    bad: ['bg-rust-tint text-rust', 'bg-rust'],
 };
 
 export default function StatusPill({ status }) {
     const [label, tone] = MAP[status] ?? [status ? status[0].toUpperCase() + status.slice(1) : '', 'neut'];
+    const [pill, dot] = TONES[tone] ?? TONES.neut;
 
     return (
-        <span className={['inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11.5px] font-semibold', TONES[tone]].join(' ')}>
-            <span className="h-1.5 w-1.5 rounded-full bg-current" />{label}
+        <span className={['inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold', pill].join(' ')}>
+            <span className={['h-1.5 w-1.5 shrink-0 rounded-full', dot].join(' ')} aria-hidden="true" />
+            {label}
         </span>
     );
 }

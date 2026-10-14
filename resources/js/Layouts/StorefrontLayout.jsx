@@ -1,25 +1,97 @@
 import { useEffect, useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import Alert from '../Components/ui/Alert';
 import { cartCount } from '../lib/cart';
 
-function NavLink({ href, active, children, badge }) {
+const DEFAULT_TICKER = "Téléchargement immédiat des produits numériques | Expédition suivie à domicile | Paiement Mobile Money et carte bancaire";
+
+/** Retire les emojis et pictogrammes décoratifs saisis dans le bandeau. */
+const stripPictographs = (text) => text
+    .replace(/[\p{Extended_Pictographic}\u2726\u2727\uFE0F\u200D]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+function Icon({ d, className = 'h-5 w-5', strokeWidth = 1.7 }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth}
+             strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            {[].concat(d).map((p) => <path key={p} d={p} />)}
+        </svg>
+    );
+}
+
+const ICONS = {
+    menu: 'M4 7h16M4 12h16M4 17h16',
+    close: 'M6 6l12 12M18 6L6 18',
+    chevron: 'M6 9l6 6 6-6',
+    cart: ['M3 4h2.2l1.9 10.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L20 8H6.2', 'M9 20h.01', 'M17 20h.01'],
+    user: ['M20 21v-1.5a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4V21', 'M12 11.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+    arrow: 'M5 12h14M13 6l6 6-6 6',
+    search: ['M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z', 'M20 20l-3.5-3.5'],
+    grid: 'M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v6H4zM14 15h6v6h-6z',
+};
+
+/** Univers mis en avant dans la barre de catégories (mêmes destinations que l'accueil). */
+const UNIVERS_NAV = [
+    { label: 'Formations', href: '/boutique?type=digital', match: 'type=digital' },
+    { label: 'Mode & Artisanat', href: '/boutique?type=physical', match: 'type=physical' },
+    { label: 'Résidences', href: '/place-de-marche?pole=residences-guest-houses-immobilier', match: 'pole=residences' },
+    { label: 'Soins & Praticiens', href: '/boutique?type=service', match: 'type=service' },
+];
+
+function SearchForm({ className = '', inputId }) {
+    const { url } = usePage();
+    const initial = (() => {
+        try { return new URL(url, window.location.origin).searchParams.get('q') ?? ''; } catch { return ''; }
+    })();
+    const [q, setQ] = useState(initial);
+
+    const submit = (e) => {
+        e.preventDefault();
+        router.get(route('catalog.index'), q.trim() ? { q: q.trim() } : {});
+    };
+
+    return (
+        <form role="search" onSubmit={submit} className={['flex items-stretch', className].join(' ')}>
+            <label htmlFor={inputId} className="sr-only">Rechercher un produit</label>
+            <input id={inputId} type="search" value={q} onChange={(e) => setQ(e.target.value)}
+                   placeholder="Rechercher un produit, un soin…"
+                   className="min-h-11 w-full min-w-0 rounded-l-full border border-r-0 border-line-strong bg-surface px-5 text-[15px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none" />
+            <button type="submit" aria-label="Lancer la recherche"
+                    className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-r-full bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-2">
+                <Icon d={ICONS.search} className="h-[18px] w-[18px]" />
+                <span className="hidden md:inline">Rechercher</span>
+            </button>
+        </form>
+    );
+}
+
+function Brand({ onClick, size = 'md', tone = 'light' }) {
+    return (
+        <Link href="/" onClick={onClick} className="flex shrink-0 items-center gap-2.5" aria-label="MALKUTHAR, accueil">
+            <img src="/images/logo.png" alt="" className={size === 'sm' ? 'h-8 w-8 object-contain' : 'h-9 w-9 object-contain'} />
+            <span className={[
+                'font-display font-semibold leading-none tracking-[0.14em]',
+                tone === 'dark' ? 'text-white' : 'text-ink',
+                size === 'sm' ? 'text-xl' : 'text-[22px]',
+            ].join(' ')}>
+                MALKUTHAR
+            </span>
+        </Link>
+    );
+}
+
+function NavLink({ href, active, children }) {
     return (
         <Link
             href={href}
+            aria-current={active ? 'page' : undefined}
             className={[
-                'inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs uppercase tracking-[0.06em] transition-all duration-150',
-                active
-                    ? 'bg-ground-alt/90 font-extrabold text-ink shadow-2xs ring-1 ring-line-strong/80'
-                    : 'font-semibold text-ink-2 hover:bg-ground-alt/60 hover:text-ink',
+                'relative inline-flex min-h-11 items-center whitespace-nowrap px-3 text-sm font-medium transition-colors',
+                active ? 'text-ink after:absolute after:inset-x-3 after:bottom-2 after:h-px after:bg-accent' : 'text-ink-2 hover:text-ink',
             ].join(' ')}
         >
-            <span>{children}</span>
-            {badge && (
-                <span className="rounded-md bg-accent/15 px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-accent uppercase">
-                    {badge}
-                </span>
-            )}
+            {children}
         </Link>
     );
 }
@@ -28,29 +100,28 @@ function MegaMenu({ categories, open, setOpen }) {
     if (!open) return null;
 
     return (
-        <div onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
-             className="absolute inset-x-0 top-full hidden px-4 pt-2 sm:px-6 lg:block">
-            <div className="mx-auto max-w-[1280px] overflow-hidden rounded-2xl border border-line-strong/70 bg-surface shadow-[0_20px_48px_-16px_rgba(46,44,40,0.18)]">
-                <div className="grid grid-cols-3 gap-3 p-5">
+        <div id="menu-boutique" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
+             className="absolute inset-x-0 top-full hidden border-b border-line bg-surface lg:block">
+            <div className="mx-auto max-w-[1280px] px-6 py-8">
+                <div className="grid grid-cols-3 gap-6">
                     {categories.map((c) => (
                         <Link key={c.type} href={route('catalog.index', { type: c.type })} onClick={() => setOpen(false)}
-                              className="group flex gap-3.5 rounded-xl border border-line/60 bg-ground/40 p-4 transition-all duration-200 hover:border-accent/60 hover:bg-surface hover:shadow-xs">
-                            <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-white text-accent shadow-2xs group-hover:border-accent group-hover:bg-accent/10">
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-                                     dangerouslySetInnerHTML={{ __html: c.icon }} />
-                            </span>
+                              className="group flex gap-4 rounded-xl p-3 -m-3 transition-colors hover:bg-ground">
+                            <svg className="mt-0.5 h-5 w-5 shrink-0 text-accent-2" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                                 strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                                 dangerouslySetInnerHTML={{ __html: c.icon }} />
                             <span className="min-w-0">
-                                <span className="block font-display text-[15px] font-bold text-ink group-hover:text-accent transition-colors">{c.label}</span>
-                                <span className="mt-1 block text-xs leading-relaxed text-ink-2">{c.text}</span>
+                                <span className="block text-[15px] font-semibold text-ink">{c.label}</span>
+                                <span className="mt-1 block text-sm leading-relaxed text-ink-2">{c.text}</span>
                             </span>
                         </Link>
                     ))}
                 </div>
-                <div className="flex items-center justify-between border-t border-line bg-ground-alt/70 px-6 py-3.5 text-xs">
-                    <span className="font-medium text-ink-3">Trois voies, une maison.</span>
-                    <Link href={route('catalog.index')} onClick={() => setOpen(false)} className="inline-flex items-center gap-1.5 font-bold text-accent hover:text-accent-2 transition-colors">
-                        <span>Explorer la boutique</span>
-                        <span aria-hidden="true">→</span>
+                <div className="mt-8 flex items-center justify-end border-t border-line pt-5">
+                    <Link href={route('catalog.index')} onClick={() => setOpen(false)}
+                          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-2 hover:text-ink">
+                        Voir toute la boutique
+                        <Icon d={ICONS.arrow} className="h-4 w-4" />
                     </Link>
                 </div>
             </div>
@@ -58,155 +129,147 @@ function MegaMenu({ categories, open, setOpen }) {
     );
 }
 
-function Drawer({ open, onClose, categories, marketplaceEnabled, user }) {
-    const [prodOpen, setProdOpen] = useState(false);
+function DrawerLink({ href, onClick, native = false, children }) {
+    const cls = 'flex min-h-12 items-center border-b border-line px-1 text-[15px] font-medium text-ink';
+    return native
+        ? <a href={href} onClick={onClick} className={cls}>{children}</a>
+        : <Link href={href} onClick={onClick} className={cls}>{children}</Link>;
+}
+
+function Drawer({ open, onClose, categories, marketplaceHref, user }) {
+    const [shopOpen, setShopOpen] = useState(false);
 
     return (
         <div hidden={!open} className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col border-r border-line-strong/80 bg-surface shadow-2xl">
-                <div className="flex h-18 items-center justify-between border-b border-line px-5">
-                    <Link href="/" onClick={onClose} className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line-strong/70 bg-white p-1 shadow-2xs">
-                            <img src="/images/logo.png" alt="Logo MALKUTHAR" className="h-full w-full object-contain" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-display text-[15.5px] font-extrabold tracking-[0.16em] text-ink leading-tight">MALKUTHAR</span>
-                            <span className="text-[9px] font-extrabold tracking-[0.22em] text-accent uppercase leading-none mt-0.5">Maison & Marché</span>
-                        </div>
-                    </Link>
-                    <button type="button" onClick={onClose} aria-label="Fermer"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-ground-alt/60 text-ink hover:bg-ground-alt">
-                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
-                        </svg>
+            <div className="absolute inset-0 bg-ink/50" onClick={onClose} aria-hidden="true" />
+            <div role="dialog" aria-modal="true" aria-label="Menu principal"
+                 className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-surface">
+                <div className="flex h-16 items-center justify-between border-b border-line px-5">
+                    <Brand onClick={onClose} size="sm" />
+                    <button type="button" onClick={onClose} aria-label="Fermer le menu"
+                            className="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-ground-alt">
+                        <Icon d={ICONS.close} />
                     </button>
                 </div>
 
-                <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-                    <Link href="/" onClick={onClose} className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-ground-alt">
-                        Accueil
-                    </Link>
-
-                    <div>
-                        <button type="button" onClick={() => setProdOpen((v) => !v)}
-                                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-ground-alt">
-                            <span>Produits</span>
-                            <svg className={['h-4 w-4 text-ink-3 transition-transform', prodOpen ? 'rotate-180 text-accent' : ''].join(' ')} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                <nav className="flex-1 overflow-y-auto px-5 py-2" aria-label="Navigation principale">
+                    <div className="border-b border-line">
+                        <button type="button" onClick={() => setShopOpen((v) => !v)} aria-expanded={shopOpen}
+                                className="flex min-h-12 w-full items-center justify-between px-1 text-left text-[15px] font-medium text-ink">
+                            <span>Boutique</span>
+                            <Icon d={ICONS.chevron} className={['h-4 w-4 text-ink-3 transition-transform', shopOpen ? 'rotate-180' : ''].join(' ')} />
                         </button>
-                        {prodOpen && (
-                            <div className="my-1 ml-3 space-y-1 border-l-2 border-accent/40 pl-3">
+                        {shopOpen && (
+                            <div className="pb-3 pl-3">
+                                <Link href={route('catalog.index')} onClick={onClose}
+                                      className="flex min-h-11 items-center text-sm font-medium text-ink-2 hover:text-ink">
+                                    Toute la boutique
+                                </Link>
                                 {categories.map((c) => (
                                     <Link key={c.type} href={route('catalog.index', { type: c.type })} onClick={onClose}
-                                          className="block rounded-lg px-2.5 py-2 text-xs font-medium text-ink-2 hover:bg-ground-alt hover:text-ink">
+                                          className="flex min-h-11 items-center text-sm text-ink-2 hover:text-ink">
                                         {c.label}
                                     </Link>
                                 ))}
                             </div>
                         )}
                     </div>
+                    <DrawerLink href={marketplaceHref} onClick={onClose}>Place de marché</DrawerLink>
+                    <DrawerLink href={route('affiliation')} onClick={onClose}>Affiliation</DrawerLink>
+                    <DrawerLink href={route('about')} onClick={onClose}>À propos</DrawerLink>
+                    <DrawerLink href={route('contact')} onClick={onClose}>Contact</DrawerLink>
 
-                    <Link href={route('affiliation')} onClick={onClose} className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-ground-alt">
-                        Affiliation
-                    </Link>
-                    <Link href={marketplaceEnabled ? route('marketplace.shop') : route('marketplace')} onClick={onClose}
-                          className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-ground-alt">
-                        <span>Marketplace</span>
-                        <span className="rounded-md bg-accent/15 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-accent">Place</span>
-                    </Link>
-                    <Link href={route('about')} onClick={onClose} className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-ground-alt">
-                        À propos
-                    </Link>
-                    <Link href={route('contact')} onClick={onClose} className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-ground-alt">
-                        Contact
-                    </Link>
-
-                    <div className="my-3 border-t border-line" />
-                    {user ? (
-                        <div className="space-y-1">
-                            <a href="/mon-compte" className="flex items-center rounded-xl px-3 py-2.5 text-sm font-bold text-ink hover:bg-ground-alt">
-                                Mon compte
-                            </a>
-                            <form method="POST" action={route('logout')}>
-                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
-                                <button className="block w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-rust hover:bg-rust/10">
-                                    Se déconnecter
-                                </button>
-                            </form>
-                        </div>
-                    ) : (
-                        <div className="space-y-2 pt-2">
-                            <a href={route('login')} className="flex w-full items-center justify-center rounded-xl border border-line-strong/80 bg-white py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-2xs hover:bg-ground-alt">
-                                Connexion
-                            </a>
-                            <a href={route('register')} className="flex w-full items-center justify-center rounded-xl bg-ink py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-2xs hover:bg-ink/90">
-                                Créer un compte
-                            </a>
-                        </div>
-                    )}
+                    <div className="mt-6 space-y-3">
+                        {user ? (
+                            <>
+                                <a href={route('espace')}
+                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white">
+                                    Mon espace
+                                </a>
+                                <form method="POST" action={route('logout')}>
+                                    <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
+                                    <button className="flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-6 text-sm font-medium text-ink-2 hover:text-ink">
+                                        Se déconnecter
+                                    </button>
+                                </form>
+                            </>
+                        ) : (
+                            <>
+                                <a href={route('login')}
+                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white">
+                                    Connexion
+                                </a>
+                                <a href={route('register')}
+                                   className="flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-6 text-sm font-semibold text-ink">
+                                    Créer un compte
+                                </a>
+                            </>
+                        )}
+                    </div>
                 </nav>
 
-                <div className="border-t border-line bg-ground-alt/40 px-5 py-3 text-xs text-ink-3">
-                    <a href={route('affiliate.program-terms')} className="font-medium hover:text-ink">Conditions du programme</a>
+                <div className="border-t border-line px-5 py-4 text-sm">
+                    <a href={route('affiliate.program-terms')} className="text-ink-2 hover:text-ink">Conditions du programme</a>
                 </div>
             </div>
         </div>
     );
 }
 
-function Footer() {
+function FooterColumn({ title, children }) {
     return (
-        <footer className="mt-24 border-t border-line-strong/70 bg-surface/90">
-            <div className="mx-auto max-w-[1280px] px-4 py-14 sm:px-6">
-                <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-                    <div className="col-span-2 sm:col-span-1">
-                        <Link href="/" className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line-strong/60 bg-white p-1 shadow-2xs">
-                                <img src="/images/logo.png" alt="Logo MALKUTHAR" className="h-full w-full object-contain" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-display text-[15px] font-extrabold tracking-[0.16em] text-ink leading-tight">MALKUTHAR</span>
-                                <span className="text-[9px] font-extrabold tracking-[0.22em] text-accent uppercase leading-none mt-0.5">Maison & Marché</span>
-                            </div>
+        <div>
+            <h2 className="font-sans text-sm font-semibold tracking-normal text-white">{title}</h2>
+            <ul className="mt-4 space-y-3 text-sm text-night-ink-2">{children}</ul>
+        </div>
+    );
+}
+
+const footerLink = 'transition-colors hover:text-white';
+
+function Footer({ marketplaceHref }) {
+    return (
+        <footer className="mt-24 bg-ink text-night-ink">
+            <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6">
+                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+                    <div>
+                        <Link href="/" className="inline-flex items-center gap-2.5" aria-label="MALKUTHAR, accueil">
+                            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-surface p-1">
+                                <img src="/images/logo.png" alt="" className="h-full w-full object-contain" />
+                            </span>
+                            <span className="font-display text-[22px] font-semibold leading-none tracking-[0.14em] text-white">MALKUTHAR</span>
                         </Link>
-                        <p className="mt-3 max-w-xs text-xs leading-relaxed text-ink-2">Produits digitaux, créations d'exception et services spécialisés — une seule maison d'honneur.</p>
-                        <ul className="mt-4 space-y-2 text-xs font-medium text-ink-2">
-                            <li><Link href={route('about')} className="transition-colors hover:text-accent">À propos de la Maison</Link></li>
-                            <li><Link href={route('marketplace')} className="transition-colors hover:text-accent">Vendre sur la Marketplace</Link></li>
-                            <li><Link href={route('contact')} className="transition-colors hover:text-accent">Contact & Support</Link></li>
-                        </ul>
+                        <p className="mt-4 max-w-xs text-sm leading-relaxed text-night-ink-2">
+                            Formations, créations artisanales, résidences et consultations, réunies sur une même boutique.
+                        </p>
+                        <a href={route('contact')} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-accent-light hover:text-white">
+                            Nous écrire
+                        </a>
                     </div>
-                    <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">La Boutique</p>
-                        <ul className="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                            <li><Link href="/boutique?type=digital" className="transition-colors hover:text-ink">Produits digitaux</Link></li>
-                            <li><Link href="/boutique?type=physical" className="transition-colors hover:text-ink">Produits physiques</Link></li>
-                            <li><Link href="/boutique?type=service" className="transition-colors hover:text-ink">Services & Consultations</Link></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Programmes</p>
-                        <ul className="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                            <li><Link href={route('affiliation')} className="transition-colors hover:text-ink">Affiliation — Découvrir</Link></li>
-                            <li><a href={route('register.affiliate')} className="transition-colors hover:text-ink">Devenir affilié officiel</a></li>
-                            <li><a href={route('register.vendor')} className="transition-colors hover:text-ink">Devenir vendeur partenaire</a></li>
-                            <li><a href={route('affiliate.program-terms')} className="transition-colors hover:text-ink">Conditions du programme</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Informations</p>
-                        <ul className="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                            <li><a href="/mentions-legales" className="transition-colors hover:text-ink">Conditions Générales de Vente</a></li>
-                            <li><a href="/confidentialite" className="transition-colors hover:text-ink">Politique de confidentialité</a></li>
-                            <li><a href="/cookies" className="transition-colors hover:text-ink">Gestion des cookies</a></li>
-                        </ul>
-                    </div>
+                    <FooterColumn title="Boutique">
+                        <li><Link href="/boutique?type=digital" className={footerLink}>Produits digitaux</Link></li>
+                        <li><Link href="/boutique?type=physical" className={footerLink}>Produits physiques</Link></li>
+                        <li><Link href="/boutique?type=service" className={footerLink}>Services et consultations</Link></li>
+                        <li><Link href={marketplaceHref} className={footerLink}>Place de marché</Link></li>
+                    </FooterColumn>
+                    <FooterColumn title="Programmes">
+                        <li><Link href={route('affiliation')} className={footerLink}>L'affiliation</Link></li>
+                        <li><a href={route('register.affiliate')} className={footerLink}>Devenir affilié</a></li>
+                        <li><a href={route('register.vendor')} className={footerLink}>Devenir vendeur</a></li>
+                        <li><Link href={route('marketplace')} className={footerLink}>Vendre sur la place de marché</Link></li>
+                        <li><a href={route('affiliate.program-terms')} className={footerLink}>Conditions du programme</a></li>
+                    </FooterColumn>
+                    <FooterColumn title="Informations">
+                        <li><Link href={route('about')} className={footerLink}>À propos</Link></li>
+                        <li><Link href={route('contact')} className={footerLink}>Contact</Link></li>
+                        <li><a href="/mentions-legales" className={footerLink}>Conditions générales de vente</a></li>
+                        <li><a href="/confidentialite" className={footerLink}>Politique de confidentialité</a></li>
+                        <li><a href="/cookies" className={footerLink}>Gestion des cookies</a></li>
+                    </FooterColumn>
                 </div>
-                <div className="mt-10 flex flex-col gap-2 border-t border-line pt-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-14 flex flex-col gap-2 border-t border-night-line pt-6 text-sm text-night-ink-2 sm:flex-row sm:items-center sm:justify-between">
                     <p>© {new Date().getFullYear()} MALKUTHAR SARL. Tous droits réservés.</p>
-                    <p className="font-medium text-ink-2">Paiement sécurisé crypté — FedaPay · CinetPay · Mobile Money</p>
+                    <p>Paiement sécurisé : FedaPay · CinetPay · Mobile Money</p>
                 </div>
             </div>
         </footer>
@@ -222,7 +285,7 @@ export default function StorefrontLayout({ children }) {
         marketplaceEnabled,
         auth,
         flash,
-        announcementTicker = "✨ Créations & savoirs d'exception pour tous vos projets · ⚡ Téléchargement immédiat 24/7 · 📦 Expédition soignée à domicile · 🤝 Affiliation 3 niveaux (jusqu'à 30 %) · 💳 Paiements sécurisés Mobile Money & Cartes",
+        announcementTicker = DEFAULT_TICKER,
         announcementTickerEnabled = true,
     } = props;
 
@@ -231,17 +294,11 @@ export default function StorefrontLayout({ children }) {
     const [count, setCount] = useState(0);
     const [bannerVisible, setBannerVisible] = useState(true);
 
-    const tickerSegments = (announcementTicker || '')
-        .split(/\r?\n|\|/)
-        .map((s) => s.trim())
+    // Segments séparés par retour à la ligne, « | » ou « · » ; affichés sur une ligne, sans défilement.
+    const tickerSegments = (announcementTicker || DEFAULT_TICKER)
+        .split(/\r?\n|\||·/)
+        .map((s) => stripPictographs(s))
         .filter(Boolean);
-
-    const activeSegments = tickerSegments.length > 0
-        ? tickerSegments
-        : ["✨ Créations & savoirs d'exception pour tous vos projets · ⚡ Téléchargement immédiat 24/7 · 📦 Expédition soignée à domicile · 🤝 Affiliation 3 niveaux (jusqu'à 30 %) · 💳 Paiements sécurisés Mobile Money & Cartes"];
-
-    const repeatCount = Math.max(2, Math.ceil(6 / activeSegments.length));
-    const trackItems = Array(repeatCount).fill(activeSegments).flat();
 
     useEffect(() => {
         const sync = () => setCount(cartCount());
@@ -254,7 +311,25 @@ export default function StorefrontLayout({ children }) {
         };
     }, []);
 
+    // Ferme menus et tiroir à chaque navigation, et sur Échap.
+    useEffect(() => {
+        setMegaOpen(false);
+        setDrawerOpen(false);
+    }, [url]);
+
+    useEffect(() => {
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                setMegaOpen(false);
+                setDrawerOpen(false);
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
     const is = (prefix) => url === prefix || url.startsWith(prefix + '/') || url.startsWith(prefix + '?');
+    const marketplaceHref = marketplaceEnabled ? route('marketplace.shop') : route('marketplace');
     const flashMessage = flash?.error
         ? { tone: 'error', text: flash.error }
         : flash?.success
@@ -265,156 +340,123 @@ export default function StorefrontLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-ground font-sans text-ink antialiased">
-            <header className="sticky top-0 z-40 border-b border-line-strong/70 bg-surface/98 backdrop-blur-md shadow-[0_2px_12px_-4px_rgba(46,44,40,0.06)]">
-                <div className="relative mx-auto flex h-18 max-w-[1280px] items-center gap-4 px-4 sm:px-6 lg:gap-8">
-                    <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Ouvrir le menu"
-                            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line-strong/60 bg-white text-ink shadow-2xs transition-colors hover:bg-ground-alt lg:hidden">
-                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path d="M3 6h14M3 10h14M3 14h14" strokeLinecap="round" />
-                        </svg>
-                    </button>
+            <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-white">
+                Aller au contenu
+            </a>
 
-                    <Link href="/" className="group flex shrink-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line-strong/70 bg-white p-1 shadow-2xs transition-all duration-200 group-hover:scale-105 group-hover:border-accent group-hover:shadow-xs">
-                            <img src="/images/logo.png" alt="Logo MALKUTHAR" className="h-full w-full object-contain" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-display text-[16px] font-extrabold tracking-[0.16em] text-ink leading-tight transition-colors group-hover:text-accent">MALKUTHAR</span>
-                            <span className="text-[9px] font-extrabold tracking-[0.24em] text-accent uppercase leading-none mt-0.5">Maison & Marché</span>
-                        </div>
-                    </Link>
-
-                    <nav className="hidden items-center gap-1.5 lg:flex">
-                        <NavLink href="/" active={url === '/'}>Accueil</NavLink>
-
-                        <button type="button" onClick={() => setMegaOpen((v) => !v)} onMouseEnter={() => setMegaOpen(true)}
-                                aria-expanded={megaOpen}
-                                className={[
-                                    'inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs uppercase tracking-[0.06em] transition-all duration-150',
-                                    megaOpen
-                                        ? 'bg-ground-alt/90 font-extrabold text-ink shadow-2xs ring-1 ring-line-strong/80'
-                                        : 'font-semibold text-ink-2 hover:bg-ground-alt/60 hover:text-ink',
-                                ].join(' ')}>
-                            <span>Produits</span>
-                            <svg className={['h-3 w-3 transition-transform duration-200', megaOpen ? 'rotate-180 text-accent' : 'text-ink-3'].join(' ')} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </button>
-
-                        <NavLink href={route('affiliation')} active={is('/affiliation') || is('/programme-affiliation')}>Affiliation</NavLink>
-                        <NavLink href={marketplaceEnabled ? route('marketplace.shop') : route('marketplace')} active={is('/place-de-marche') || is('/marketplace')} badge="Place">Marketplace</NavLink>
-                        <NavLink href={route('about')} active={is('/a-propos')}>À propos</NavLink>
-                        <NavLink href={route('contact')} active={is('/contact')}>Contact</NavLink>
-                    </nav>
-
-                    <div className="ml-auto flex items-center gap-2 sm:gap-2.5">
-                        {auth?.user ? (
-                            <a href="/mon-compte"
-                               className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-line-strong/70 bg-white px-3.5 py-2 text-xs font-bold text-ink shadow-2xs transition-all hover:border-accent hover:bg-ground-alt/40 hover:shadow-xs">
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-accent/15 text-[10px] font-black text-accent uppercase">
-                                    {auth.user.name ? auth.user.name.charAt(0) : 'U'}
-                                </span>
-                                <span className="max-w-[120px] truncate">{auth.user.name || 'Mon compte'}</span>
-                            </a>
-                        ) : (
-                            <a href={route('login')}
-                               className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-line-strong/70 bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-[0.06em] text-ink shadow-2xs transition-all hover:border-accent hover:bg-ground-alt/40 hover:text-accent hover:shadow-xs">
-                                <svg className="h-3.5 w-3.5 text-ink-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                <span>Connexion</span>
-                            </a>
-                        )}
-
-                        <Link href={route('cart')} aria-label="Panier"
-                              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line-strong/70 bg-white text-ink shadow-2xs transition-all hover:border-accent hover:bg-ground-alt/40 hover:text-accent hover:shadow-xs">
-                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-                                <path d="M3 4h2l1.6 9.2a1.5 1.5 0 0 0 1.48 1.24h6.84a1.5 1.5 0 0 0 1.47-1.2L18.5 7H6" strokeLinecap="round" strokeLinejoin="round" />
-                                <circle cx="8.5" cy="17" r="1" /><circle cx="15.5" cy="17" r="1" />
-                            </svg>
-                            {count > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rust px-1 text-[10px] font-extrabold text-white ring-2 ring-white shadow-xs">
-                                    {count}
-                                </span>
-                            )}
-                        </Link>
+            {/* Bandeau d'annonce (texte géré par l'administrateur) — fixe, une ligne. */}
+            {bannerVisible && announcementTickerEnabled && tickerSegments.length > 0 && (
+                <aside aria-label="Annonces" className="relative border-b border-line bg-ground-alt text-ink-2">
+                    <div className="mx-auto flex min-h-10 max-w-[1280px] items-center justify-center px-12 text-center text-[13px]">
+                        <p className="truncate sm:hidden">{tickerSegments[0]}</p>
+                        <p className="hidden truncate sm:block">{tickerSegments.join(' · ')}</p>
                     </div>
-
-                    <MegaMenu categories={categories} open={megaOpen} setOpen={setMegaOpen} />
-                </div>
-            </header>
-
-            {/* Bandeau d'annonce défilant sous le menu (mis à jour par l'administrateur) */}
-            {bannerVisible && announcementTickerEnabled && (
-                <aside
-                    aria-label="Annonces défilantes"
-                    className="relative z-30 overflow-hidden border-b border-black/10 bg-black text-white select-none shadow-xs"
-                >
-                    {/* Estompage dégradé subtil à gauche et à droite */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-16 bg-gradient-to-r from-black via-black/85 to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 sm:w-20 bg-gradient-to-l from-black via-black/85 to-transparent" />
-
-                    <div className="flex py-2.5 text-[11px] sm:text-xs font-medium tracking-wide">
-                        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-                            {/* Piste 1 */}
-                            <div className="flex shrink-0 items-center gap-8 pr-8">
-                                {trackItems.map((item, idx) => (
-                                    <span key={`t1-${idx}`} className="inline-flex items-center gap-3 whitespace-nowrap">
-                                        <span>{item}</span>
-                                        <span className="text-accent text-[10px] opacity-80" aria-hidden="true">✦</span>
-                                    </span>
-                                ))}
-                            </div>
-                            {/* Piste 2 (identique pour défilement continu vers la gauche sans coupure) */}
-                            <div className="flex shrink-0 items-center gap-8 pr-8" aria-hidden="true">
-                                {trackItems.map((item, idx) => (
-                                    <span key={`t2-${idx}`} className="inline-flex items-center gap-3 whitespace-nowrap">
-                                        <span>{item}</span>
-                                        <span className="text-accent text-[10px] opacity-80">✦</span>
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => setBannerVisible(false)}
-                        aria-label="Fermer le bandeau d'annonce"
-                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 flex h-6 w-6 items-center justify-center rounded-md text-white/50 hover:bg-white/10 hover:text-white transition-colors text-xs"
-                    >
-                        ✕
+                    <button type="button" onClick={() => setBannerVisible(false)} aria-label="Fermer le bandeau d'annonce"
+                            className="absolute right-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-ink-3 hover:text-ink">
+                        <Icon d={ICONS.close} className="h-4 w-4" />
                     </button>
                 </aside>
             )}
 
+            <header className="sticky top-0 z-40">
+                {/* Barre principale : marque, recherche, compte, panier. */}
+                <div className="bg-ink text-white">
+                    <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-3 px-4 sm:px-6 lg:h-[76px] lg:gap-8">
+                        <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Ouvrir le menu" aria-expanded={drawerOpen}
+                                className="-ml-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white hover:bg-white/10 lg:hidden">
+                            <Icon d={ICONS.menu} />
+                        </button>
+
+                        <Brand tone="dark" />
+
+                        <SearchForm inputId="recherche-entete" className="hidden flex-1 lg:flex lg:max-w-[620px]" />
+
+                        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+                            <a href={auth?.user ? route('espace') : route('login')}
+                               aria-label={auth?.user ? 'Mon espace' : 'Se connecter'}
+                               className="inline-flex min-h-11 items-center gap-2.5 rounded-full px-2 text-sm text-white transition-colors hover:bg-white/10 sm:px-3">
+                                <Icon d={ICONS.user} className="h-[22px] w-[22px]" />
+                                <span className="hidden flex-col leading-tight sm:flex" aria-hidden="true">
+                                    <span className="text-xs text-white/70">{auth?.user ? `Bonjour ${(auth.user.name || '').split(' ')[0]}` : 'Bienvenue'}</span>
+                                    <span className="font-semibold">{auth?.user ? 'Mon espace' : 'Se connecter'}</span>
+                                </span>
+                            </a>
+
+                            <Link href={route('cart')} aria-label={count > 0 ? `Panier, ${count} article${count > 1 ? 's' : ''}` : 'Panier'}
+                                  className="relative -mr-2 inline-flex min-h-11 items-center gap-2.5 rounded-full px-2 text-sm text-white transition-colors hover:bg-white/10 sm:mr-0 sm:px-3">
+                                <span className="relative">
+                                    <Icon d={ICONS.cart} className="h-6 w-6" />
+                                    {count > 0 && (
+                                        <span aria-hidden="true" className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-light px-1 text-xs font-bold text-ink">
+                                            {count}
+                                        </span>
+                                    )}
+                                </span>
+                                <span className="hidden font-semibold sm:inline" aria-hidden="true">Panier</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Recherche pleine largeur sur mobile. */}
+                    <div className="px-4 pb-3 sm:px-6 lg:hidden">
+                        <SearchForm inputId="recherche-mobile" />
+                    </div>
+                </div>
+
+                {/* Barre de catégories. */}
+                <div className="relative hidden border-b border-line bg-surface lg:block">
+                    <nav className="mx-auto flex h-12 max-w-[1280px] items-center gap-1 px-6" aria-label="Catégories">
+                        <button type="button" onClick={() => setMegaOpen((v) => !v)} onMouseEnter={() => setMegaOpen(true)}
+                                aria-expanded={megaOpen} aria-controls="menu-boutique"
+                                className="mr-2 inline-flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ground-alt px-4 text-sm font-semibold text-ink transition-colors hover:bg-line">
+                            <Icon d={ICONS.grid} className="h-4 w-4" />
+                            Toutes les catégories
+                            <Icon d={ICONS.chevron} className={['h-4 w-4 text-ink-3 transition-transform', megaOpen ? 'rotate-180' : ''].join(' ')} />
+                        </button>
+                        {UNIVERS_NAV.map((u) => (
+                            <NavLink key={u.href} href={u.href} active={url.includes(u.match)}>{u.label}</NavLink>
+                        ))}
+                        <span className="mx-2 h-5 w-px bg-line-strong" aria-hidden="true" />
+                        <NavLink href={marketplaceHref} active={is('/place-de-marche') || is('/marketplace')}>Place de marché</NavLink>
+                        <NavLink href={route('affiliation')} active={is('/affiliation') || is('/programme-affiliation')}>Affiliation</NavLink>
+                        <a href={route('marketplace.become-vendor')}
+                           className="ml-auto inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold text-space-vendor hover:text-ink">
+                            Vendre sur MALKUTHAR
+                            <Icon d={ICONS.arrow} className="h-4 w-4" />
+                        </a>
+                    </nav>
+                    <MegaMenu categories={categories} open={megaOpen} setOpen={setMegaOpen} />
+                </div>
+            </header>
+
             <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} categories={categories}
-                    marketplaceEnabled={marketplaceEnabled} user={auth?.user} />
+                    marketplaceHref={marketplaceHref} user={auth?.user} />
 
             {flashMessage && (
-                <div className="mx-auto w-full max-w-2xl px-4 pt-4">
+                <div className="mx-auto w-full max-w-2xl px-4 pt-6">
                     <Alert tone={flashMessage.tone}>{flashMessage.text}</Alert>
                 </div>
             )}
 
-            <main>{children}</main>
+            <main id="contenu">{children}</main>
 
-            <Footer />
+            <Footer marketplaceHref={marketplaceHref} />
 
-            {/* Bouton Flottant WhatsApp (identique au modèle de référence) */}
+            {/* Contact WhatsApp — discret, icône seule. Remonte au-dessus de la barre d'action mobile (StickyCta). */}
+            {props.whatsapp && (
             <a
-                href="https://wa.me/22900000000"
+                href={`https://wa.me/${props.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Discutons sur WhatsApp"
-                className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-[0_4px_18px_rgba(37,211,102,0.45)] transition-all duration-200 hover:scale-105 hover:bg-[#20ba5a] active:scale-95"
+                aria-label="Nous écrire sur WhatsApp"
+                className="fixed bottom-5 right-5 z-40 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-line-strong bg-surface text-sage shadow-[0_1px_2px_rgba(28,25,23,0.06)] transition-colors hover:border-sage max-lg:[body:has([data-sticky-cta])_&]:bottom-24"
             >
-                <svg className="h-4 sm:h-5 w-4 sm:w-5 fill-current" viewBox="0 0 24 24">
-                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.544 1.884.821 2.796.821 3.183 0 5.769-2.586 5.77-5.766.001-3.182-2.585-5.768-5.77-5.768zm3.393 8.354c-.149.421-.737.77-1.025.82-.288.05-.62.069-1.921-.456-1.558-.63-2.57-2.186-2.651-2.29-.081-.104-.64-.852-.64-1.624 0-.772.404-1.15.548-1.304.144-.154.316-.192.422-.192.106 0 .213.001.306.006.098.005.231-.038.361.274.135.324.462 1.127.502 1.21.04.082.067.177.013.286-.054.108-.081.176-.161.27-.081.095-.17.212-.243.285-.081.081-.166.17-.071.334.095.163.422.697.906 1.128.623.555 1.149.728 1.312.809.163.081.258.072.354-.038.096-.11.41-.478.52-.642.11-.164.22-.137.369-.082.149.055.945.446 1.107.527.162.081.27.122.31.19.04.068.04.394-.109.815z" />
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35z" />
+                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24z" />
                 </svg>
-                <span>Discutons sur WhatsApp</span>
             </a>
+            )}
         </div>
     );
 }

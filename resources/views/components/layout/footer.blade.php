@@ -1,58 +1,59 @@
-<footer class="mt-24 border-t border-line-strong/70 bg-surface/90">
-    <div class="mx-auto max-w-[1280px] px-4 py-14 sm:px-6">
-        <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            <div class="col-span-2 sm:col-span-1">
-                <a href="{{ url('/') }}" class="flex items-center gap-3">
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line-strong/60 bg-white p-1 shadow-2xs">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo MALKUTHAR" class="h-full w-full object-contain">
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-display text-[15px] font-extrabold tracking-[0.16em] text-ink leading-tight">MALKUTHAR</span>
-                        <span class="text-[9px] font-extrabold tracking-[0.22em] text-accent uppercase leading-none mt-0.5">Maison & Marché</span>
-                    </div>
+@php
+    $heading = 'text-sm font-semibold text-night-ink';
+    $list = 'mt-4 space-y-1 text-sm text-night-ink-2';
+    $link = 'inline-flex min-h-9 items-center transition-colors hover:text-night-ink';
+@endphp
+
+<footer class="mt-24 bg-ink text-night-ink-2">
+    <div class="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 lg:py-16">
+        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            <div>
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-surface p-1.5">
+                        <img src="{{ asset('images/logo.png') }}" alt="" class="h-full w-full object-contain">
+                    </span>
+                    <span class="font-display text-[22px] font-semibold tracking-[0.18em] text-night-ink">MALKUTHAR</span>
                 </a>
-                <p class="mt-3 max-w-xs text-xs leading-relaxed text-ink-2">
-                    Produits digitaux, créations d'exception et services spécialisés — une seule maison d'honneur.
+                <p class="mt-4 max-w-xs text-sm leading-relaxed">
+                    Livres, formations, séances et créations de vendeurs vérifiés, réunis sur une même boutique.
                 </p>
-                <ul class="mt-4 space-y-2 text-xs font-medium text-ink-2">
-                    <li><a href="{{ route('about') }}" class="transition-colors hover:text-accent">À propos de la Maison</a></li>
-                    <li><a href="{{ route('marketplace') }}" class="transition-colors hover:text-accent">Vendre sur la Marketplace</a></li>
-                    <li><a href="{{ route('contact') }}" class="transition-colors hover:text-accent">Contact & Support</a></li>
+            </div>
+
+            <div>
+                <p class="{{ $heading }}">Boutique</p>
+                <ul class="{{ $list }}">
+                    <li><a href="{{ url('/boutique?type=digital') }}" class="{{ $link }}">Produits digitaux</a></li>
+                    <li><a href="{{ url('/boutique?type=physical') }}" class="{{ $link }}">Produits physiques</a></li>
+                    <li><a href="{{ url('/boutique?type=service') }}" class="{{ $link }}">Services et consultations</a></li>
+                    <li><a href="{{ \App\Support\MarketplaceSettings::enabled() ? route('marketplace.shop') : route('marketplace') }}" class="{{ $link }}">Place de marché</a></li>
                 </ul>
             </div>
 
             <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">La Boutique</p>
-                <ul class="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                    <li><a href="{{ url('/boutique?type=digital') }}" class="transition-colors hover:text-ink">Produits digitaux</a></li>
-                    <li><a href="{{ url('/boutique?type=physical') }}" class="transition-colors hover:text-ink">Produits physiques</a></li>
-                    <li><a href="{{ url('/boutique?type=service') }}" class="transition-colors hover:text-ink">Services & Consultations</a></li>
+                <p class="{{ $heading }}">Programmes</p>
+                <ul class="{{ $list }}">
+                    <li><a href="{{ route('affiliation') }}" class="{{ $link }}">Le programme d'affiliation</a></li>
+                    <li><a href="{{ route('register.affiliate') }}" class="{{ $link }}">Devenir affilié</a></li>
+                    <li><a href="{{ route('register.vendor') }}" class="{{ $link }}">Devenir vendeur</a></li>
+                    <li><a href="{{ route('affiliate.program-terms') }}" class="{{ $link }}">Conditions du programme</a></li>
                 </ul>
             </div>
 
             <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Programmes</p>
-                <ul class="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                    <li><a href="{{ route('affiliation') }}" class="transition-colors hover:text-ink">Affiliation — Découvrir</a></li>
-                    <li><a href="{{ route('register.affiliate') }}" class="transition-colors hover:text-ink">Devenir affilié officiel</a></li>
-                    <li><a href="{{ route('register.vendor') }}" class="transition-colors hover:text-ink">Devenir vendeur partenaire</a></li>
-                    <li><a href="{{ route('affiliate.program-terms') }}" class="transition-colors hover:text-ink">Conditions du programme</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Informations</p>
-                <ul class="mt-3.5 space-y-2.5 text-xs text-ink-2">
-                    <li><a href="{{ url('/mentions-legales') }}" class="transition-colors hover:text-ink">Conditions Générales de Vente</a></li>
-                    <li><a href="{{ url('/confidentialite') }}" class="transition-colors hover:text-ink">Politique de confidentialité</a></li>
-                    <li><a href="{{ url('/cookies') }}" class="transition-colors hover:text-ink">Gestion des cookies</a></li>
+                <p class="{{ $heading }}">Informations</p>
+                <ul class="{{ $list }}">
+                    <li><a href="{{ route('about') }}" class="{{ $link }}">À propos</a></li>
+                    <li><a href="{{ route('contact') }}" class="{{ $link }}">Contact</a></li>
+                    <li><a href="{{ url('/mentions-legales') }}" class="{{ $link }}">Conditions générales de vente</a></li>
+                    <li><a href="{{ url('/confidentialite') }}" class="{{ $link }}">Politique de confidentialité</a></li>
+                    <li><a href="{{ url('/cookies') }}" class="{{ $link }}">Gestion des cookies</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="mt-10 flex flex-col gap-2 border-t border-line pt-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="mt-12 flex flex-col gap-2 border-t border-night-line pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
             <p>© {{ date('Y') }} MALKUTHAR SARL. Tous droits réservés.</p>
-            <p class="font-medium text-ink-2">Paiement sécurisé crypté — FedaPay · CinetPay · Mobile Money</p>
+            <p>Paiement par FedaPay, CinetPay et Mobile Money</p>
         </div>
     </div>
 </footer>

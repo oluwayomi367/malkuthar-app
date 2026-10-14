@@ -30,14 +30,19 @@ class CatalogTest extends TestCase
                 ->where('products.data.0.name', 'Ebook Visible'));
     }
 
-    public function test_home_page_is_a_landing_not_a_catalog(): void
+    public function test_home_page_shows_new_arrivals_without_the_full_catalog(): void
     {
         Product::factory()->digitalAffiliable()->create(['name' => 'Ebook Catalogue', 'status' => 'published', 'is_available' => true]);
+        Product::factory()->digitalAffiliable()->create(['name' => 'Ebook Brouillon', 'status' => 'draft', 'is_available' => true]);
 
-        // L'accueil ne reçoit aucune donnée produit : les produits vivent sur /boutique.
+        // L'accueil montre des rayons (nouveautés…) mais pas la grille paginée de /boutique.
         $this->get('/')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Home')->missing('products'));
+            ->assertInertia(fn (Assert $page) => $page->component('Home')
+                ->missing('products')
+                ->has('newArrivals', 1)
+                ->where('newArrivals.0.name', 'Ebook Catalogue')
+                ->where('newArrivals.0.kind', 'product'));
 
         $this->get('/boutique')
             ->assertInertia(fn (Assert $page) => $page->where('products.data.0.name', 'Ebook Catalogue'));

@@ -41,33 +41,33 @@ export default function Index({
         <AdminLayout title="Réglages Vitrine & Marketplace" eyebrow={eyebrow} heading={heading}>
             <div className="grid gap-8 lg:grid-cols-2">
                 {/* 1. BANDEAU DÉFILANT D'ANNONCES VITRINE */}
-                <div className="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xs flex flex-col justify-between">
+                <div className="rounded-2xl border border-night-line bg-night-2 p-6 flex flex-col justify-between">
                     <div>
                         <div className="flex items-center justify-between">
-                            <h2 className="font-display text-base font-bold text-zinc-900">
+                            <h2 className="font-sans text-base font-semibold text-night-ink">
                                 Bandeau d'annonces défilant
                             </h2>
-                            <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-[10px] font-bold text-accent uppercase tracking-wider">
+                            <span className="rounded-full bg-accent-light/15 px-2.5 py-0.5 text-xs font-bold text-accent-light uppercase tracking-wider">
                                 Vitrine
                             </span>
                         </div>
-                        <p className="mt-1 text-xs text-zinc-500">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             Texte défilant affiché en haut de toutes les pages sous le menu de navigation.
                         </p>
 
-                        <form onSubmit={submitTicker} className="mt-5 space-y-4 text-xs">
+                        <form onSubmit={submitTicker} className="mt-5 space-y-4 text-sm">
                             <div>
-                                <label className="font-semibold text-zinc-700">Texte à faire défiler</label>
+                                <label className="font-semibold text-night-ink-2">Texte à faire défiler</label>
                                 <textarea
                                     rows="4"
                                     required
                                     value={tickerForm.data.announcement_ticker}
                                     onChange={(e) => tickerForm.setData('announcement_ticker', e.target.value)}
-                                    placeholder="Ex. ✨ Créations & savoirs d'exception · ⚡ Téléchargement immédiat 24/7 · 📦 Expédition soignée · 🤝 Affiliation 3 niveaux"
-                                    className="mt-1.5 block w-full rounded-xl border border-zinc-300 p-3 text-xs leading-relaxed text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                    placeholder="Ex. Téléchargement immédiat · Expédition sous 48 h · Affiliation sur 3 niveaux"
+                                    className="mt-1.5 block w-full rounded-xl border bg-night border-night-ink-2/60 p-3 text-sm leading-relaxed text-night-ink focus:border-accent-light focus:outline-none"
                                 />
                                 {tickerForm.errors.announcement_ticker && (
-                                    <p className="mt-1 text-rose-600">{tickerForm.errors.announcement_ticker}</p>
+                                    <p className="mt-1 text-rust-tint">{tickerForm.errors.announcement_ticker}</p>
                                 )}
                             </div>
 
@@ -79,9 +79,9 @@ export default function Index({
                                     onChange={(e) =>
                                         tickerForm.setData('announcement_ticker_enabled', e.target.checked)
                                     }
-                                    className="rounded border-zinc-300 text-accent focus:ring-accent"
+                                    className="rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                 />
-                                <label htmlFor="ticker_enabled" className="text-zinc-700 font-medium">
+                                <label htmlFor="ticker_enabled" className="text-night-ink-2 font-medium">
                                     Activer l'affichage du bandeau d'annonces
                                 </label>
                             </div>
@@ -89,7 +89,7 @@ export default function Index({
                             <button
                                 type="submit"
                                 disabled={tickerForm.processing}
-                                className="rounded-xl bg-zinc-900 px-4 py-2 font-semibold text-white shadow-2xs transition-colors hover:bg-zinc-800 disabled:opacity-50"
+                                className="rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer le bandeau
                             </button>
@@ -98,41 +98,41 @@ export default function Index({
                 </div>
 
                 {/* 2. RÉGLAGES GLOBAUX MARKETPLACE */}
-                <div className="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xs flex flex-col justify-between">
+                <div className="rounded-2xl border border-night-line bg-night-2 p-6 flex flex-col justify-between">
                     <div>
                         <div className="flex items-center justify-between">
-                            <h2 className="font-display text-base font-bold text-zinc-900">
+                            <h2 className="font-sans text-base font-semibold text-night-ink">
                                 Place de marché multi-vendeurs
                             </h2>
                             <span
                                 className={[
-                                    'rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                                    'rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider',
                                     mpForm.data.enabled
-                                        ? 'bg-emerald-100 text-emerald-800'
-                                        : 'bg-zinc-100 text-zinc-600',
+                                        ? 'bg-sage/30 text-sage-soft'
+                                        : 'bg-night-line text-night-ink-2',
                                 ].join(' ')}
                             >
                                 {mpForm.data.enabled ? 'Module Actif' : 'Module Inactif'}
                             </span>
                         </div>
-                        <p className="mt-1 text-xs text-zinc-500">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             Gère l'ouverture de l'espace vendeurs tiers et les paliers de commission plateforme.
                         </p>
 
-                        <form onSubmit={submitMp} className="mt-5 space-y-4 text-xs">
-                            <div className="rounded-xl border border-zinc-200/70 bg-zinc-50/80 p-3.5 flex items-center gap-3">
+                        <form onSubmit={submitMp} className="mt-5 space-y-4 text-sm">
+                            <div className="rounded-xl border border-night-line bg-night p-3.5 flex items-center gap-3">
                                 <input
                                     type="checkbox"
                                     id="mp_enabled"
                                     checked={mpForm.data.enabled}
                                     onChange={(e) => mpForm.setData('enabled', e.target.checked)}
-                                    className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                    className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                 />
                                 <label htmlFor="mp_enabled" className="cursor-pointer">
-                                    <span className="block font-semibold text-zinc-900">
+                                    <span className="block font-semibold text-night-ink">
                                         Activer la place de marché multi-vendeurs
                                     </span>
-                                    <span className="block text-[11px] text-zinc-500">
+                                    <span className="block text-xs text-night-ink-2">
                                         Si décoché, les pages vendeurs et offres externes sont masquées du public.
                                     </span>
                                 </label>
@@ -140,7 +140,7 @@ export default function Index({
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="font-semibold text-zinc-700">Taux Starter (%)</label>
+                                    <label className="font-semibold text-night-ink-2">Taux Starter (%)</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -149,11 +149,11 @@ export default function Index({
                                         required
                                         value={mpForm.data.starter_rate_percent}
                                         onChange={(e) => mpForm.setData('starter_rate_percent', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
                                     />
                                 </div>
                                 <div>
-                                    <label className="font-semibold text-zinc-700">Taux Growth (%)</label>
+                                    <label className="font-semibold text-night-ink-2">Taux Growth (%)</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -162,13 +162,13 @@ export default function Index({
                                         required
                                         value={mpForm.data.growth_rate_percent}
                                         onChange={(e) => mpForm.setData('growth_rate_percent', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="font-semibold text-zinc-700">Seuil palier Growth (FCFA)</label>
+                                <label className="font-semibold text-night-ink-2">Seuil palier Growth (FCFA)</label>
                                 <input
                                     type="number"
                                     min="0"
@@ -176,14 +176,14 @@ export default function Index({
                                     required
                                     value={mpForm.data.growth_threshold_amount}
                                     onChange={(e) => mpForm.setData('growth_threshold_amount', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 shadow-2xs focus:border-accent focus:outline-none"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
                                 />
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={mpForm.processing}
-                                className="rounded-xl bg-accent px-4 py-2 font-semibold text-white shadow-2xs transition-colors hover:bg-accent-2 disabled:opacity-50"
+                                className="rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer les réglages
                             </button>
@@ -193,17 +193,17 @@ export default function Index({
             </div>
 
             {/* 3. DÉROGATIONS DE COMMISSION PAR VENDEUR */}
-            <div className="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xs">
-                <h3 className="font-display text-sm font-bold text-zinc-900">
+            <div className="mt-8 rounded-2xl border border-night-line bg-night-2 p-6">
+                <h3 className="font-sans text-sm font-semibold text-night-ink">
                     Dérogations manuelles par vendeur
                 </h3>
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-1 text-xs text-night-ink-2">
                     Vendeurs pour lesquels un taux de commission négocié individuel est appliqué en priorité sur le catalogue.
                 </p>
 
-                <div className="mt-4 overflow-hidden rounded-xl border border-zinc-200">
-                    <table className="w-full text-left text-xs">
-                        <thead className="border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                <div className="mt-4 overflow-x-auto rounded-xl border border-night-line">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b border-night-line text-xs font-semibold uppercase tracking-[0.08em] text-night-ink-2">
                             <tr>
                                 <th className="px-4 py-2.5">Boutique vendeur</th>
                                 <th className="px-4 py-2.5">Taux dérogatoire</th>
@@ -211,32 +211,32 @@ export default function Index({
                                 <th className="px-4 py-2.5 text-right">Fiche</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-zinc-100">
+                        <tbody className="divide-y divide-night-line">
                             {vendorsWithOverride && vendorsWithOverride.length > 0 ? (
                                 vendorsWithOverride.map((v) => (
-                                    <tr key={v.id} className="hover:bg-zinc-50/60">
-                                        <td className="px-4 py-2.5 font-semibold text-zinc-900">
+                                    <tr key={v.id} className="hover:bg-night-line/50">
+                                        <td className="px-4 py-2.5 font-semibold text-night-ink">
                                             {v.display_name}
                                         </td>
-                                        <td className="px-4 py-2.5 font-mono font-bold text-accent">
+                                        <td className="px-4 py-2.5 font-mono font-bold text-accent-light">
                                             {Math.round(v.commission_rate_override * 100 * 100) / 100} %
                                         </td>
-                                        <td className="px-4 py-2.5 text-zinc-500">
+                                        <td className="px-4 py-2.5 text-night-ink-2">
                                             {v.updated_at ? new Date(v.updated_at).toLocaleDateString('fr-FR') : '—'}
                                         </td>
                                         <td className="px-4 py-2.5 text-right">
                                             <Link
                                                 href={route('admin.marketplace.vendors.show', v.id)}
-                                                className="font-semibold text-accent hover:text-accent-2"
+                                                className="font-semibold text-accent-light hover:text-night-ink"
                                             >
-                                                Voir →
+                                                Voir
                                             </Link>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="px-4 py-6 text-center text-zinc-500">
+                                    <td colSpan="4" className="px-4 py-6 text-center text-night-ink-2">
                                         Aucun vendeur n'a de taux dérogatoire (tous au barème Starter/Growth).
                                     </td>
                                 </tr>

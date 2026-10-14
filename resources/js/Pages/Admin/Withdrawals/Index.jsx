@@ -63,10 +63,10 @@ export default function Index({
                             href={route('admin.withdrawals.index', tab.value ? { status: tab.value } : {})}
                             preserveScroll
                             className={[
-                                'rounded-full px-4 py-1.5 text-xs font-semibold shadow-2xs transition-colors',
+                                'rounded-full px-4 py-1.5 text-xs font-semibold transition-colors',
                                 active
-                                    ? 'bg-zinc-900 text-white'
-                                    : 'border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50',
+                                    ? 'bg-accent-light text-night'
+                                    : 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50',
                             ].join(' ')}
                         >
                             {tab.label}
@@ -76,9 +76,9 @@ export default function Index({
             </div>
 
             {/* TABLEAU DES RETRAITS */}
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xs">
-                <table className="w-full text-left text-xs">
-                    <thead className="border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+            <div className="overflow-x-auto rounded-2xl border border-night-line bg-night-2">
+                <table className="w-full text-left text-sm">
+                    <thead className="border-b border-night-line text-xs font-semibold uppercase tracking-[0.08em] text-night-ink-2">
                         <tr>
                             <th className="px-4 py-3">Référence</th>
                             <th className="px-4 py-3">Affilié</th>
@@ -89,26 +89,26 @@ export default function Index({
                             <th className="px-4 py-3 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-night-line">
                         {withdrawals.data && withdrawals.data.length > 0 ? (
                             withdrawals.data.map((w) => (
-                                <tr key={w.id} className="hover:bg-zinc-50/60">
-                                    <td className="px-4 py-3 font-mono font-semibold text-zinc-900">
+                                <tr key={w.id} className="hover:bg-night-line/50">
+                                    <td className="px-4 py-3 font-mono font-semibold text-night-ink">
                                         {w.reference}
                                     </td>
                                     <td className="px-4 py-3">
-                                        <div className="font-medium text-zinc-900">
+                                        <div className="font-medium text-night-ink">
                                             {w.user ? `${w.user.first_name} ${w.user.last_name}` : '—'}
                                         </div>
-                                        <div className="font-mono text-[11px] text-zinc-400">
+                                        <div className="font-mono text-sm text-night-ink-2">
                                             {w.user?.affiliate_id}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 font-bold text-zinc-900">
+                                    <td className="px-4 py-3 font-bold text-night-ink">
                                         {formatNumber(w.amount)} {w.currency || 'FCFA'}
                                     </td>
-                                    <td className="px-4 py-3 text-zinc-600">{w.method || '—'}</td>
-                                    <td className="px-4 py-3 text-zinc-500">
+                                    <td className="px-4 py-3 text-night-ink-2">{w.method || '—'}</td>
+                                    <td className="px-4 py-3 text-night-ink-2">
                                         {w.requested_at
                                             ? new Date(w.requested_at).toLocaleDateString('fr-FR', {
                                                   day: '2-digit',
@@ -121,22 +121,22 @@ export default function Index({
                                     </td>
                                     <td className="px-4 py-3">
                                         {w.status === 'processing' && (
-                                            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                                            <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
                                                 À traiter
                                             </span>
                                         )}
                                         {w.status === 'paid' && (
-                                            <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
+                                            <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
                                                 Payé
                                             </span>
                                         )}
                                         {w.status === 'failed' && (
-                                            <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-[11px] font-semibold text-rose-800">
+                                            <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
                                                 Échoué
                                             </span>
                                         )}
                                         {w.status === 'cancelled' && (
-                                            <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-semibold text-zinc-600">
+                                            <span className="rounded-full bg-night-line px-2.5 py-0.5 text-xs font-semibold text-night-ink-2">
                                                 Annulé
                                             </span>
                                         )}
@@ -147,21 +147,21 @@ export default function Index({
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedPaid(w)}
-                                                    className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-emerald-700"
+                                                    className="rounded-full bg-sage px-2.5 py-1 text-sm font-semibold text-white hover:bg-sage/85 min-h-11"
                                                 >
                                                     Marquer payé
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedFailed(w)}
-                                                    className="rounded-lg border border-rose-300 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 shadow-2xs hover:bg-rose-50"
+                                                    className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust-tint hover:bg-rust/20 min-h-11"
                                                 >
                                                     Échouer
                                                 </button>
                                             </div>
                                         )}
                                         {w.provider_reference && (
-                                            <span className="font-mono text-[11px] text-zinc-500">
+                                            <span className="font-mono text-xs text-night-ink-2">
                                                 Réf : {w.provider_reference}
                                             </span>
                                         )}
@@ -170,7 +170,7 @@ export default function Index({
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" className="px-4 py-8 text-center text-zinc-500">
+                                <td colSpan="7" className="px-4 py-8 text-center text-night-ink-2">
                                     Aucune demande de retrait trouvée.
                                 </td>
                             </tr>
@@ -181,17 +181,17 @@ export default function Index({
 
             {/* MODAL MARQUER PAYÉ */}
             {selectedPaid && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-                        <h3 className="font-display text-base font-bold text-zinc-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
+                        <h3 className="font-sans text-base font-semibold text-night-ink">
                             Confirmer le paiement
                         </h3>
-                        <p className="mt-1 text-xs text-zinc-600">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             Retrait {selectedPaid.reference} de {formatNumber(selectedPaid.amount)} {selectedPaid.currency} pour {selectedPaid.user?.first_name} {selectedPaid.user?.last_name}.
                         </p>
                         <form onSubmit={submitPaid} className="mt-4 space-y-3">
                             <div>
-                                <label className="text-xs font-medium text-zinc-700">
+                                <label className="text-sm font-medium text-night-ink-2">
                                     Référence de transaction PSP (optionnel)
                                 </label>
                                 <input
@@ -199,21 +199,21 @@ export default function Index({
                                     placeholder="Ex. FED-TRX-839201"
                                     value={paidForm.data.provider_reference}
                                     onChange={(e) => paidForm.setData('provider_reference', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-xs text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                 />
                             </div>
                             <div className="flex justify-end gap-2 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setSelectedPaid(null)}
-                                    className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                                    className="rounded-full border border-night-ink-2/60 bg-night-2 px-3 py-1.5 text-sm font-medium text-night-ink-2 hover:bg-night-line/50 min-h-11"
                                 >
                                     Annuler
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={paidForm.processing}
-                                    className="rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-emerald-700"
+                                    className="rounded-full bg-sage px-4 py-1.5 text-sm font-semibold text-white hover:bg-sage/85 min-h-11"
                                 >
                                     Valider le paiement
                                 </button>
@@ -225,38 +225,38 @@ export default function Index({
 
             {/* MODAL MARQUER ÉCHOUÉ */}
             {selectedFailed && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-                        <h3 className="font-display text-base font-bold text-rose-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
+                        <h3 className="font-sans text-base font-semibold text-rust-tint">
                             Marquer comme échoué
                         </h3>
-                        <p className="mt-1 text-xs text-zinc-600">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             Les fonds seront automatiquement recrédités sur le solde de l'affilié.
                         </p>
                         <form onSubmit={submitFailed} className="mt-4 space-y-3">
                             <div>
-                                <label className="text-xs font-medium text-zinc-700">Motif du rejet</label>
+                                <label className="text-sm font-medium text-night-ink-2">Motif du rejet</label>
                                 <textarea
                                     required
                                     rows="3"
                                     placeholder="Ex. Compte destinataire invalide / Rejet opérateur Mobile Money"
                                     value={failedForm.data.reason}
                                     onChange={(e) => failedForm.setData('reason', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-zinc-300 p-2 text-xs text-zinc-900 shadow-2xs focus:border-rose-500 focus:outline-none"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 p-2 text-sm text-night-ink focus:border-rust focus:outline-none"
                                 />
                             </div>
                             <div className="flex justify-end gap-2 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setSelectedFailed(null)}
-                                    className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                                    className="rounded-full border border-night-ink-2/60 bg-night-2 px-3 py-1.5 text-sm font-medium text-night-ink-2 hover:bg-night-line/50 min-h-11"
                                 >
                                     Fermer
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={failedForm.processing}
-                                    className="rounded-lg bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-rose-700"
+                                    className="rounded-full bg-rust px-4 py-1.5 text-sm font-semibold text-white hover:bg-rust/85 min-h-11"
                                 >
                                     Confirmer l'échec & recréditer
                                 </button>

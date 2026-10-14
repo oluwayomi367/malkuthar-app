@@ -10,7 +10,7 @@ use App\Models\Setting;
  */
 class StorefrontSettings
 {
-    public const DEFAULT_TICKER = "✨ Créations & savoirs d'exception pour tous vos projets · ⚡ Téléchargement immédiat 24/7 · 📦 Expédition soignée à domicile · 🤝 Affiliation 3 niveaux (jusqu'à 30 %) · 💳 Paiements sécurisés Mobile Money & Cartes";
+    public const DEFAULT_TICKER = "Téléchargement immédiat des contenus digitaux · Livraison à domicile · Paiement Mobile Money ou carte · Programme d'affiliation sur trois niveaux";
 
     public static function announcementTicker(): string
     {

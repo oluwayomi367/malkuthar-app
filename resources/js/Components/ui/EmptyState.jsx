@@ -10,15 +10,13 @@ const PATHS = {
 
 export default function EmptyState({ icon, title = 'Rien à afficher', text, cta, className = '' }) {
     return (
-        <div className={['rounded-2xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center', className].filter(Boolean).join(' ')}>
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-ground-alt text-ink-3">
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={PATHS[icon] ?? PATHS.box} />
-                </svg>
-            </div>
-            <p className="mt-4 font-display text-base font-semibold text-ink">{title}</p>
-            {text && <p className="mx-auto mt-1.5 max-w-sm text-sm text-ink-2">{text}</p>}
-            {cta && <div className="mt-5 flex flex-wrap justify-center gap-2">{cta}</div>}
+        <div className={['rounded-2xl border border-line bg-surface px-6 py-12 text-center', className].filter(Boolean).join(' ')}>
+            <svg className="mx-auto h-7 w-7 text-ink-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d={PATHS[icon] ?? PATHS.box} />
+            </svg>
+            <p className="mt-4 text-base font-semibold text-ink">{title}</p>
+            {text && <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-2">{text}</p>}
+            {cta && <div className="mt-6 flex flex-wrap justify-center gap-2">{cta}</div>}
         </div>
     );
 }

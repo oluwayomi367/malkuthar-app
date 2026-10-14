@@ -115,21 +115,21 @@ export default function Index({ categories = [], tree = [], editing = null }) {
             <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
                 {/* ============ ARBRE DES CATEGORIES ============ */}
                 <div>
-                    <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs">
-                        <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                            <h2 className="font-serif text-base font-semibold text-zinc-900">
+                    <div className="rounded-2xl border border-night-line bg-night-2 p-5">
+                        <div className="flex items-center justify-between pb-3 border-b border-night-line">
+                            <h2 className="font-sans text-base font-semibold text-night-ink">
                                 Arbre ({categories.length})
                             </h2>
                             <Link
                                 href={route('admin.marketplace.categories.index')}
-                                className="text-xs font-semibold text-accent hover:underline"
+                                className="text-xs font-semibold text-accent-light hover:underline"
                             >
                                 + Nouvelle racine
                             </Link>
                         </div>
 
                         {tree.length === 0 ? (
-                            <p className="mt-4 text-sm text-zinc-500">
+                            <p className="mt-4 text-sm text-night-ink-2">
                                 Aucune catégorie. Créez-en une avec le formulaire.
                             </p>
                         ) : (
@@ -144,21 +144,21 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                 preserveScroll
                                                 className={`flex items-center justify-between rounded-xl px-2.5 py-2 transition-colors ${
                                                     isSelected
-                                                        ? 'bg-accent/10 font-bold text-accent'
-                                                        : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900'
+                                                        ? 'bg-accent-light/10 font-bold text-accent-light'
+                                                        : 'text-night-ink-2 hover:bg-night-line hover:text-night-ink'
                                                 }`}
                                                 style={{ paddingLeft: `${0.5 + row.depth * 1.1}rem` }}
                                             >
                                                 <span className="flex items-center gap-1.5">
-                                                    {row.depth > 0 && <span className="text-zinc-400">└</span>}
+                                                    {row.depth > 0 && <span className="text-night-ink-2">└</span>}
                                                     {cat.name}
                                                     {!cat.is_active && (
-                                                        <span className="rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-rose-700">
+                                                        <span className="rounded bg-rust/20 px-1.5 py-0.5 text-xs font-bold uppercase text-rust-tint">
                                                             masquée
                                                         </span>
                                                     )}
                                                 </span>
-                                                <span className="text-[11px] font-medium text-zinc-400">
+                                                <span className="text-xs font-medium text-night-ink-2">
                                                     {cat.fields_count ?? (cat.fields ? cat.fields.length : 0)} ch.
                                                 </span>
                                             </Link>
@@ -174,17 +174,17 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                 <div className="space-y-6">
                     <form
                         onSubmit={handleCategorySubmit}
-                        className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-xs"
+                        className="rounded-2xl border border-night-line bg-night-2 p-6 "
                     >
-                        <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                            <h2 className="font-serif text-base font-semibold text-zinc-900">
+                        <div className="flex items-center justify-between pb-3 border-b border-night-line">
+                            <h2 className="font-sans text-base font-semibold text-night-ink">
                                 {editing ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
                             </h2>
                             {editing && (
                                 <button
                                     type="button"
                                     onClick={handleDeleteCategory}
-                                    className="text-xs font-semibold text-rose-600 hover:underline"
+                                    className="text-xs font-semibold text-rust-tint hover:underline"
                                 >
                                     Supprimer
                                 </button>
@@ -194,25 +194,25 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                         <div className="mt-4 grid gap-4">
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label className="block text-xs font-medium text-zinc-700">Nom *</label>
+                                    <label className="block text-sm font-medium text-night-ink-2">Nom *</label>
                                     <input
                                         type="text"
                                         required
                                         value={categoryForm.data.name}
                                         onChange={(e) => categoryForm.setData('name', e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                     />
                                     {categoryForm.errors.name && (
-                                        <p className="mt-1 text-xs text-rose-600">{categoryForm.errors.name}</p>
+                                        <p className="mt-1 text-xs text-rust-tint">{categoryForm.errors.name}</p>
                                     )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium text-zinc-700">Parent</label>
+                                    <label className="block text-sm font-medium text-night-ink-2">Parent</label>
                                     <select
                                         value={categoryForm.data.parent_id}
                                         onChange={(e) => categoryForm.setData('parent_id', e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-800 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 h-10 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                     >
                                         <option value="">— racine —</option>
                                         {categories.map((c) => {
@@ -226,38 +226,38 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         })}
                                     </select>
                                     {categoryForm.errors.parent_id && (
-                                        <p className="mt-1 text-xs text-rose-600">{categoryForm.errors.parent_id}</p>
+                                        <p className="mt-1 text-xs text-rust-tint">{categoryForm.errors.parent_id}</p>
                                     )}
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-zinc-700">Description</label>
+                                <label className="block text-sm font-medium text-night-ink-2">Description</label>
                                 <textarea
                                     rows="2"
                                     value={categoryForm.data.description}
                                     onChange={(e) => categoryForm.setData('description', e.target.value)}
-                                    className="mt-1 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                    className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none"
                                 />
                             </div>
 
                             <div>
-                                <span className="block text-xs font-medium text-zinc-700">Types d'offres admis *</span>
+                                <span className="block text-xs font-medium text-night-ink-2">Types d'offres admis *</span>
                                 <div className="mt-2 flex flex-wrap gap-4">
                                     {types.map((t) => (
-                                        <label key={t.id} className="inline-flex items-center gap-2 text-xs font-medium text-zinc-800 cursor-pointer">
+                                        <label key={t.id} className="inline-flex items-center gap-2 text-sm font-medium text-night-ink cursor-pointer">
                                             <input
                                                 type="checkbox"
                                                 checked={categoryForm.data.applicable_offer_types.includes(t.id)}
                                                 onChange={() => toggleOfferType(t.id)}
-                                                className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                                className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                             />
                                             {t.label}
                                         </label>
                                     ))}
                                 </div>
                                 {categoryForm.errors.applicable_offer_types && (
-                                    <p className="mt-1 text-xs text-rose-600">
+                                    <p className="mt-1 text-xs text-rust-tint">
                                         {categoryForm.errors.applicable_offer_types}
                                     </p>
                                 )}
@@ -265,7 +265,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
 
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div>
-                                    <label className="block text-xs font-medium text-zinc-700">Commission (%)</label>
+                                    <label className="block text-sm font-medium text-night-ink-2">Commission (%)</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -274,28 +274,28 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         placeholder="défaut"
                                         value={categoryForm.data.commission_rate_percent}
                                         onChange={(e) => categoryForm.setData('commission_rate_percent', e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium text-zinc-700">Position</label>
+                                    <label className="block text-sm font-medium text-night-ink-2">Position</label>
                                     <input
                                         type="number"
                                         min="0"
                                         value={categoryForm.data.position}
                                         onChange={(e) => categoryForm.setData('position', e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                     />
                                 </div>
 
                                 <div className="flex items-center pt-5">
-                                    <label className="inline-flex items-center gap-2 text-xs font-medium text-zinc-800 cursor-pointer">
+                                    <label className="inline-flex items-center gap-2 text-sm font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={categoryForm.data.is_active}
                                             onChange={(e) => categoryForm.setData('is_active', e.target.checked)}
-                                            className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Active
                                     </label>
@@ -303,12 +303,12 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                             </div>
 
                             {/* REGLES */}
-                            <fieldset className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
-                                <legend className="px-1 text-[11px] font-bold uppercase tracking-wider text-zinc-600">
+                            <fieldset className="rounded-xl border border-night-line bg-night p-4">
+                                <legend className="px-1 text-xs font-bold uppercase tracking-wider text-night-ink-2">
                                     Règles
                                 </legend>
                                 <div className="grid gap-3 sm:grid-cols-2">
-                                    <label className="inline-flex items-center gap-2 text-xs font-medium text-zinc-800 cursor-pointer">
+                                    <label className="inline-flex items-center gap-2 text-sm font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={categoryForm.data.ruleset.require_approval}
@@ -318,11 +318,11 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     require_approval: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Validation admin obligatoire
                                     </label>
-                                    <label className="inline-flex items-center gap-2 text-xs font-medium text-zinc-800 cursor-pointer">
+                                    <label className="inline-flex items-center gap-2 text-sm font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={categoryForm.data.ruleset.requires_shipping}
@@ -332,11 +332,11 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     requires_shipping: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Livraison requise
                                     </label>
-                                    <label className="inline-flex items-center gap-2 text-xs font-medium text-zinc-800 cursor-pointer">
+                                    <label className="inline-flex items-center gap-2 text-sm font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={categoryForm.data.ruleset.allow_variants}
@@ -346,7 +346,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     allow_variants: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Variantes autorisées
                                     </label>
@@ -364,7 +364,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     min_price: e.target.value,
                                                 })
                                             }
-                                            className="h-8 rounded-lg border border-zinc-300 bg-white px-2 text-xs text-zinc-900 shadow-2xs"
+                                            className="h-11 rounded-lg border border-night-ink-2/60 bg-night px-2 text-sm text-night-ink"
                                         />
                                         <input
                                             type="number"
@@ -378,7 +378,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     max_price: e.target.value,
                                                 })
                                             }
-                                            className="h-8 rounded-lg border border-zinc-300 bg-white px-2 text-xs text-zinc-900 shadow-2xs"
+                                            className="h-11 rounded-lg border border-night-ink-2/60 bg-night px-2 text-sm text-night-ink"
                                         />
                                         <input
                                             type="number"
@@ -392,7 +392,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     max_images: e.target.value,
                                                 })
                                             }
-                                            className="h-8 rounded-lg border border-zinc-300 bg-white px-2 text-xs text-zinc-900 shadow-2xs"
+                                            className="h-11 rounded-lg border border-night-ink-2/60 bg-night px-2 text-sm text-night-ink"
                                         />
                                     </div>
                                 </div>
@@ -402,7 +402,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                 <button
                                     type="submit"
                                     disabled={categoryForm.processing}
-                                    className="rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-accent-2 disabled:opacity-50"
+                                    className="rounded-full bg-accent-light px-5 py-2.5 text-sm font-bold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
                                 >
                                     {editing ? 'Enregistrer les modifications' : 'Créer la catégorie'}
                                 </button>
@@ -412,28 +412,28 @@ export default function Index({ categories = [], tree = [], editing = null }) {
 
                     {/* ============ CHAMPS PERSONNALISES ============ */}
                     {editing && (
-                        <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-xs">
-                            <h2 className="font-serif text-base font-semibold text-zinc-900">
+                        <div className="rounded-2xl border border-night-line bg-night-2 p-6">
+                            <h2 className="font-sans text-base font-semibold text-night-ink">
                                 Champs personnalisés — {editing.name}
                             </h2>
-                            <p className="mt-1 text-xs text-zinc-500">
+                            <p className="mt-1 text-xs text-night-ink-2">
                                 Les offres de cette catégorie héritent aussi des champs de ses catégories parentes.
                             </p>
 
                             {editing.fields && editing.fields.length > 0 && (
-                                <table className="mt-4 w-full text-xs">
-                                    <tbody className="divide-y divide-zinc-100">
+                                <table className="mt-4 w-full text-sm">
+                                    <tbody className="divide-y divide-night-line">
                                         {editing.fields.map((f) => (
-                                            <tr key={f.id} className="hover:bg-zinc-50/50">
+                                            <tr key={f.id} className="hover:bg-night-line/50">
                                                 <td className="py-2.5">
-                                                    <span className="font-mono text-[11px] text-zinc-400">{f.key}</span>
-                                                    <span className="ml-2 font-medium text-zinc-900">{f.label}</span>
+                                                    <span className="font-mono text-xs text-night-ink-2">{f.key}</span>
+                                                    <span className="ml-2 font-medium text-night-ink">{f.label}</span>
                                                 </td>
-                                                <td className="py-2.5 text-zinc-600">
+                                                <td className="py-2.5 text-night-ink-2">
                                                     {fieldTypes.find((t) => t.id === f.type)?.label || f.type}
                                                 </td>
-                                                <td className="py-2.5 text-[11px] text-zinc-400">
-                                                    {f.is_required && <span className="mr-1 text-amber-700 font-semibold">requis</span>}
+                                                <td className="py-2.5 text-sm text-night-ink-2">
+                                                    {f.is_required && <span className="mr-1 text-amber-tint font-semibold">requis</span>}
                                                     {f.is_filterable && <span>· facette </span>}
                                                     {f.is_variant_axis && <span>· variante</span>}
                                                 </td>
@@ -441,7 +441,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDeleteField(f.id)}
-                                                        className="text-[11px] font-semibold text-rose-600 hover:underline"
+                                                        className="text-xs font-semibold text-rust-tint hover:underline"
                                                     >
                                                         Supprimer
                                                     </button>
@@ -452,24 +452,24 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                 </table>
                             )}
 
-                            <form onSubmit={handleFieldSubmit} className="mt-5 border-t border-zinc-100 pt-4 grid gap-3">
+                            <form onSubmit={handleFieldSubmit} className="mt-5 border-t border-night-line pt-4 grid gap-3">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                     <div>
-                                        <label className="block text-xs font-medium text-zinc-700">Libellé *</label>
+                                        <label className="block text-sm font-medium text-night-ink-2">Libellé *</label>
                                         <input
                                             type="text"
                                             required
                                             value={fieldForm.data.label}
                                             onChange={(e) => fieldForm.setData('label', e.target.value)}
-                                            className="mt-1 h-9 w-full rounded-xl border border-zinc-300 bg-white px-3 text-xs text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                            className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-zinc-700">Type</label>
+                                        <label className="block text-sm font-medium text-night-ink-2">Type</label>
                                         <select
                                             value={fieldForm.data.type}
                                             onChange={(e) => fieldForm.setData('type', e.target.value)}
-                                            className="mt-1 h-9 w-full rounded-xl border border-zinc-300 bg-white px-3 text-xs text-zinc-800 shadow-2xs focus:border-accent focus:outline-none"
+                                            className="mt-1 h-9 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none"
                                         >
                                             {fieldTypes.map((ft) => (
                                                 <option key={ft.id} value={ft.id}>
@@ -481,7 +481,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium text-zinc-700">
+                                    <label className="block text-sm font-medium text-night-ink-2">
                                         Clé machine (facultatif — déduite du libellé)
                                     </label>
                                     <input
@@ -489,53 +489,53 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         placeholder="ex. matiere"
                                         value={fieldForm.data.key}
                                         onChange={(e) => fieldForm.setData('key', e.target.value)}
-                                        className="mt-1 h-9 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-xs text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 font-mono text-sm text-night-ink focus:border-accent-light focus:outline-none"
                                     />
                                     {fieldForm.errors.key && (
-                                        <p className="mt-1 text-xs text-rose-600">{fieldForm.errors.key}</p>
+                                        <p className="mt-1 text-xs text-rust-tint">{fieldForm.errors.key}</p>
                                     )}
                                 </div>
 
                                 {(fieldForm.data.type === 'select' || fieldForm.data.type === 'multiselect') && (
                                     <div>
-                                        <label className="block text-xs font-medium text-zinc-700">
+                                        <label className="block text-sm font-medium text-night-ink-2">
                                             Options (une par ligne)
                                         </label>
                                         <textarea
                                             rows="3"
                                             value={fieldForm.data.options_text}
                                             onChange={(e) => fieldForm.setData('options_text', e.target.value)}
-                                            className="mt-1 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none"
                                         />
                                     </div>
                                 )}
 
-                                <div className="flex flex-wrap gap-4 pt-1 text-xs">
-                                    <label className="inline-flex items-center gap-1.5 font-medium text-zinc-800 cursor-pointer">
+                                <div className="flex flex-wrap gap-4 pt-1 text-sm">
+                                    <label className="inline-flex items-center gap-1.5 font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={fieldForm.data.is_required}
                                             onChange={(e) => fieldForm.setData('is_required', e.target.checked)}
-                                            className="h-3.5 w-3.5 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Requis
                                     </label>
-                                    <label className="inline-flex items-center gap-1.5 font-medium text-zinc-800 cursor-pointer">
+                                    <label className="inline-flex items-center gap-1.5 font-medium text-night-ink cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={fieldForm.data.is_filterable}
                                             onChange={(e) => fieldForm.setData('is_filterable', e.target.checked)}
-                                            className="h-3.5 w-3.5 rounded border-zinc-300 text-accent focus:ring-accent"
+                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                         />
                                         Facette de recherche
                                     </label>
                                     {fieldForm.data.type === 'select' && (
-                                        <label className="inline-flex items-center gap-1.5 font-medium text-zinc-800 cursor-pointer">
+                                        <label className="inline-flex items-center gap-1.5 font-medium text-night-ink cursor-pointer">
                                             <input
                                                 type="checkbox"
                                                 checked={fieldForm.data.is_variant_axis}
                                                 onChange={(e) => fieldForm.setData('is_variant_axis', e.target.checked)}
-                                                className="h-3.5 w-3.5 rounded border-zinc-300 text-accent focus:ring-accent"
+                                                className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                             />
                                             Axe de variante
                                         </label>
@@ -546,7 +546,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                     <button
                                         type="submit"
                                         disabled={fieldForm.processing}
-                                        className="rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-2 text-xs font-bold text-zinc-800 shadow-2xs transition-colors hover:bg-zinc-200 disabled:opacity-50"
+                                        className="rounded-full border border-night-ink-2/60 bg-night-line px-4 py-2 text-sm font-bold text-night-ink transition-colors hover:bg-night-ink-2/25 disabled:opacity-50 min-h-11"
                                     >
                                         Ajouter le champ
                                     </button>

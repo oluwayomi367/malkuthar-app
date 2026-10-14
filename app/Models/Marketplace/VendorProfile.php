@@ -75,6 +75,11 @@ class VendorProfile extends Model
         return $this->hasMany(VendorDocument::class);
     }
 
+    public function offers(): HasMany
+    {
+        return $this->hasMany(MarketplaceOffer::class, 'vendor_profile_id');
+    }
+
     public function balance(): HasOne
     {
         return $this->hasOne(VendorBalance::class, 'vendor_profile_id');

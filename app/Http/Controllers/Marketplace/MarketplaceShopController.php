@@ -281,7 +281,7 @@ class MarketplaceShopController extends Controller
     }
 
     /** Forme envoyée pour chaque carte d'offre (grille boutique, vendeur, offres liées). */
-    private function cardPayload(MarketplaceOffer $offer): array
+    public static function cardPayload(MarketplaceOffer $offer): array
     {
         $colors = $offer->relationLoaded('variants')
             ? $offer->variants

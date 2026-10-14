@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import Badge from '../ui/Badge';
 import RosetteBadge from './RosetteBadge';
-
-const TYPE_LABELS = { digital: 'Digital', physical: 'Physique', service: 'Service' };
 
 export default function ProductGallery({ product, className = '' }) {
     const images = [product.main_image, ...(product.gallery ?? [])].filter(Boolean)
@@ -14,36 +11,35 @@ export default function ProductGallery({ product, className = '' }) {
 
     return (
         <div className={className}>
-            <div className="relative overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-xs">
-                <div className="aspect-[4/5] flex items-center justify-center overflow-hidden rounded-xl">
+            <div className="relative overflow-hidden rounded-2xl border border-line bg-surface">
+                <div className="flex aspect-square items-center justify-center">
                     {images.length ? (
                         images.map((img, i) => (
-                            <img key={img} src={img} alt={product.name} hidden={current !== i}
-                                 className="max-h-full max-w-full object-contain" />
+                            <img key={img} src={img} alt={i === 0 ? product.name : `${product.name} — vue ${i + 1}`} hidden={current !== i}
+                                 className="h-full w-full object-contain" />
                         ))
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center text-ink-3">
-                            <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1">
+                        <div className="flex h-full w-full items-center justify-center bg-ground-alt text-ink-3">
+                            <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
                                 <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 15l5-5 4 4 3-3 6 6" /><circle cx="9" cy="9" r="1.5" />
                             </svg>
                         </div>
                     )}
                 </div>
-                <span className="absolute left-3 top-3">
-                    <Badge tone="ink" className="bg-ground/90 backdrop-blur">{TYPE_LABELS[product.type] ?? product.type}</Badge>
-                </span>
                 {hasSale && (
-                    <div className="absolute right-3 top-3">
+                    <span className="absolute left-3 top-3">
                         <RosetteBadge discount={discountPercent} />
-                    </div>
+                    </span>
                 )}
             </div>
 
             {images.length > 1 && (
-                <div className="mt-3 flex gap-2">
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                     {images.map((img, i) => (
                         <button key={img} type="button" onClick={() => setCurrent(i)}
-                                className={['h-14 w-14 shrink-0 overflow-hidden rounded-md border', current === i ? 'border-ink' : 'border-line'].join(' ')}>
+                                aria-label={`Afficher la vue ${i + 1}`} aria-pressed={current === i}
+                                className={['h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-surface transition-colors',
+                                    current === i ? 'border-ink' : 'border-line hover:border-line-strong'].join(' ')}>
                             <img src={img} alt="" className="h-full w-full object-cover" />
                         </button>
                     ))}
@@ -51,7 +47,7 @@ export default function ProductGallery({ product, className = '' }) {
             )}
 
             {product.presentation_video && (
-                <div className="mt-3 overflow-hidden rounded-lg border border-line">
+                <div className="mt-3 overflow-hidden rounded-2xl border border-line">
                     <video src={product.presentation_video} controls preload="none" className="aspect-video w-full bg-ink" />
                 </div>
             )}

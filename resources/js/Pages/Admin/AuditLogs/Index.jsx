@@ -25,7 +25,7 @@ export default function Index({
                 <select
                     value={action || ''}
                     onChange={handleActionChange}
-                    className="rounded-xl border border-zinc-300 bg-white px-3.5 py-2 text-xs font-medium text-zinc-800 shadow-2xs focus:border-accent focus:outline-none"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm font-medium text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                 >
                     <option value="">Toutes les actions</option>
                     {actions.map((a) => (
@@ -38,7 +38,7 @@ export default function Index({
                     <button
                         type="button"
                         onClick={() => router.get(route('admin.audit-logs.index'))}
-                        className="text-xs text-zinc-500 hover:text-zinc-800 underline"
+                        className="text-xs text-night-ink-2 hover:text-night-ink underline"
                     >
                         Réinitialiser
                     </button>
@@ -46,18 +46,18 @@ export default function Index({
             </div>
 
             {/* LISTE DES JOURNAUX */}
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-night-line bg-night-2">
                 {logs.data && logs.data.length > 0 ? (
-                    <div className="divide-y divide-zinc-100">
+                    <div className="divide-y divide-night-line">
                         {logs.data.map((log) => (
                             <div
                                 key={log.id}
-                                className="flex flex-wrap items-start justify-between gap-4 px-5 py-4 text-xs transition-colors hover:bg-zinc-50/60"
+                                className="flex flex-wrap items-start justify-between gap-4 px-5 py-4 text-sm transition-colors hover:bg-night-line/50"
                             >
                                 <div className="min-w-0 flex-1">
-                                    <p className="font-semibold text-zinc-900">{log.description}</p>
-                                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-zinc-500">
-                                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 font-bold text-zinc-700">
+                                    <p className="font-semibold text-night-ink">{log.description}</p>
+                                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm text-night-ink-2">
+                                        <span className="rounded bg-night-line px-1.5 py-0.5 font-bold text-night-ink-2">
                                             {log.action}
                                         </span>
                                         {log.ip_address && <span>IP : {log.ip_address}</span>}
@@ -68,11 +68,11 @@ export default function Index({
                                         )}
                                     </div>
                                 </div>
-                                <div className="shrink-0 text-right text-zinc-500">
-                                    <p className="font-medium text-zinc-800">
+                                <div className="shrink-0 text-right text-night-ink-2">
+                                    <p className="font-medium text-night-ink">
                                         {log.admin ? `${log.admin.first_name} ${log.admin.last_name}` : 'Système'}
                                     </p>
-                                    <p className="mt-0.5 text-[11px] text-zinc-400">
+                                    <p className="mt-0.5 text-xs text-night-ink-2">
                                         {log.created_at
                                             ? new Date(log.created_at).toLocaleDateString('fr-FR', {
                                                   day: '2-digit',
@@ -88,7 +88,7 @@ export default function Index({
                         ))}
                     </div>
                 ) : (
-                    <div className="px-5 py-12 text-center text-xs text-zinc-500">
+                    <div className="px-5 py-12 text-center text-sm text-night-ink-2">
                         Aucune action enregistrée pour ce filtre.
                     </div>
                 )}

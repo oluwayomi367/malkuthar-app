@@ -3,14 +3,14 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-ground font-sans text-ink antialiased">
+<body class="flex min-h-screen flex-col bg-ground font-sans text-ink antialiased">
     @include('partials.tracking-body')
 
     <x-layout.navbar-public />
 
     @include('partials.flash')
 
-    <main>
+    <main class="flex-1">
         {{ $slot ?? '' }}
         @yield('content')
     </main>

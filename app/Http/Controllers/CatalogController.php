@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Support\Catalog;
+use App\Support\StorefrontHome;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -21,13 +22,14 @@ use Inertia\Response;
 class CatalogController extends Controller
 {
     /**
-     * GET / — Page d'accueil : présentation de la maison, sans catalogue.
-     * Les produits vivent exclusivement sur /boutique.
+     * GET / — Page d'accueil « boutique » : nouveautés, meilleures ventes,
+     * promotions et créateurs (boutique maison + place de marché).
      */
     public function home(): Response
     {
         return Inertia::render('Home', [
             'categories' => Catalog::categories(),
+            ...StorefrontHome::sections(),
         ]);
     }
 
@@ -141,7 +143,7 @@ class CatalogController extends Controller
         return $type === 'physical' ? ['variants'] : [];
     }
 
-    private function cardPayload(Product $p): array
+    public static function cardPayload(Product $p): array
     {
         $colors = $p->relationLoaded('variants')
             ? $p->variants

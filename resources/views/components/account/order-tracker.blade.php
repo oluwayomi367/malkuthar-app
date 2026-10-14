@@ -1,41 +1,52 @@
 @props(['order'])
 
 @php
-    $steps = ['Payée', 'En préparation', 'Expédiée', 'En livraison', 'Livrée'];
-    $index = ['paid' => 0, 'preparing' => 1, 'shipped' => 2, 'in_delivery' => 3, 'delivered' => 4][$order->shipping_status] ?? 0;
+    // Quatre étapes après le paiement (mêmes étapes que le suivi côté admin).
+    $steps = [
+        'preparing' => 'En préparation',
+        'shipped' => 'Expédiée',
+        'in_delivery' => 'En livraison',
+        'delivered' => 'Livrée',
+    ];
+    $keys = array_keys($steps);
+    $status = $order->shipping_status;
+    $reached = in_array($status, $keys, true) ? array_search($status, $keys, true) + 1 : 0;
+    $current = $reached > 0 ? $steps[$status] : 'Payée, en attente de préparation';
 @endphp
 
 <div {{ $attributes }}>
-    <div class="flex items-center">
-        @foreach ($steps as $i => $label)
-            <div class="flex flex-1 items-center @if ($i === count($steps) - 1) flex-none @endif">
+    <p class="text-sm text-ink-2">
+        Statut : <span class="font-semibold text-ink">{{ $current }}</span>
+    </p>
+
+    <ol class="mt-3 grid grid-cols-4 gap-1.5" aria-label="Étapes de livraison">
+        @foreach ($steps as $key => $label)
+            @php $done = $loop->iteration <= $reached; @endphp
+            <li @if ($loop->iteration === $reached) aria-current="step" @endif>
                 <span @class([
-                    'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold',
-                    'border-accent bg-accent text-white' => $i <= $index,
-                    'border-black/15 text-ink-3' => $i > $index,
+                    'block h-1.5 rounded-full',
+                    'bg-ink' => $done,
+                    'bg-line' => ! $done,
+                ])></span>
+                <span @class([
+                    'mt-2 block text-xs leading-tight',
+                    'font-semibold text-ink' => $loop->iteration === $reached,
+                    'text-ink-2' => $done && $loop->iteration !== $reached,
+                    'text-ink-3' => ! $done,
                 ])>
-                    @if ($i < $index)
-                        <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 6.5l2.5 2.5 4.5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    @else
-                        {{ $i + 1 }}
-                    @endif
+                    {{ $label }}<span class="sr-only">{{ $done ? ' (atteinte)' : ' (à venir)' }}</span>
                 </span>
-                @if ($i < count($steps) - 1)
-                    <span @class(['h-px flex-1', 'bg-accent' => $i < $index, 'bg-black/[0.06]' => $i >= $index])></span>
-                @endif
-            </div>
+            </li>
         @endforeach
-    </div>
-    <div class="mt-2 flex justify-between text-[10.5px] text-ink-3">
-        @foreach ($steps as $i => $label)
-            <span @class(['w-12 text-center', 'text-ink' => $i === $index]) @if ($i === 0) class="w-12 text-left" @elseif ($i === count($steps) - 1) class="w-12 text-right" @endif>{{ $label }}</span>
-        @endforeach
-    </div>
+    </ol>
 
     @if ($order->tracking_number || $order->shipping_carrier)
-        <p class="mt-3 text-xs text-ink-2">
+        <p class="mt-4 text-sm text-ink-2">
             {{ $order->shipping_carrier }}
-            @if ($order->tracking_number) · Suivi <span class="font-mono text-ink">{{ $order->tracking_number }}</span>@endif
+            @if ($order->tracking_number)
+                @if ($order->shipping_carrier) · @endif
+                Numéro de suivi <span class="font-mono text-ink">{{ $order->tracking_number }}</span>
+            @endif
         </p>
     @endif
 </div>

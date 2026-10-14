@@ -1,5 +1,5 @@
 @if (session('status') || session('success') || session('error'))
-    <div class="mx-auto w-full max-w-2xl px-4 pt-4">
+    <div class="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:px-6">
         @if (session('error'))
             <x-ui.alert tone="error">{{ session('error') }}</x-ui.alert>
         @elseif (session('success'))

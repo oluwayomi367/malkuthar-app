@@ -12,19 +12,16 @@
 @endphp
 
 @if ($isLocked && $activeCode)
-    <div class="group flex flex-col gap-1.5">
-        <div class="flex items-center justify-between">
-            <label for="referral_code" class="flex items-center gap-1.5 text-[12.5px] font-semibold tracking-wide text-ink">
-                <svg class="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span>Code de parrainage</span>
-                <span class="inline-flex items-center rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/30">
-                    Lien détecté — Verrouillé
-                </span>
+    <div class="flex flex-col gap-1.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="referral_code" class="text-[12.5px] font-semibold tracking-wide text-ink-2">
+                Code de parrainage
             </label>
-            <span class="text-[11px] font-semibold text-accent flex items-center gap-1">
-                <span>🔒</span> Non modifiable
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-ink-3">
+                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" stroke-linecap="round" />
+                </svg>
+                Lien détecté — Verrouillé
             </span>
         </div>
 
@@ -34,20 +31,20 @@
                 name="referral_code"
                 type="text"
                 readonly
-                tabindex="-1"
+                aria-describedby="referral_code_help"
                 value="{{ $activeCode }}"
-                class="h-11 w-full rounded-xl border border-accent/40 bg-accent-soft/20 px-3.5 font-mono text-[14.5px] font-bold text-ink cursor-not-allowed select-none shadow-inner focus:outline-none focus:ring-0"
+                class="h-11 w-full cursor-not-allowed rounded-xl border border-line bg-ground-alt px-3.5 pr-36 font-mono text-[14.5px] font-semibold text-ink focus:outline-none"
             >
-            <div class="absolute right-3 flex items-center gap-1.5 rounded-lg bg-surface/90 border border-line/70 px-2 py-1 text-[11px] font-semibold text-brand-green select-none pointer-events-none shadow-xs">
-                <svg class="h-3.5 w-3.5 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <span class="pointer-events-none absolute right-2 inline-flex max-w-[8.5rem] items-center gap-1.5 truncate rounded-lg border border-line bg-surface px-2 py-1 text-xs font-medium text-sage">
+                <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span>{{ $sponsor ? ($sponsor->first_name ?: 'Parrain validé') : 'Parrain validé' }}</span>
-            </div>
+                <span class="truncate">{{ $sponsor ? ($sponsor->first_name ?: 'Parrain validé') : 'Parrain validé' }}</span>
+            </span>
         </div>
 
-        <p class="text-[11px] leading-relaxed text-ink-3">
-            Ce code provient du lien de recommandation que vous avez suivi. Il est sécurisé et ne peut pas être modifié.
+        <p id="referral_code_help" class="text-xs leading-relaxed text-ink-3">
+            Non modifiable : ce code provient du lien de recommandation que vous avez suivi.
         </p>
     </div>
 @else

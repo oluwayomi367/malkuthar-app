@@ -37,38 +37,48 @@ export default function BookingCalendar({ product, onPick, className = '' }) {
     };
 
     return (
-        <div className={['rounded-lg border border-line bg-ground p-4', className].filter(Boolean).join(' ')}>
-            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-3">Choisir un créneau</p>
+        <div className={['rounded-xl border border-line bg-ground p-4', className].filter(Boolean).join(' ')}>
+            <h3 className="text-base font-semibold text-ink">Choisir un créneau</h3>
 
-            <label className="mt-3 block text-[13px] font-semibold text-ink-2">
-                Date
-                <input type="date" value={date} min={new Date().toISOString().slice(0, 10)}
-                       onChange={(e) => { setDate(e.target.value); loadSlots(e.target.value); }}
-                       className="mt-1 h-11 w-full rounded-md border border-line-strong/25 bg-ground px-3 text-[15px] text-ink focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10" />
-            </label>
+            <label className="mt-3 block text-sm font-medium text-ink-2" htmlFor={`rdv-date-${product.id}`}>Date</label>
+            <input id={`rdv-date-${product.id}`} type="date" value={date} min={new Date().toISOString().slice(0, 10)}
+                   onChange={(e) => { setDate(e.target.value); loadSlots(e.target.value); }}
+                   className="mt-1.5 h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-base text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
 
             {date && (
-                <div className="mt-4">
-                    {loading && <p className="text-[13px] text-ink-3">Chargement…</p>}
-                    {!loading && error && <p className="text-[13px] text-rust">{error}</p>}
+                <div className="mt-4" aria-live="polite">
+                    {loading && <p className="text-sm text-ink-3">Chargement des créneaux…</p>}
+                    {!loading && error && <p className="text-sm text-rust">{error}</p>}
                     {!loading && !error && slots.length === 0 && (
-                        <p className="text-[13px] text-rust">Aucun créneau disponible ce jour-là.</p>
+                        <p className="text-sm text-ink-2">Aucun créneau disponible ce jour-là. Essayez une autre date.</p>
                     )}
                     {!loading && slots.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                            {slots.map((s) => (
-                                <button key={s} type="button" onClick={() => pick(s)}
-                                        className={['h-11 rounded-md border px-3 text-sm transition-colors', time === s ? 'border-ink bg-ink text-white' : 'border-line-strong/25 text-ink hover:border-ink'].join(' ')}>
-                                    {s}
-                                </button>
-                            ))}
-                        </div>
+                        <>
+                            <p className="text-sm font-medium text-ink-2">Horaires disponibles</p>
+                            <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4" role="group" aria-label="Horaires disponibles">
+                                {slots.map((s) => {
+                                    const on = time === s;
+                                    return (
+                                        <button key={s} type="button" onClick={() => pick(s)} aria-pressed={on}
+                                                className={['inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-2 text-sm font-medium transition-colors',
+                                                    on ? 'border-ink bg-ink text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
+                                            {on && (
+                                                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                                                </svg>
+                                            )}
+                                            {s}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </>
                     )}
                 </div>
             )}
 
             {date && time && (
-                <p className="mt-3 text-[13px] text-ink-2">
+                <p className="mt-4 rounded-lg bg-surface px-3 py-2.5 text-sm text-ink-2" aria-live="polite">
                     Créneau choisi : <span className="font-semibold text-ink">
                         {new Date(date).toLocaleDateString('fr-FR', WEEKDAY_MONTH)} à {time}
                     </span>

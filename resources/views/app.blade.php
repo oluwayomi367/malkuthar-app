@@ -15,10 +15,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..900;1,300..900&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500&display=swap">
+          href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232e2c28'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%238a6d2c' stroke-width='1'/><text x='16' y='22.5' font-family='Georgia,serif' font-size='17' font-weight='700' fill='%23c8ab5e' text-anchor='middle'>M</text></svg>">
-    <meta name="theme-color" content="#f6f4ee">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231c1917'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%238a6d2c' stroke-width='1'/><text x='16' y='22.5' font-family='Georgia,serif' font-size='17' font-weight='700' fill='%23c8ab5e' text-anchor='middle'>M</text></svg>">
+    <meta name="theme-color" content="#f7f5f0">
 
     @routes
     @viteReactRefresh

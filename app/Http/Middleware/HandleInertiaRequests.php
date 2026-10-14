@@ -51,6 +51,8 @@ class HandleInertiaRequests extends Middleware
             'commissionRates' => app(CommissionRateResolver::class)->percentages(),
             'announcementTicker' => StorefrontSettings::announcementTicker(),
             'announcementTickerEnabled' => StorefrontSettings::announcementTickerEnabled(),
+            // Numéro du bouton WhatsApp flottant (chiffres seuls, format wa.me).
+            'whatsapp' => preg_replace('/\D+/', '', (string) config('malkuthar.contact.whatsapp')) ?: null,
         ];
     }
 }

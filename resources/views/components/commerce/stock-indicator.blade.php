@@ -18,7 +18,7 @@
         <span class="h-1.5 w-1.5 rounded-full bg-current"></span>Plus que {{ $available }} en stock
     </p>
 @else
-    <p {{ $attributes->merge(['class' => 'inline-flex items-center gap-2 text-sm text-ink-3']) }}>
-        <span class="h-1.5 w-1.5 rounded-full bg-forest"></span>En stock
+    <p {{ $attributes->merge(['class' => 'inline-flex items-center gap-2 text-sm text-ink-2']) }}>
+        <span class="h-1.5 w-1.5 rounded-full bg-sage"></span>En stock
     </p>
 @endif

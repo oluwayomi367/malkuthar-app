@@ -174,8 +174,14 @@ Route::post('/webhooks/{provider}', PaymentWebhookController::class)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+    // Adresses courtes des espaces : /espace mène à l'espace principal du compte.
+    Route::get('/espace', fn () => redirect(\App\Support\ProfileHome::url(auth()->user())))->name('espace');
+    Route::redirect('/espace/client', '/mon-compte');
+    Route::redirect('/espace/affilie', '/affiliate/dashboard');
+    Route::redirect('/espace/vendeur', '/vendeur');
+
     // §77 — Espace client
-    Route::get('/mon-compte', [AccountController::class, 'dashboard'])->name('account.dashboard');
+    Route::get('/mon-compte',[AccountController::class, 'dashboard'])->name('account.dashboard');
     Route::get('/mon-compte/telechargements', [AccountController::class, 'downloads'])->name('account.downloads');
     Route::get('/mon-compte/commandes', [AccountController::class, 'orders'])->name('account.orders');
     Route::get('/mon-compte/commandes/{order}', [AccountController::class, 'order'])->name('account.orders.show');

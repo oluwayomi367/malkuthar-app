@@ -42,25 +42,25 @@ export default function Show({ order = {} }) {
         switch (st) {
             case 'paid':
                 return (
-                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                    <span className="rounded-full bg-sage/30 px-3 py-1 text-xs font-semibold text-sage-soft">
                         Payée
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber-tint">
                         À encaisser
                     </span>
                 );
             case 'failed':
                 return (
-                    <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-800">
+                    <span className="rounded-full bg-rust/20 px-3 py-1 text-xs font-semibold text-rust-tint">
                         Annulée
                     </span>
                 );
             default:
                 return (
-                    <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-600">
+                    <span className="rounded-full bg-night-line px-3 py-1 text-xs font-semibold text-night-ink-2">
                         {st}
                     </span>
                 );
@@ -71,25 +71,25 @@ export default function Show({ order = {} }) {
         switch (st) {
             case 'settled':
                 return (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
+                    <span className="rounded-full bg-sage/30 px-2 py-0.5 text-xs font-semibold text-sage-soft">
                         Versé
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+                    <span className="rounded-full bg-amber/25 px-2 py-0.5 text-xs font-semibold text-amber-tint">
                         En attente
                     </span>
                 );
             case 'reversed':
                 return (
-                    <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-800">
+                    <span className="rounded-full bg-rust/20 px-2 py-0.5 text-xs font-semibold text-rust-tint">
                         Remboursé
                     </span>
                 );
             default:
                 return (
-                    <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-600">
+                    <span className="rounded-full bg-night-line px-2 py-0.5 text-xs font-semibold text-night-ink-2">
                         {st}
                     </span>
                 );
@@ -109,26 +109,26 @@ export default function Show({ order = {} }) {
                         order.suborders.map((sub) => (
                             <section
                                 key={sub.id}
-                                className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-xs"
+                                className="rounded-2xl border border-night-line bg-night-2 p-6 "
                             >
-                                <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                                    <h2 className="font-serif text-base font-semibold text-zinc-900">
+                                <div className="flex items-center justify-between pb-3 border-b border-night-line">
+                                    <h2 className="font-sans text-base font-semibold text-night-ink">
                                         {sub.vendor?.display_name || 'Vendeur'}
                                     </h2>
-                                    <span className="font-mono text-xs text-zinc-400 font-medium">
+                                    <span className="font-mono text-xs text-night-ink-2 font-medium">
                                         {sub.suborder_number}
                                     </span>
                                 </div>
 
-                                <table className="mt-3 w-full text-xs">
-                                    <tbody className="divide-y divide-zinc-100">
+                                <table className="mt-3 w-full text-sm">
+                                    <tbody className="divide-y divide-night-line">
                                         {sub.items &&
                                             sub.items.map((item) => (
                                                 <tr key={item.id}>
-                                                    <td className="py-2.5 font-medium text-zinc-900">
+                                                    <td className="py-2.5 font-medium text-night-ink">
                                                         {item.quantity} × {item.title}
                                                     </td>
-                                                    <td className="py-2.5 text-right font-semibold text-zinc-700">
+                                                    <td className="py-2.5 text-right font-semibold text-night-ink-2">
                                                         {formatPrice(item.line_total)} {order.currency || 'XOF'}
                                                     </td>
                                                 </tr>
@@ -136,29 +136,29 @@ export default function Show({ order = {} }) {
                                     </tbody>
                                 </table>
 
-                                <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-zinc-100 pt-4 text-xs">
+                                <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-night-line pt-4 text-sm">
                                     <div>
-                                        <dt className="text-zinc-500 font-medium">Brut vendeur</dt>
-                                        <dd className="mt-0.5 font-semibold text-zinc-900">
+                                        <dt className="text-night-ink-2 font-medium">Brut vendeur</dt>
+                                        <dd className="mt-0.5 font-semibold text-night-ink">
                                             {formatPrice(sub.vendor_gross)} {order.currency || 'XOF'}
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt className="text-zinc-500 font-medium">
+                                        <dt className="text-night-ink-2 font-medium">
                                             Commission ({parseFloat((Number(sub.commission_rate || 0) * 100).toFixed(2))} %)
                                         </dt>
-                                        <dd className="mt-0.5 font-semibold text-rose-600">
+                                        <dd className="mt-0.5 font-semibold text-rust-tint">
                                             − {formatPrice(sub.commission_amount)} {order.currency || 'XOF'}
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt className="text-zinc-500 font-medium">Net vendeur</dt>
-                                        <dd className="mt-0.5 font-bold text-zinc-900 text-sm">
+                                        <dt className="text-night-ink-2 font-medium">Net vendeur</dt>
+                                        <dd className="mt-0.5 font-bold text-night-ink text-sm">
                                             {formatPrice(sub.vendor_net)} {order.currency || 'XOF'}
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt className="text-zinc-500 font-medium">Statut règlement</dt>
+                                        <dt className="text-night-ink-2 font-medium">Statut règlement</dt>
                                         <dd className="mt-0.5">{settlementPill(sub.settlement_status)}</dd>
                                     </div>
                                 </dl>
@@ -166,7 +166,7 @@ export default function Show({ order = {} }) {
                                 {order.payment_status === 'paid' && sub.settlement_status !== 'reversed' && (
                                     <form
                                         onSubmit={(e) => handleRefundSuborder(e, sub.id)}
-                                        className="mt-4 flex items-center gap-2 border-t border-zinc-100 pt-4"
+                                        className="mt-4 flex items-center gap-2 border-t border-night-line pt-4"
                                     >
                                         <input
                                             type="text"
@@ -176,11 +176,11 @@ export default function Show({ order = {} }) {
                                             onChange={(e) =>
                                                 setRefundReasons({ ...refundReasons, [sub.id]: e.target.value })
                                             }
-                                            className="h-8 flex-1 rounded-xl border border-zinc-300 bg-white px-3 text-xs text-zinc-900 shadow-2xs placeholder:text-zinc-400 focus:border-accent focus:outline-none"
+                                            className="h-11 flex-1 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none"
                                         />
                                         <button
                                             type="submit"
-                                            className="rounded-xl border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-800 shadow-2xs hover:bg-rose-100 transition-colors"
+                                            className="rounded-full border border-rust bg-rust/20 px-3 py-1.5 text-sm font-bold text-rust-tint hover:bg-rust/35 transition-colors min-h-11"
                                         >
                                             Rembourser cette part
                                         </button>
@@ -192,35 +192,35 @@ export default function Show({ order = {} }) {
 
                 {/* DETAILS DE LA COMMANDE & ENCAISSEMENT */}
                 <div className="space-y-6">
-                    <section className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-xs text-xs">
-                        <h2 className="font-serif text-base font-semibold text-zinc-900 pb-3 border-b border-zinc-100">
+                    <section className="rounded-2xl border border-night-line bg-night-2 p-6 text-sm">
+                        <h2 className="font-sans text-base font-semibold text-night-ink pb-3 border-b border-night-line">
                             Commande globale
                         </h2>
                         <dl className="mt-4 space-y-3">
                             <div>
-                                <dt className="text-zinc-500 font-medium">Acheteur</dt>
-                                <dd className="mt-0.5 font-semibold text-zinc-900 text-sm">
+                                <dt className="text-night-ink-2 font-medium">Acheteur</dt>
+                                <dd className="mt-0.5 font-semibold text-night-ink text-sm">
                                     {order.buyer_email}
                                     {order.buyer_phone ? ` · ${order.buyer_phone}` : ''}
                                 </dd>
                             </div>
                             <div>
-                                <dt className="text-zinc-500 font-medium">Mode & Statut de paiement</dt>
+                                <dt className="text-night-ink-2 font-medium">Mode & Statut de paiement</dt>
                                 <dd className="mt-1 flex items-center gap-2">
-                                    <span className="font-semibold text-zinc-800">{order.payment_provider}</span>
+                                    <span className="font-semibold text-night-ink">{order.payment_provider}</span>
                                     {statusPill(order.payment_status)}
                                 </dd>
                             </div>
                             <div>
-                                <dt className="text-zinc-500 font-medium">Montant total TTC</dt>
-                                <dd className="mt-0.5 text-base font-bold text-zinc-900">
+                                <dt className="text-night-ink-2 font-medium">Montant total TTC</dt>
+                                <dd className="mt-0.5 text-base font-bold text-night-ink">
                                     {formatPrice(order.grand_total)} {order.currency || 'XOF'}
                                 </dd>
                             </div>
                             {order.paid_at && (
                                 <div>
-                                    <dt className="text-zinc-500 font-medium">Payée le</dt>
-                                    <dd className="mt-0.5 text-zinc-800">
+                                    <dt className="text-night-ink-2 font-medium">Payée le</dt>
+                                    <dd className="mt-0.5 text-night-ink">
                                         {new Date(order.paid_at).toLocaleString('fr-FR')}
                                     </dd>
                                 </div>
@@ -233,27 +233,27 @@ export default function Show({ order = {} }) {
                             <button
                                 type="button"
                                 onClick={handleMarkPaid}
-                                className="h-11 w-full rounded-2xl border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-800 shadow-2xs hover:bg-emerald-100 transition-colors"
+                                className="h-11 w-full rounded-2xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
                             >
                                 Encaisser la commande
                             </button>
 
                             <form
                                 onSubmit={handleCancel}
-                                className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs space-y-2"
+                                className="rounded-2xl border border-night-line bg-night-2 p-5 space-y-2"
                             >
-                                <label className="block text-xs font-medium text-zinc-700">Annuler la commande</label>
+                                <label className="block text-sm font-medium text-night-ink-2">Annuler la commande</label>
                                 <input
                                     type="text"
                                     required
                                     placeholder="Motif d'annulation"
                                     value={cancelReason}
                                     onChange={(e) => setCancelReason(e.target.value)}
-                                    className="h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-xs text-zinc-900 shadow-2xs placeholder:text-zinc-400 focus:border-accent focus:outline-none"
+                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
                                 />
                                 <button
                                     type="submit"
-                                    className="h-9 w-full rounded-xl border border-rose-300 bg-rose-50 text-xs font-bold text-rose-800 shadow-2xs hover:bg-rose-100 transition-colors"
+                                    className="h-9 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
                                 >
                                     Annuler
                                 </button>
@@ -266,9 +266,9 @@ export default function Show({ order = {} }) {
             <div className="mt-8">
                 <Link
                     href={route('admin.marketplace.orders.index')}
-                    className="text-xs font-semibold text-accent hover:underline"
+                    className="text-xs font-semibold text-accent-light hover:underline"
                 >
-                    ← Toutes les commandes
+                    Toutes les commandes
                 </Link>
             </div>
         </AdminLayout>

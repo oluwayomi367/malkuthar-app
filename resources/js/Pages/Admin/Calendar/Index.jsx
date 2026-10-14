@@ -66,11 +66,11 @@ export default function Index({
     return (
         <AdminLayout title="Calendrier" eyebrow={eyebrow} heading={heading}>
             {/* 1. DISPONIBILITÉ DES SERVICES */}
-            <div className="mb-6 rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+            <div className="mb-6 rounded-2xl border border-night-line bg-night-2 p-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-night-ink-2">
                     Disponibilité des services (§18)
                 </p>
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-1 text-xs text-night-ink-2">
                     Jours &amp; horaires, durée, pauses et jours indisponibles — se règlent sur la fiche de chaque service.
                 </p>
 
@@ -80,34 +80,34 @@ export default function Index({
                             <Link
                                 key={s.id}
                                 href={`${route('admin.products.edit', s.id)}#availability`}
-                                className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50/50 px-3 py-2 text-xs font-medium text-zinc-800 transition-colors hover:border-accent hover:bg-white shadow-2xs"
+                                className="inline-flex items-center gap-2 rounded-full border border-night-line bg-night px-3 py-2 text-sm font-medium text-night-ink transition-colors hover:border-accent-light hover:bg-night-line/50 min-h-11"
                             >
-                                <span className="font-semibold text-zinc-900">{s.name}</span>
-                                <span className="text-zinc-400">
+                                <span className="font-semibold text-night-ink">{s.name}</span>
+                                <span className="text-night-ink-2">
                                     {s.duration_minutes || 60} min ·{' '}
                                     {s.schedules_count > 0 ? (
-                                        <span className="text-emerald-600">{s.schedules_count} jour(s)</span>
+                                        <span className="text-sage-soft">{s.schedules_count} jour(s)</span>
                                     ) : (
-                                        <span className="text-rose-600">calendrier vide</span>
+                                        <span className="text-rust-tint">calendrier vide</span>
                                     )}
                                 </span>
                             </Link>
                         ))
                     ) : (
-                        <p className="text-xs text-zinc-400">Aucun service créé.</p>
+                        <p className="text-xs text-night-ink-2">Aucun service créé.</p>
                     )}
                 </div>
             </div>
 
             {/* 2. FILTRES AGENDA */}
             <div className="mb-6 flex flex-wrap items-center gap-3">
-                <div className="flex items-center rounded-xl border border-zinc-200 bg-white p-1 shadow-2xs text-xs">
+                <div className="flex items-center rounded-xl border border-night-line bg-night-2 p-1 text-sm">
                     <button
                         type="button"
                         onClick={() => handleFilter('upcoming')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'upcoming' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:text-zinc-900',
+                            scope === 'upcoming' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         À venir
@@ -117,7 +117,7 @@ export default function Index({
                         onClick={() => handleFilter('past')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'past' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:text-zinc-900',
+                            scope === 'past' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         Passés
@@ -127,7 +127,7 @@ export default function Index({
                         onClick={() => handleFilter('all')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'all' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:text-zinc-900',
+                            scope === 'all' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         Tous
@@ -137,7 +137,7 @@ export default function Index({
                 <select
                     value={productId || ''}
                     onChange={(e) => handleFilter(undefined, e.target.value)}
-                    className="rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-800 shadow-2xs focus:border-accent focus:outline-none"
+                    className="rounded-xl border border-night-line bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                 >
                     <option value="">Tous les services</option>
                     {services.map((s) => (
@@ -151,7 +151,7 @@ export default function Index({
                     <button
                         type="button"
                         onClick={() => handleFilter('upcoming', '')}
-                        className="text-xs text-zinc-500 hover:text-zinc-800 underline"
+                        className="text-xs text-night-ink-2 hover:text-night-ink underline"
                     >
                         Réinitialiser
                     </button>
@@ -171,7 +171,7 @@ export default function Index({
 
                         return (
                             <div key={dateKey}>
-                                <h3 className="mb-2 font-display text-sm font-bold capitalize text-zinc-800">
+                                <h3 className="mb-2 font-sans text-sm font-semibold capitalize text-night-ink">
                                     {dateFormatted}
                                 </h3>
                                 <div className="space-y-2.5">
@@ -185,20 +185,20 @@ export default function Index({
                                         return (
                                             <div
                                                 key={b.id}
-                                                className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs flex flex-wrap items-center justify-between gap-4"
+                                                className="rounded-2xl border border-night-line bg-night-2 p-4 flex flex-wrap items-center justify-between gap-4"
                                             >
                                                 <div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-mono text-sm font-bold text-accent">
+                                                        <span className="font-mono text-sm font-bold text-accent-light">
                                                             {time}
                                                         </span>
-                                                        <span className="font-semibold text-zinc-900">
+                                                        <span className="font-semibold text-night-ink">
                                                             {b.product_name}
                                                         </span>
                                                     </div>
-                                                    <div className="mt-1 text-xs text-zinc-500">
+                                                    <div className="mt-1 text-sm text-night-ink-2">
                                                         Client :{' '}
-                                                        <span className="font-medium text-zinc-700">
+                                                        <span className="font-medium text-night-ink-2">
                                                             {b.order?.user
                                                                 ? `${b.order.user.first_name} ${b.order.user.last_name}`
                                                                 : 'Invité'}
@@ -218,14 +218,14 @@ export default function Index({
                                                                 b.reservation_datetime.slice(0, 16)
                                                             );
                                                         }}
-                                                        className="rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700 hover:bg-white shadow-2xs"
+                                                        className="rounded-full border border-night-line bg-night px-2.5 py-1 text-sm font-semibold text-night-ink-2 hover:bg-night-line/50 min-h-11"
                                                     >
                                                         Déplacer
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => setCancelingBooking(b)}
-                                                        className="rounded-lg border border-rose-200 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-50 shadow-2xs"
+                                                        className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust-tint hover:bg-rust/20 min-h-11"
                                                     >
                                                         Annuler
                                                     </button>
@@ -239,25 +239,25 @@ export default function Index({
                     })}
                 </div>
             ) : (
-                <div className="rounded-2xl border border-dashed border-zinc-300 bg-white/70 p-12 text-center text-xs text-zinc-500">
+                <div className="rounded-2xl border border-dashed border-night-ink-2/60 bg-night-2 p-12 text-center text-sm text-night-ink-2">
                     Aucun rendez-vous pour cette période ou ce filtre.
                 </div>
             )}
 
             {/* MODAL DÉPLACER */}
             {editingBooking && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-                        <h3 className="font-display text-base font-bold text-zinc-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
+                        <h3 className="font-sans text-base font-semibold text-night-ink">
                             Déplacer le rendez-vous
                         </h3>
-                        <p className="mt-1 text-xs text-zinc-600">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             {editingBooking.product_name} pour {editingBooking.order?.user?.first_name}{' '}
                             {editingBooking.order?.user?.last_name}.
                         </p>
                         <form onSubmit={submitReschedule} className="mt-4 space-y-3.5">
                             <div>
-                                <label className="text-xs font-medium text-zinc-700">
+                                <label className="text-sm font-medium text-night-ink-2">
                                     Nouvelle date et heure
                                 </label>
                                 <input
@@ -265,7 +265,7 @@ export default function Index({
                                     required
                                     value={rescheduleForm.data.datetime}
                                     onChange={(e) => rescheduleForm.setData('datetime', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-xs text-zinc-900 shadow-2xs focus:border-accent focus:outline-none"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
                                 />
                             </div>
                             <div className="flex items-center gap-2">
@@ -276,9 +276,9 @@ export default function Index({
                                     onChange={(e) =>
                                         rescheduleForm.setData('notify_client', e.target.checked)
                                     }
-                                    className="rounded border-zinc-300 text-accent focus:ring-accent"
+                                    className="rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
                                 />
-                                <label htmlFor="notify_reschedule" className="text-xs text-zinc-700">
+                                <label htmlFor="notify_reschedule" className="text-sm text-night-ink-2">
                                     Notifier le client par email du changement
                                 </label>
                             </div>
@@ -286,14 +286,14 @@ export default function Index({
                                 <button
                                     type="button"
                                     onClick={() => setEditingBooking(null)}
-                                    className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                                    className="rounded-full border border-night-ink-2/60 bg-night-2 px-3 py-1.5 text-sm font-medium text-night-ink-2 hover:bg-night-line/50 min-h-11"
                                 >
                                     Fermer
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={rescheduleForm.processing}
-                                    className="rounded-lg bg-accent px-4 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-accent-2"
+                                    className="rounded-full bg-accent-light px-4 py-1.5 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
                                 >
                                     Confirmer le déplacement
                                 </button>
@@ -305,23 +305,23 @@ export default function Index({
 
             {/* MODAL ANNULER */}
             {cancelingBooking && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-                        <h3 className="font-display text-base font-bold text-rose-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
+                        <h3 className="font-sans text-base font-semibold text-rust-tint">
                             Annuler la réservation
                         </h3>
-                        <p className="mt-1 text-xs text-zinc-600">
+                        <p className="mt-1 text-xs text-night-ink-2">
                             Le créneau sera libéré. Vous pouvez préciser un motif pour le client.
                         </p>
                         <form onSubmit={submitCancel} className="mt-4 space-y-3.5">
                             <div>
-                                <label className="text-xs font-medium text-zinc-700">Motif</label>
+                                <label className="text-sm font-medium text-night-ink-2">Motif</label>
                                 <input
                                     type="text"
                                     placeholder="Ex. Indisponibilité du praticien / Report demandé"
                                     value={cancelForm.data.reason}
                                     onChange={(e) => cancelForm.setData('reason', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-xs text-zinc-900 shadow-2xs focus:border-rose-500 focus:outline-none"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-rust focus:outline-none min-h-11"
                                 />
                             </div>
                             <div className="flex items-center gap-2">
@@ -330,9 +330,9 @@ export default function Index({
                                     id="notify_cancel"
                                     checked={cancelForm.data.notify_client}
                                     onChange={(e) => cancelForm.setData('notify_client', e.target.checked)}
-                                    className="rounded border-zinc-300 text-rose-600 focus:ring-rose-500"
+                                    className="rounded border-night-ink-2/60 text-rust-tint focus:ring-rust"
                                 />
-                                <label htmlFor="notify_cancel" className="text-xs text-zinc-700">
+                                <label htmlFor="notify_cancel" className="text-sm text-night-ink-2">
                                     Notifier le client de l'annulation
                                 </label>
                             </div>
@@ -340,14 +340,14 @@ export default function Index({
                                 <button
                                     type="button"
                                     onClick={() => setCancelingBooking(null)}
-                                    className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                                    className="rounded-full border border-night-ink-2/60 bg-night-2 px-3 py-1.5 text-sm font-medium text-night-ink-2 hover:bg-night-line/50 min-h-11"
                                 >
                                     Fermer
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={cancelForm.processing}
-                                    className="rounded-lg bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-rose-700"
+                                    className="rounded-full bg-rust px-4 py-1.5 text-sm font-semibold text-white hover:bg-rust/85 min-h-11"
                                 >
                                     Confirmer l'annulation
                                 </button>

@@ -47,7 +47,7 @@ export default function Index({
     const headerActions = (
         <Link
             href={route('admin.products.create')}
-            className="rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-accent-2"
+            className="rounded-full bg-accent-light px-4 py-2 text-sm font-bold text-night transition-colors hover:bg-accent-light/85 min-h-11 inline-flex items-center justify-center"
         >
             + Nouveau produit
         </Link>
@@ -57,15 +57,15 @@ export default function Index({
         <AdminLayout title="Produits" eyebrow={eyebrow} heading={heading} actions={headerActions}>
             {/* ALERTE STOCK FAIBLE */}
             {lowStock && lowStock.length > 0 && (
-                <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50/70 p-4 shadow-2xs">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-amber-800">
+                <div className="mb-6 rounded-2xl border border-amber bg-amber/25 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-amber-tint">
                         Alerte Stock faible
                     </p>
-                    <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-amber-900">
+                    <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-amber-tint">
                         {lowStock.map((p) => (
                             <li key={p.id}>
                                 <Link href={route('admin.products.edit', p.id)} className="hover:underline">
-                                    {p.name} — <strong className="text-amber-800">{p.stock_available}</strong> restant(s)
+                                    {p.name} — <strong className="text-amber-tint">{p.stock_available}</strong> restant(s)
                                 </Link>
                             </li>
                         ))}
@@ -80,13 +80,13 @@ export default function Index({
                     placeholder="Nom, SKU, slug…"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 min-w-[220px] rounded-xl border border-zinc-300 bg-white px-3.5 py-2 text-xs text-zinc-900 shadow-2xs placeholder:text-zinc-400 focus:border-accent focus:outline-none"
+                    className="flex-1 min-w-[220px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
                 />
 
                 <select
                     value={type || ''}
                     onChange={(e) => handleFilter(e.target.value, undefined)}
-                    className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs text-zinc-700 shadow-2xs focus:border-accent focus:outline-none"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
                 >
                     <option value="">Tous les types</option>
                     <option value="digital">Digital</option>
@@ -97,7 +97,7 @@ export default function Index({
                 <select
                     value={status || ''}
                     onChange={(e) => handleFilter(undefined, e.target.value)}
-                    className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs text-zinc-700 shadow-2xs focus:border-accent focus:outline-none"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
                 >
                     <option value="">Tous les statuts</option>
                     <option value="published">Publié</option>
@@ -107,7 +107,7 @@ export default function Index({
 
                 <button
                     type="submit"
-                    className="rounded-xl bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800"
+                    className="rounded-full bg-accent-light px-4 py-2 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
                 >
                     Filtrer
                 </button>
@@ -118,7 +118,7 @@ export default function Index({
                             setSearch('');
                             router.get(route('admin.products.index'));
                         }}
-                        className="text-xs text-zinc-500 hover:text-zinc-800 underline"
+                        className="text-xs text-night-ink-2 hover:text-night-ink underline"
                     >
                         Réinitialiser
                     </button>
@@ -126,9 +126,9 @@ export default function Index({
             </form>
 
             {/* TABLEAU DES PRODUITS */}
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xs">
-                <table className="w-full text-left text-xs">
-                    <thead className="border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+            <div className="overflow-x-auto rounded-2xl border border-night-line bg-night-2">
+                <table className="w-full text-left text-sm">
+                    <thead className="border-b border-night-line text-xs font-semibold uppercase tracking-[0.08em] text-night-ink-2">
                         <tr>
                             <th className="px-4 py-3">Produit</th>
                             <th className="px-4 py-3">Type</th>
@@ -140,15 +140,15 @@ export default function Index({
                             <th className="px-4 py-3 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-night-line">
                         {products.data && products.data.length > 0 ? (
                             products.data.map((p) => {
                                 const rep = reports[p.id] || {};
                                 return (
-                                    <tr key={p.id} className="hover:bg-zinc-50/60">
+                                    <tr key={p.id} className="hover:bg-night-line/50">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
+                                                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-night-line bg-night-line">
                                                     {p.main_image ? (
                                                         <img
                                                             src={p.main_image}
@@ -156,7 +156,7 @@ export default function Index({
                                                             className="h-full w-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="flex h-full w-full items-center justify-center font-bold text-zinc-300">
+                                                        <div className="flex h-full w-full items-center justify-center font-bold text-night-ink-2">
                                                             M
                                                         </div>
                                                     )}
@@ -164,30 +164,30 @@ export default function Index({
                                                 <div className="min-w-0">
                                                     <Link
                                                         href={route('admin.products.show', p.id)}
-                                                        className="block truncate font-semibold text-zinc-900 hover:text-accent"
+                                                        className="block truncate font-semibold text-night-ink hover:text-accent-light"
                                                     >
                                                         {p.name}
                                                     </Link>
-                                                    <span className="block truncate text-[11px] text-zinc-400 font-mono">
+                                                    <span className="block truncate text-xs text-night-ink-2 font-mono">
                                                         {p.sku || p.slug}
                                                     </span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3">
-                                            <span className="rounded bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-700">
+                                            <span className="rounded bg-night-line px-2 py-0.5 text-xs font-medium text-night-ink-2">
                                                 {typeLabels[p.type] || p.type}
                                             </span>
                                             {p.is_affiliable && (
-                                                <span className="ml-1 rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold text-accent">
+                                                <span className="ml-1 rounded bg-accent-light/15 px-1.5 py-0.5 text-xs font-bold text-accent-light">
                                                     Affiliable
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-4 py-3 font-semibold text-zinc-900">
+                                        <td className="px-4 py-3 font-semibold text-night-ink">
                                             {formatNumber(p.promotional_price || p.price)} {p.currency || 'FCFA'}
                                             {p.promotional_price && (
-                                                <span className="block text-[10px] text-zinc-400 line-through">
+                                                <span className="block text-xs text-night-ink-2 line-through">
                                                     {formatNumber(p.price)}
                                                 </span>
                                             )}
@@ -198,34 +198,34 @@ export default function Index({
                                                     <span
                                                         className={[
                                                             'font-bold',
-                                                            p.stock_available <= 5 ? 'text-rose-600' : 'text-zinc-900',
+                                                            p.stock_available <= 5 ? 'text-rust-tint' : 'text-night-ink',
                                                         ].join(' ')}
                                                     >
                                                         {p.stock_available}
                                                     </span>
-                                                    <span className="text-zinc-400 text-[11px]"> dispo</span>
+                                                    <span className="text-night-ink-2 text-xs"> dispo</span>
                                                 </div>
                                             ) : (
-                                                <span className="text-zinc-400 text-[11px]">—</span>
+                                                <span className="text-night-ink-2 text-xs">—</span>
                                             )}
                                         </td>
-                                        <td className="px-4 py-3 font-medium text-zinc-800">
+                                        <td className="px-4 py-3 font-medium text-night-ink">
                                             {rep.units_sold || 0}
                                         </td>
-                                        <td className="px-4 py-3 font-mono text-zinc-700">
+                                        <td className="px-4 py-3 font-mono text-night-ink-2">
                                             {formatNumber(rep.commissions_amount || 0)}
                                         </td>
                                         <td className="px-4 py-3">
                                             {p.status === 'published' ? (
-                                                <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-800">
+                                                <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
                                                     Publié
                                                 </span>
                                             ) : p.status === 'draft' ? (
-                                                <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-semibold text-zinc-600">
+                                                <span className="rounded-full bg-night-line px-2.5 py-0.5 text-xs font-semibold text-night-ink-2">
                                                     Brouillon
                                                 </span>
                                             ) : (
-                                                <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-[10px] font-semibold text-rose-800">
+                                                <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
                                                     Archivé
                                                 </span>
                                             )}
@@ -234,15 +234,15 @@ export default function Index({
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
                                                     href={route('admin.products.edit', p.id)}
-                                                    className="font-medium text-zinc-600 hover:text-zinc-900 hover:underline"
+                                                    className="font-medium text-night-ink-2 hover:text-night-ink hover:underline"
                                                 >
                                                     Modifier
                                                 </Link>
                                                 <Link
                                                     href={route('admin.products.show', p.id)}
-                                                    className="font-semibold text-accent hover:text-accent-2"
+                                                    className="font-semibold text-accent-light hover:text-night-ink"
                                                 >
-                                                    Voir →
+                                                    Voir
                                                 </Link>
                                             </div>
                                         </td>
@@ -251,7 +251,7 @@ export default function Index({
                             })
                         ) : (
                             <tr>
-                                <td colSpan="8" className="px-4 py-12 text-center text-zinc-500">
+                                <td colSpan="8" className="px-4 py-12 text-center text-night-ink-2">
                                     Aucun produit ne correspond aux filtres.
                                 </td>
                             </tr>

@@ -3,7 +3,7 @@
     'active' => null,
 ])
 
-<nav {{ $attributes->merge(['class' => 'flex gap-1 overflow-x-auto rounded-xl border border-black/10 bg-surface p-1 backdrop-blur']) }}>
+<nav {{ $attributes->merge(['class' => 'flex max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-ground-alt p-1']) }}>
     @foreach ($items as $url => $item)
         @php
             $itemUrl = is_array($item) ? ($item['url'] ?? $url) : $url;
@@ -13,10 +13,11 @@
                 : ($active !== null && (string) $active === (string) $itemUrl);
         @endphp
         <a href="{{ $itemUrl }}"
+           @if ($isActive) aria-current="page" @endif
            @class([
-               'shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-               'bg-accent text-white shadow-[0_6px_20px_-8px] shadow-black/10' => $isActive,
-               'text-ink-3 hover:text-ink' => ! $isActive,
+               'inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors',
+               'bg-surface text-ink shadow-[0_1px_2px_rgba(28,25,23,0.08)]' => $isActive,
+               'text-ink-2 hover:text-ink' => ! $isActive,
            ])>{{ $itemLabel }}</a>
     @endforeach
 </nav>
