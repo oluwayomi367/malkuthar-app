@@ -65,7 +65,7 @@ export default function Index({
                             className={[
                                 'rounded-full px-4 py-1.5 text-xs font-semibold transition-colors',
                                 active
-                                    ? 'bg-accent-light text-night'
+                                    ? 'bg-accent text-white'
                                     : 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50',
                             ].join(' ')}
                         >
@@ -121,17 +121,17 @@ export default function Index({
                                     </td>
                                     <td className="px-4 py-3">
                                         {w.status === 'processing' && (
-                                            <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                                            <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber">
                                                 À traiter
                                             </span>
                                         )}
                                         {w.status === 'paid' && (
-                                            <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                            <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                 Payé
                                             </span>
                                         )}
                                         {w.status === 'failed' && (
-                                            <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                                            <span className="rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                                                 Échoué
                                             </span>
                                         )}
@@ -154,7 +154,7 @@ export default function Index({
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedFailed(w)}
-                                                    className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust-tint hover:bg-rust/20 min-h-11"
+                                                    className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust hover:bg-rust-tint min-h-11"
                                                 >
                                                     Échouer
                                                 </button>
@@ -199,7 +199,7 @@ export default function Index({
                                     placeholder="Ex. FED-TRX-839201"
                                     value={paidForm.data.provider_reference}
                                     onChange={(e) => paidForm.setData('provider_reference', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div className="flex justify-end gap-2 pt-2">
@@ -227,7 +227,7 @@ export default function Index({
             {selectedFailed && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
                     <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
-                        <h3 className="font-sans text-base font-semibold text-rust-tint">
+                        <h3 className="font-sans text-base font-semibold text-rust">
                             Marquer comme échoué
                         </h3>
                         <p className="mt-1 text-xs text-night-ink-2">

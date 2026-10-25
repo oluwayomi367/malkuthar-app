@@ -77,7 +77,7 @@ export default function CheckoutReturn({ order, status, isLocal, csrfToken }) {
                             {order.payment_status !== 'paid' ? (
                                 <form method="POST" action={route('dev.confirm-payment', order.id)}>
                                     <input type="hidden" name="_token" value={csrfToken} />
-                                    <button className="min-h-11 rounded-full bg-ink px-4 font-semibold text-white">Simuler le paiement</button>
+                                    <button className="min-h-11 rounded-full bg-deep px-4 font-semibold text-white">Simuler le paiement</button>
                                 </form>
                             ) : (
                                 <form method="POST" action={route('dev.refund', order.id)}>

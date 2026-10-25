@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { route as routeFn } from 'ziggy-js';
+import './consent';
 
 // `route()` global — même ergonomie que le helper Blade, utilisable sans
 // import dans chaque composant. Config lue depuis `window.Ziggy`, injectée

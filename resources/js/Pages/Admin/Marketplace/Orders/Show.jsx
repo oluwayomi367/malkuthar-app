@@ -42,19 +42,19 @@ export default function Show({ order = {} }) {
         switch (st) {
             case 'paid':
                 return (
-                    <span className="rounded-full bg-sage/30 px-3 py-1 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-3 py-1 text-xs font-semibold text-sage">
                         Payée
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber">
                         À encaisser
                     </span>
                 );
             case 'failed':
                 return (
-                    <span className="rounded-full bg-rust/20 px-3 py-1 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-3 py-1 text-xs font-semibold text-rust">
                         Annulée
                     </span>
                 );
@@ -71,19 +71,19 @@ export default function Show({ order = {} }) {
         switch (st) {
             case 'settled':
                 return (
-                    <span className="rounded-full bg-sage/30 px-2 py-0.5 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-2 py-0.5 text-xs font-semibold text-sage">
                         Versé
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber/25 px-2 py-0.5 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-2 py-0.5 text-xs font-semibold text-amber">
                         En attente
                     </span>
                 );
             case 'reversed':
                 return (
-                    <span className="rounded-full bg-rust/20 px-2 py-0.5 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-2 py-0.5 text-xs font-semibold text-rust">
                         Remboursé
                     </span>
                 );
@@ -147,7 +147,7 @@ export default function Show({ order = {} }) {
                                         <dt className="text-night-ink-2 font-medium">
                                             Commission ({parseFloat((Number(sub.commission_rate || 0) * 100).toFixed(2))} %)
                                         </dt>
-                                        <dd className="mt-0.5 font-semibold text-rust-tint">
+                                        <dd className="mt-0.5 font-semibold text-rust">
                                             − {formatPrice(sub.commission_amount)} {order.currency || 'XOF'}
                                         </dd>
                                     </div>
@@ -176,11 +176,11 @@ export default function Show({ order = {} }) {
                                             onChange={(e) =>
                                                 setRefundReasons({ ...refundReasons, [sub.id]: e.target.value })
                                             }
-                                            className="h-11 flex-1 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none"
+                                            className="h-11 flex-1 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none"
                                         />
                                         <button
                                             type="submit"
-                                            className="rounded-full border border-rust bg-rust/20 px-3 py-1.5 text-sm font-bold text-rust-tint hover:bg-rust/35 transition-colors min-h-11"
+                                            className="rounded-full border border-rust bg-rust-tint px-3 py-1.5 text-sm font-bold text-rust hover:bg-rust/35 transition-colors min-h-11"
                                         >
                                             Rembourser cette part
                                         </button>
@@ -233,7 +233,7 @@ export default function Show({ order = {} }) {
                             <button
                                 type="button"
                                 onClick={handleMarkPaid}
-                                className="h-11 w-full rounded-2xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
+                                className="h-11 w-full rounded-2xl border border-sage bg-sage-soft text-xs font-bold text-sage hover:bg-sage-soft transition-colors"
                             >
                                 Encaisser la commande
                             </button>
@@ -249,11 +249,11 @@ export default function Show({ order = {} }) {
                                     placeholder="Motif d'annulation"
                                     value={cancelReason}
                                     onChange={(e) => setCancelReason(e.target.value)}
-                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                 />
                                 <button
                                     type="submit"
-                                    className="h-9 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
+                                    className="h-9 w-full rounded-xl border border-rust bg-rust-tint text-xs font-bold text-rust hover:bg-rust/35 transition-colors"
                                 >
                                     Annuler
                                 </button>
@@ -266,7 +266,7 @@ export default function Show({ order = {} }) {
             <div className="mt-8">
                 <Link
                     href={route('admin.marketplace.orders.index')}
-                    className="text-xs font-semibold text-accent-light hover:underline"
+                    className="text-xs font-semibold text-accent-2 hover:underline"
                 >
                     Toutes les commandes
                 </Link>

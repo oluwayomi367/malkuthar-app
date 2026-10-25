@@ -61,14 +61,14 @@
                     <label class="flex flex-col gap-1 text-xs text-night-ink-2">RDV en parallèle
                         <input type="number" min="1" x-model.number="w.capacity" :name="`windows[${i}][capacity]`" class="h-9 rounded-lg border border-night-line bg-night-2 px-2 text-sm text-night-ink">
                     </label>
-                    <button type="button" x-on:click="windows.splice(i, 1)" class="mb-1 text-xs text-rust-tint hover:underline">Retirer</button>
+                    <button type="button" x-on:click="windows.splice(i, 1)" class="mb-1 text-xs text-rust hover:underline">Retirer</button>
                 </div>
             </template>
         </div>
 
         <div class="mt-3 flex items-center justify-between">
             <button type="button" x-on:click="windows.push({ weekday: 1, start_time: '09:00', end_time: '17:00', capacity: def })"
-                    class="text-xs font-semibold text-accent-light hover:underline">+ Ajouter un jour</button>
+                    class="text-xs font-semibold text-accent-2 hover:underline">+ Ajouter un jour</button>
             <x-ui.button type="submit" variant="secondary">Enregistrer le calendrier</x-ui.button>
         </div>
     </form>
@@ -94,7 +94,7 @@
                         </span>
                         <form method="POST" action="{{ route('admin.services.time-off.destroy', $off) }}">
                             @csrf @method('DELETE')
-                            <button class="text-xs text-rust-tint hover:underline">Retirer</button>
+                            <button class="text-xs text-rust hover:underline">Retirer</button>
                         </form>
                     </li>
                 @endforeach

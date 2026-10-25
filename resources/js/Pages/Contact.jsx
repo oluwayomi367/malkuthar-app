@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import StorefrontLayout from '../Layouts/StorefrontLayout';
+import { useImages } from '../lib/images';
 import Button from '../Components/ui/Button';
 import Field from '../Components/ui/Field';
 import Select from '../Components/ui/Select';
@@ -23,6 +24,7 @@ function Coordonnee({ label, children }) {
 }
 
 export default function Contact({ contact }) {
+    const img = useImages();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '', email: '', subject: '', message: '', website: '',
     });
@@ -55,7 +57,7 @@ export default function Contact({ contact }) {
                     </div>
                     <div className="overflow-hidden rounded-2xl bg-ground-alt">
                         <img
-                            src="/images/contact-concierge.jpg"
+                            src={img('contact.hero')}
                             alt="Accueil de la maison MALKUTHAR"
                             className="aspect-[4/3] h-full w-full object-cover"
                         />

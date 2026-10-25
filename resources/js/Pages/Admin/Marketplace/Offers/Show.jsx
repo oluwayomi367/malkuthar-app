@@ -86,25 +86,25 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
         switch (st) {
             case 'approved':
                 return (
-                    <span className="rounded-full bg-sage/30 px-3 py-1 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-3 py-1 text-xs font-semibold text-sage">
                         Approuvée
                     </span>
                 );
             case 'pending_review':
                 return (
-                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber">
                         À valider
                     </span>
                 );
             case 'changes_requested':
                 return (
-                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber">
                         À corriger
                     </span>
                 );
             case 'rejected':
                 return (
-                    <span className="rounded-full bg-rust/20 px-3 py-1 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-3 py-1 text-xs font-semibold text-rust">
                         Refusée
                     </span>
                 );
@@ -161,7 +161,7 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                 <dd className="mt-0.5 text-night-ink font-semibold text-sm">
                                     {formatPrice(c.price)} {offer.currency || 'XOF'}
                                     {c.sale_price && (
-                                        <span className="ml-2 text-xs font-normal text-amber-tint">
+                                        <span className="ml-2 text-xs font-normal text-amber">
                                             (promo {formatPrice(c.sale_price)})
                                         </span>
                                     )}
@@ -204,7 +204,7 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                         )}
 
                         {candidate && offer.first_published_at && (
-                            <div className="mt-4 rounded-xl border border-amber bg-amber/25 p-3 text-sm text-amber-tint">
+                            <div className="mt-4 rounded-xl border border-amber bg-amber/25 p-3 text-sm text-amber">
                                 Une version est déjà en ligne. L’approbation remplacera son contenu par celui-ci.
                             </div>
                         )}
@@ -255,11 +255,11 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                         placeholder="Note (facultatif)"
                                         value={approveNote}
                                         onChange={(e) => setApproveNote(e.target.value)}
-                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                     />
                                     <button
                                         type="submit"
-                                        className="h-10 w-full rounded-xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
+                                        className="h-10 w-full rounded-xl border border-sage bg-sage-soft text-xs font-bold text-sage hover:bg-sage-soft transition-colors"
                                     >
                                         Approuver
                                     </button>
@@ -272,11 +272,11 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                         placeholder="Corrections à apporter"
                                         value={changesNote}
                                         onChange={(e) => setChangesNote(e.target.value)}
-                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                     />
                                     <button
                                         type="submit"
-                                        className="h-10 w-full rounded-xl border border-amber bg-amber/25 text-xs font-bold text-amber-tint hover:bg-amber/40 transition-colors"
+                                        className="h-10 w-full rounded-xl border border-amber bg-amber/25 text-xs font-bold text-amber hover:bg-amber/40 transition-colors"
                                     >
                                         Demander des corrections
                                     </button>
@@ -289,11 +289,11 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                         placeholder="Motif de refus"
                                         value={rejectReason}
                                         onChange={(e) => setRejectReason(e.target.value)}
-                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                     />
                                     <button
                                         type="submit"
-                                        className="h-10 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
+                                        className="h-10 w-full rounded-xl border border-rust bg-rust-tint text-xs font-bold text-rust hover:bg-rust/35 transition-colors"
                                     >
                                         Refuser
                                     </button>
@@ -309,11 +309,11 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                     placeholder="Motif de suspension"
                                     value={suspendReason}
                                     onChange={(e) => setSuspendReason(e.target.value)}
-                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                 />
                                 <button
                                     type="submit"
-                                    className="h-10 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
+                                    className="h-10 w-full rounded-xl border border-rust bg-rust-tint text-xs font-bold text-rust hover:bg-rust/35 transition-colors"
                                 >
                                     Suspendre l’offre
                                 </button>
@@ -325,7 +325,7 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                 <button
                                     type="button"
                                     onClick={handleUnsuspend}
-                                    className="h-10 w-full rounded-xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
+                                    className="h-10 w-full rounded-xl border border-sage bg-sage-soft text-xs font-bold text-sage hover:bg-sage-soft transition-colors"
                                 >
                                     Rétablir l’offre
                                 </button>
@@ -344,7 +344,7 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                         <div className="flex items-center justify-between">
                             <h2 className="font-sans text-base font-semibold text-night-ink">Commission produit</h2>
                             {offer.commission_rate !== null && offer.commission_rate !== undefined ? (
-                                <span className="rounded-full bg-accent-light/10 px-2.5 py-0.5 text-xs font-semibold text-accent-light">
+                                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-2">
                                     {parseFloat((Number(offer.commission_rate) * 100).toFixed(2))} % (spécifique)
                                 </span>
                             ) : (
@@ -369,20 +369,20 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
                                     onChange={(e) =>
                                         commissionForm.setData('commission_rate_percent', e.target.value)
                                     }
-                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                 />
                                 <span className="absolute right-3 top-2.5 text-xs font-semibold text-night-ink-2">%</span>
                             </div>
                             <button
                                 type="submit"
                                 disabled={commissionForm.processing}
-                                className="h-10 rounded-full bg-accent-light px-4 text-sm font-bold text-night hover:bg-accent-light/85 transition-colors disabled:opacity-50 min-h-11"
+                                className="h-10 rounded-full bg-accent px-4 text-sm font-bold text-white hover:bg-accent-2 transition-colors disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer
                             </button>
                         </form>
                         {offer.commission_rate !== null && offer.commission_rate !== undefined && (
-                            <p className="mt-3 text-xs font-medium text-accent-light">
+                            <p className="mt-3 text-xs font-medium text-accent-2">
                                 Surcharge active : {parseFloat((Number(offer.commission_rate) * 100).toFixed(2))} % prélevés sur chaque vente de cette offre.
                             </p>
                         )}
@@ -393,7 +393,7 @@ export default function Show({ offer = {}, pendingRevision = null, liveRevision 
             <div className="mt-8">
                 <Link
                     href={route('admin.marketplace.offers.index')}
-                    className="text-xs font-semibold text-accent-light hover:underline"
+                    className="text-xs font-semibold text-accent-2 hover:underline"
                 >
                     File de modération
                 </Link>

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import StorefrontLayout from '../../Layouts/StorefrontLayout';
+import { useImages } from '../../lib/images';
 import EmptyState from '../../Components/ui/EmptyState';
 import Button from '../../Components/ui/Button';
 import OfferCard from '../../Components/commerce/OfferCard';
 import {
-    CatalogHeader, Segments, FilterPanel, FilterGroup, SearchField, PriceRange,
-    CheckOption, ColorOptions, CatalogToolbar, ActiveFilters, LoadMore,
-} from '../../Components/commerce/CatalogFilters';
+    ShopBreadcrumb, ShopBanner, SortMenu, ShopFilterPanel, ShopFilterGroup, ShopSearchField,
+    ShopPriceRange, ShopCheckOption, ShopColorOptions, ShopActiveFilters, ShopLoadMore,
+} from '../../Components/commerce/ShopFilters';
 
 const TYPE_CONFIG = {
     physical: { label: 'Produits physiques', shortLabel: 'Physique' },
@@ -31,6 +32,7 @@ export default function Shop({
     availableColors = [],
     query = {},
 }) {
+    const img = useImages();
     const q = query ?? {};
 
     // Filtres locaux de formulaire
@@ -123,133 +125,132 @@ export default function Shop({
                 <meta name="description" content="Les offres des créateurs, résidences, artisans et praticiens partenaires de MALKUTHAR." />
             </Head>
 
-            <div className="mx-auto max-w-[1280px] px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
-                <CatalogHeader
-                    title={category?.name ?? activePoleCategory?.name ?? 'Place de marché'}
-                    intro="Les offres des créateurs, artisans, résidences et praticiens partenaires, vérifiées avant publication."
-                >
-                    {poles.length > 0 && (
-                        <div className="mt-6">
-                            <Segments
-                                label="Univers"
-                                items={poles.map((p) => {
-                                    const isAll = !p.slug || p.key === 'all';
-                                    const isActive = isAll ? !activePole : activePole === p.slug;
-                                    return {
-                                        key: p.slug ?? 'all',
-                                        label: p.label || p.name || 'Univers',
-                                        active: isActive,
-                                        onClick: () => apply({ pole: isAll ? undefined : (isActive ? undefined : p.slug), categorie: undefined }),
-                                    };
-                                })}
+            <div className="bg-surface">
+                <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6">
+                    <ShopBreadcrumb items={[
+                        { label: 'Accueil', href: '/' },
+                        ...((category || activePoleCategory)
+                            ? [{ label: 'Place de marché', href: route('marketplace.shop') }, { label: category?.name ?? activePoleCategory.name }]
+                            : [{ label: 'Place de marché' }]),
+                    ]} />
+
+                    <ShopBanner
+                        title={category?.name ?? activePoleCategory?.name ?? 'Place de marché'}
+                        intro="Les offres des créateurs, artisans, résidences et praticiens partenaires, vérifiées avant publication."
+                        image={img('marketplace.banner')}
+                    />
+
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                        <p className="py-2 text-sm text-ink-2" aria-live="polite">{count} offre{count > 1 ? 's' : ''}</p>
+                        <div className="w-full lg:w-auto">
+                            <SortMenu
+                                value={q.tri ?? ''}
+                                onChange={(v) => apply({ tri: v || undefined })}
+                                options={[['', 'Nouveautés'], ['prix_asc', 'Prix croissant'], ['prix_desc', 'Prix décroissant'], ['populaire', 'Les plus populaires']]}
                             />
                         </div>
-                    )}
-                </CatalogHeader>
+                    </div>
 
-                <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
-                    <FilterPanel
-                        open={mobileFiltersOpen}
-                        onClose={() => setMobileFiltersOpen(false)}
-                        onSubmit={handleFormSubmit}
-                        hasActive={hasActiveFilters}
-                        onReset={resetAll}
-                    >
-                        <SearchField value={searchTerm} onChange={setSearchTerm} onClear={() => setSearchTerm('')} placeholder="Nom d'une offre" />
+                    <div className="mt-4 lg:flex lg:gap-6">
+                        <div className="w-full lg:w-[25%] lg:shrink-0">
+                            <ShopFilterPanel
+                                open={mobileFiltersOpen}
+                                onOpen={() => setMobileFiltersOpen(true)}
+                                onClose={() => setMobileFiltersOpen(false)}
+                                onSubmit={handleFormSubmit}
+                                hasActive={hasActiveFilters}
+                                onReset={resetAll}
+                                activeCount={activeChips.length}
+                            >
+                                <ShopSearchField value={searchTerm} onChange={setSearchTerm} onClear={() => setSearchTerm('')} placeholder="Rechercher une offre..." />
 
-                        <FilterGroup title="Prix">
-                            <PriceRange min={priceMin} max={priceMax} onMin={setPriceMin} onMax={setPriceMax} bounds={priceBounds} />
-                        </FilterGroup>
+                                {poles.length > 0 && (
+                                    <ShopFilterGroup title="Univers" badge={activePole ? 1 : 0}>
+                                        {poles.filter((p) => p.slug && p.key !== 'all').map((p) => {
+                                            const isActive = activePole === p.slug;
+                                            return (
+                                                <ShopCheckOption key={p.slug} checked={isActive} label={p.label || p.name || 'Univers'}
+                                                                 onClick={() => apply({ pole: isActive ? undefined : p.slug, categorie: undefined })} />
+                                            );
+                                        })}
+                                    </ShopFilterGroup>
+                                )}
 
-                        {rootCategories.length > 0 && (
-                            <FilterGroup title="Catégories">
-                                <ul>
-                                    {rootCategories.map((c) => {
-                                        const isCurrent = category?.id === c.id;
+                                <ShopFilterGroup title="Prix" badge={(q.prix_min || q.prix_max) ? 1 : 0}>
+                                    <ShopPriceRange min={priceMin} max={priceMax} onMin={setPriceMin} onMax={setPriceMax} bounds={priceBounds} />
+                                </ShopFilterGroup>
+
+                                {rootCategories.length > 0 && (
+                                    <ShopFilterGroup title="Catégories" badge={category ? 1 : 0}>
+                                        {rootCategories.map((c) => {
+                                            const isCurrent = category?.id === c.id;
+                                            return (
+                                                <ShopCheckOption key={c.slug} checked={isCurrent} label={c.name} count={c.count}
+                                                                 onClick={() => apply({ categorie: isCurrent ? undefined : c.slug })} />
+                                            );
+                                        })}
+                                    </ShopFilterGroup>
+                                )}
+
+                                <ShopFilterGroup title="Type d'offre" badge={activeType ? 1 : 0}>
+                                    {Object.entries(TYPE_CONFIG).map(([key, config]) => {
+                                        const isSelected = activeType === key;
                                         return (
-                                            <li key={c.slug}>
-                                                <CheckOption checked={isCurrent} label={c.name} count={c.count}
-                                                             onClick={() => apply({ categorie: isCurrent ? undefined : c.slug })} />
-                                            </li>
+                                            <ShopCheckOption key={key} checked={isSelected} label={config.label}
+                                                             onClick={() => apply({ type: isSelected ? undefined : key })} />
                                         );
                                     })}
-                                </ul>
-                            </FilterGroup>
-                        )}
+                                </ShopFilterGroup>
 
-                        <FilterGroup title="Type d'offre">
-                            <ul>
-                                {Object.entries(TYPE_CONFIG).map(([key, config]) => {
-                                    const isSelected = activeType === key;
-                                    return (
-                                        <li key={key}>
-                                            <CheckOption checked={isSelected} label={config.label}
-                                                         onClick={() => apply({ type: isSelected ? undefined : key })} />
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </FilterGroup>
+                                {vendors.length > 0 && (
+                                    <ShopFilterGroup title="Créateurs" badge={q.vendeur ? 1 : 0}>
+                                        <div className="max-h-64 overflow-y-auto pr-1">
+                                            {vendors.map((v) => {
+                                                const isChecked = q.vendeur === v.slug || String(q.vendeur) === String(v.id);
+                                                return (
+                                                    <ShopCheckOption key={v.id} checked={isChecked} label={v.name}
+                                                                     onClick={() => apply({ vendeur: isChecked ? undefined : v.slug })} />
+                                                );
+                                            })}
+                                        </div>
+                                    </ShopFilterGroup>
+                                )}
 
-                        {vendors.length > 0 && (
-                            <FilterGroup title="Créateurs">
-                                <ul className="max-h-64 overflow-y-auto pr-1">
-                                    {vendors.map((v) => {
-                                        const isChecked = q.vendeur === v.slug || String(q.vendeur) === String(v.id);
-                                        return (
-                                            <li key={v.id}>
-                                                <CheckOption checked={isChecked} label={v.name}
-                                                             onClick={() => apply({ vendeur: isChecked ? undefined : v.slug })} />
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </FilterGroup>
-                        )}
+                                {availableColors && availableColors.length > 0 && (
+                                    <ShopFilterGroup title="Couleurs" badge={q.couleur ? 1 : 0}>
+                                        <ShopColorOptions colors={availableColors} selected={q.couleur}
+                                                          onToggle={(name) => apply({ couleur: q.couleur === name ? undefined : name })} />
+                                    </ShopFilterGroup>
+                                )}
 
-                        {availableColors && availableColors.length > 0 && (
-                            <FilterGroup title="Couleurs">
-                                <ColorOptions colors={availableColors} selected={q.couleur}
-                                              onToggle={(name) => apply({ couleur: q.couleur === name ? undefined : name })} />
-                            </FilterGroup>
-                        )}
+                                <ShopFilterGroup title="Disponibilité" badge={q.dispo === 'promo' ? 1 : 0}>
+                                    <ShopCheckOption checked={q.dispo === 'promo'} label="Offres en promotion"
+                                                     onClick={() => apply({ dispo: q.dispo === 'promo' ? undefined : 'promo' })} />
+                                </ShopFilterGroup>
+                            </ShopFilterPanel>
+                        </div>
 
-                        <FilterGroup title="Disponibilité">
-                            <CheckOption checked={q.dispo === 'promo'} label="Offres en promotion"
-                                         onClick={() => apply({ dispo: q.dispo === 'promo' ? undefined : 'promo' })} />
-                        </FilterGroup>
-                    </FilterPanel>
+                        <div className="min-w-0 flex-1 space-y-6">
+                            <ShopActiveFilters chips={activeChips} onClear={resetAll} />
 
-                    <div className="min-w-0 space-y-5">
-                        <CatalogToolbar
-                            countText={`${count} offre${count > 1 ? 's' : ''}`}
-                            sortId="tri-select"
-                            sortValue={q.tri ?? ''}
-                            onSort={(v) => apply({ tri: v || undefined })}
-                            options={[['', 'Nouveautés'], ['prix_asc', 'Prix croissant'], ['prix_desc', 'Prix décroissant'], ['populaire', 'Les plus populaires']]}
-                            onOpenFilters={() => setMobileFiltersOpen(true)}
-                            activeCount={activeChips.length}
-                        />
-
-                        <ActiveFilters chips={activeChips} onClear={resetAll} />
-
-                        {offers.data.length === 0 ? (
-                            <EmptyState
-                                icon="search"
-                                title="Aucune offre trouvée"
-                                text="Aucune offre ne correspond à ces critères. Modifiez ou retirez un filtre."
-                                cta={<Button variant="secondary" onClick={resetAll}>Voir toutes les offres</Button>}
-                            />
-                        ) : (
-                            <>
-                                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                                    {offers.data.map((offer) => (
-                                        <OfferCard key={offer.id} offer={offer} />
-                                    ))}
-                                </div>
-                                <LoadMore paginator={offers} endText="Vous avez vu toutes les offres." />
-                            </>
-                        )}
+                            {offers.data.length === 0 ? (
+                                <EmptyState
+                                    icon="search"
+                                    title="Aucune offre trouvée"
+                                    text="Aucune offre ne correspond à ces critères. Modifiez ou retirez un filtre."
+                                    cta={<Button variant="secondary" onClick={resetAll}>Voir toutes les offres</Button>}
+                                />
+                            ) : (
+                                <>
+                                    <div className="grid auto-rows-max grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                                        {offers.data.map((offer) => (
+                                            <OfferCard key={offer.id} offer={offer} variant="showcase" />
+                                        ))}
+                                    </div>
+                                    <ShopLoadMore paginator={offers} endText="Vous avez vu toutes les offres." />
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

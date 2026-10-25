@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import StorefrontLayout from '../Layouts/StorefrontLayout';
+import { useImages } from '../lib/images';
 import Button from '../Components/ui/Button';
 import EmptyState from '../Components/ui/EmptyState';
 import Price from '../Components/commerce/Price';
@@ -14,6 +15,7 @@ export default function Affiliation({
     rateL1, rateL2, rateL3, rateTotal, paidLevels, validationDelayDays,
     referralCookieDays, referralPath, minWithdrawal, cooldownHours, showcase,
 }) {
+    const img = useImages();
     const { auth } = usePage().props;
     const joinHref = auth?.user ? route('affiliate.join') : route('register.affiliate');
     const joinLabel = auth?.user ? 'Activer mon espace affilié' : 'Rejoindre le programme';
@@ -68,7 +70,7 @@ export default function Affiliation({
                     </div>
                     <div className="overflow-hidden rounded-2xl bg-ground-alt">
                         <img
-                            src="/images/affiliation-hero.jpg"
+                            src={img('affiliation.hero')}
                             alt="Affiliée partageant un produit MALKUTHAR"
                             className="aspect-[4/3] h-full w-full object-cover"
                         />
@@ -111,7 +113,7 @@ export default function Affiliation({
                     <div>
                         <h2 id="etapes-titre" className="text-3xl text-ink sm:text-4xl">Comment ça fonctionne</h2>
                         <div className="mt-8 hidden overflow-hidden rounded-2xl bg-ground-alt lg:block">
-                            <img src="/images/affiliation-network.jpg" alt="Réseau d'affiliés MALKUTHAR" loading="lazy"
+                            <img src={img('affiliation.network')} alt="Réseau d'affiliés MALKUTHAR" loading="lazy"
                                  className="aspect-[4/3] w-full object-cover" />
                         </div>
                     </div>
@@ -207,7 +209,7 @@ export default function Affiliation({
                 </section>
 
                 {/* Appel final */}
-                <section className="flex flex-col gap-8 rounded-2xl bg-ink p-7 text-white sm:p-10 md:flex-row md:items-center md:justify-between">
+                <section className="flex flex-col gap-8 rounded-2xl bg-deep p-7 text-white sm:p-10 md:flex-row md:items-center md:justify-between">
                     <div className="max-w-xl">
                         <h2 className="text-3xl text-white">Prêt à partager votre lien ?</h2>
                         <p className="mt-3 text-[15px] leading-relaxed text-night-ink-2">

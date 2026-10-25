@@ -122,7 +122,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                             </h2>
                             <Link
                                 href={route('admin.marketplace.categories.index')}
-                                className="text-xs font-semibold text-accent-light hover:underline"
+                                className="text-xs font-semibold text-accent-2 hover:underline"
                             >
                                 + Nouvelle racine
                             </Link>
@@ -144,7 +144,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                 preserveScroll
                                                 className={`flex items-center justify-between rounded-xl px-2.5 py-2 transition-colors ${
                                                     isSelected
-                                                        ? 'bg-accent-light/10 font-bold text-accent-light'
+                                                        ? 'bg-accent-soft font-bold text-accent-2'
                                                         : 'text-night-ink-2 hover:bg-night-line hover:text-night-ink'
                                                 }`}
                                                 style={{ paddingLeft: `${0.5 + row.depth * 1.1}rem` }}
@@ -153,7 +153,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     {row.depth > 0 && <span className="text-night-ink-2">└</span>}
                                                     {cat.name}
                                                     {!cat.is_active && (
-                                                        <span className="rounded bg-rust/20 px-1.5 py-0.5 text-xs font-bold uppercase text-rust-tint">
+                                                        <span className="rounded bg-rust-tint px-1.5 py-0.5 text-xs font-bold uppercase text-rust">
                                                             masquée
                                                         </span>
                                                     )}
@@ -184,7 +184,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                 <button
                                     type="button"
                                     onClick={handleDeleteCategory}
-                                    className="text-xs font-semibold text-rust-tint hover:underline"
+                                    className="text-xs font-semibold text-rust hover:underline"
                                 >
                                     Supprimer
                                 </button>
@@ -200,10 +200,10 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         required
                                         value={categoryForm.data.name}
                                         onChange={(e) => categoryForm.setData('name', e.target.value)}
-                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                     />
                                     {categoryForm.errors.name && (
-                                        <p className="mt-1 text-xs text-rust-tint">{categoryForm.errors.name}</p>
+                                        <p className="mt-1 text-xs text-rust">{categoryForm.errors.name}</p>
                                     )}
                                 </div>
 
@@ -212,7 +212,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                     <select
                                         value={categoryForm.data.parent_id}
                                         onChange={(e) => categoryForm.setData('parent_id', e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 h-10 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                     >
                                         <option value="">— racine —</option>
                                         {categories.map((c) => {
@@ -226,7 +226,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         })}
                                     </select>
                                     {categoryForm.errors.parent_id && (
-                                        <p className="mt-1 text-xs text-rust-tint">{categoryForm.errors.parent_id}</p>
+                                        <p className="mt-1 text-xs text-rust">{categoryForm.errors.parent_id}</p>
                                     )}
                                 </div>
                             </div>
@@ -237,7 +237,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                     rows="2"
                                     value={categoryForm.data.description}
                                     onChange={(e) => categoryForm.setData('description', e.target.value)}
-                                    className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none"
+                                    className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none"
                                 />
                             </div>
 
@@ -250,14 +250,14 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                 type="checkbox"
                                                 checked={categoryForm.data.applicable_offer_types.includes(t.id)}
                                                 onChange={() => toggleOfferType(t.id)}
-                                                className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                                className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                             />
                                             {t.label}
                                         </label>
                                     ))}
                                 </div>
                                 {categoryForm.errors.applicable_offer_types && (
-                                    <p className="mt-1 text-xs text-rust-tint">
+                                    <p className="mt-1 text-xs text-rust">
                                         {categoryForm.errors.applicable_offer_types}
                                     </p>
                                 )}
@@ -274,7 +274,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         placeholder="défaut"
                                         value={categoryForm.data.commission_rate_percent}
                                         onChange={(e) => categoryForm.setData('commission_rate_percent', e.target.value)}
-                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                     />
                                 </div>
 
@@ -285,7 +285,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         min="0"
                                         value={categoryForm.data.position}
                                         onChange={(e) => categoryForm.setData('position', e.target.value)}
-                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                     />
                                 </div>
 
@@ -295,7 +295,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                             type="checkbox"
                                             checked={categoryForm.data.is_active}
                                             onChange={(e) => categoryForm.setData('is_active', e.target.checked)}
-                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Active
                                     </label>
@@ -318,7 +318,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     require_approval: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Validation admin obligatoire
                                     </label>
@@ -332,7 +332,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     requires_shipping: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Livraison requise
                                     </label>
@@ -346,7 +346,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     allow_variants: e.target.checked,
                                                 })
                                             }
-                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Variantes autorisées
                                     </label>
@@ -402,7 +402,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                 <button
                                     type="submit"
                                     disabled={categoryForm.processing}
-                                    className="rounded-full bg-accent-light px-5 py-2.5 text-sm font-bold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                                    className="rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                                 >
                                     {editing ? 'Enregistrer les modifications' : 'Créer la catégorie'}
                                 </button>
@@ -433,7 +433,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     {fieldTypes.find((t) => t.id === f.type)?.label || f.type}
                                                 </td>
                                                 <td className="py-2.5 text-sm text-night-ink-2">
-                                                    {f.is_required && <span className="mr-1 text-amber-tint font-semibold">requis</span>}
+                                                    {f.is_required && <span className="mr-1 text-amber font-semibold">requis</span>}
                                                     {f.is_filterable && <span>· facette </span>}
                                                     {f.is_variant_axis && <span>· variante</span>}
                                                 </td>
@@ -441,7 +441,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDeleteField(f.id)}
-                                                        className="text-xs font-semibold text-rust-tint hover:underline"
+                                                        className="text-xs font-semibold text-rust hover:underline"
                                                     >
                                                         Supprimer
                                                     </button>
@@ -461,7 +461,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                             required
                                             value={fieldForm.data.label}
                                             onChange={(e) => fieldForm.setData('label', e.target.value)}
-                                            className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none"
+                                            className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none"
                                         />
                                     </div>
                                     <div>
@@ -469,7 +469,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         <select
                                             value={fieldForm.data.type}
                                             onChange={(e) => fieldForm.setData('type', e.target.value)}
-                                            className="mt-1 h-9 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none"
+                                            className="mt-1 h-9 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none"
                                         >
                                             {fieldTypes.map((ft) => (
                                                 <option key={ft.id} value={ft.id}>
@@ -489,10 +489,10 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                         placeholder="ex. matiere"
                                         value={fieldForm.data.key}
                                         onChange={(e) => fieldForm.setData('key', e.target.value)}
-                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 font-mono text-sm text-night-ink focus:border-accent-light focus:outline-none"
+                                        className="mt-1 h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 font-mono text-sm text-night-ink focus:border-accent focus:outline-none"
                                     />
                                     {fieldForm.errors.key && (
-                                        <p className="mt-1 text-xs text-rust-tint">{fieldForm.errors.key}</p>
+                                        <p className="mt-1 text-xs text-rust">{fieldForm.errors.key}</p>
                                     )}
                                 </div>
 
@@ -505,7 +505,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                             rows="3"
                                             value={fieldForm.data.options_text}
                                             onChange={(e) => fieldForm.setData('options_text', e.target.value)}
-                                            className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none"
                                         />
                                     </div>
                                 )}
@@ -516,7 +516,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                             type="checkbox"
                                             checked={fieldForm.data.is_required}
                                             onChange={(e) => fieldForm.setData('is_required', e.target.checked)}
-                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Requis
                                     </label>
@@ -525,7 +525,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                             type="checkbox"
                                             checked={fieldForm.data.is_filterable}
                                             onChange={(e) => fieldForm.setData('is_filterable', e.target.checked)}
-                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                            className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                         />
                                         Facette de recherche
                                     </label>
@@ -535,7 +535,7 @@ export default function Index({ categories = [], tree = [], editing = null }) {
                                                 type="checkbox"
                                                 checked={fieldForm.data.is_variant_axis}
                                                 onChange={(e) => fieldForm.setData('is_variant_axis', e.target.checked)}
-                                                className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                                className="h-3.5 w-3.5 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                             />
                                             Axe de variante
                                         </label>

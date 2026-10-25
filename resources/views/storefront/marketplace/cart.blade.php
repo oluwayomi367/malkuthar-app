@@ -15,7 +15,7 @@
         @if (!$lines->isEmpty())
             <ol class="flex items-center gap-3 text-sm text-ink-3" aria-label="Étapes de la commande">
                 <li class="flex items-center gap-2 font-semibold text-ink" aria-current="step">
-                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white">1</span>
+                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-deep text-xs font-semibold text-white">1</span>
                     Panier
                 </li>
                 <li aria-hidden="true" class="h-px w-6 bg-line-strong"></li>

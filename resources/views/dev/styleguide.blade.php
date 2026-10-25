@@ -19,7 +19,7 @@
                 ['Ground alt', 'bg-ground-alt border border-white/10', '#0F0F17'],
                 ['Surface', 'bg-surface border border-white/10', '#14141D'],
                 ['Line', 'bg-line', '#23232F'],
-                ['Ink', 'bg-ink', '#F5F5F8'],
+                ['Ink', 'bg-deep', '#F5F5F8'],
                 ['Ink 2', 'bg-ink-2', '#A6A6B4'],
                 ['Ink 3', 'bg-ink-3', '#6C6C7C'],
                 ['Accent', 'bg-accent', '#7C5CFF'],

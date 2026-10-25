@@ -72,11 +72,11 @@ export default function Show({
                 <span>{affiliate.email}</span>
                 <span>·</span>
                 {affiliate.status === 'active' ? (
-                    <span className="rounded-full bg-sage/30 px-2.5 py-0.5 font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-2.5 py-0.5 font-semibold text-sage">
                         Actif
                     </span>
                 ) : (
-                    <span className="rounded-full bg-rust/20 px-2.5 py-0.5 font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-2.5 py-0.5 font-semibold text-rust">
                         Suspendu
                     </span>
                 )}
@@ -123,7 +123,7 @@ export default function Show({
                                 </div>
                                 <Link
                                     href={route('admin.affiliates.show', affiliate.parent.id)}
-                                    className="text-xs font-semibold text-accent-light hover:underline"
+                                    className="text-xs font-semibold text-accent-2 hover:underline"
                                 >
                                     Ouvrir la fiche
                                 </Link>
@@ -251,8 +251,8 @@ export default function Show({
                             </button>
                         </form>
                     ) : (
-                        <div className="mt-4 rounded-xl border border-rust bg-rust/20 p-4 text-sm">
-                            <p className="font-bold text-rust-tint">Compte actuellement suspendu</p>
+                        <div className="mt-4 rounded-xl border border-rust bg-rust-tint p-4 text-sm">
+                            <p className="font-bold text-rust">Compte actuellement suspendu</p>
                             <p className="mt-1 text-night-ink-2">
                                 Motif : {affiliate.suspension_category || 'Non renseigné'}
                             </p>
@@ -284,7 +284,7 @@ export default function Show({
                             <select
                                 value={walletForm.data.direction}
                                 onChange={(e) => walletForm.setData('direction', e.target.value)}
-                                className="rounded-lg border border-night-ink-2/60 p-2 focus:border-accent-light focus:outline-none min-h-11"
+                                className="rounded-lg border border-night-ink-2/60 p-2 focus:border-accent focus:outline-none min-h-11"
                             >
                                 <option value="credit">Créditer (+)</option>
                                 <option value="debit">Débiter (−)</option>
@@ -297,7 +297,7 @@ export default function Show({
                                 placeholder="Montant (FCFA)"
                                 value={walletForm.data.amount}
                                 onChange={(e) => walletForm.setData('amount', e.target.value)}
-                                className="flex-1 rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                className="flex-1 rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
 
@@ -308,14 +308,14 @@ export default function Show({
                                 placeholder="Motif obligatoire de l'ajustement..."
                                 value={walletForm.data.reason}
                                 onChange={(e) => walletForm.setData('reason', e.target.value)}
-                                className="block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                className="block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={walletForm.processing}
-                            className="rounded-full bg-accent-light px-4 py-2 font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                            className="rounded-full bg-accent px-4 py-2 font-semibold text-white hover:bg-accent-2 min-h-11"
                         >
                             Enregistrer l'ajustement
                         </button>
@@ -333,7 +333,7 @@ export default function Show({
                         <div key={level.level} className="rounded-2xl border border-night-line bg-night-2 p-4 text-sm">
                             <div className="flex items-center justify-between">
                                 <p className="font-bold text-night-ink">Niveau {level.level}</p>
-                                <span className="rounded bg-accent-light/15 px-2 py-0.5 font-mono font-bold text-accent-light">
+                                <span className="rounded bg-accent-soft px-2 py-0.5 font-mono font-bold text-accent-2">
                                     {level.rate} %
                                 </span>
                             </div>
@@ -344,7 +344,7 @@ export default function Show({
                                 </div>
                                 <div className="flex justify-between">
                                     <dt>Actifs</dt>
-                                    <dd className="font-semibold text-sage-soft">{formatNumber(level.active)}</dd>
+                                    <dd className="font-semibold text-sage">{formatNumber(level.active)}</dd>
                                 </div>
                                 <div className="flex justify-between">
                                     <dt>Ventes réalisées</dt>
@@ -369,7 +369,7 @@ export default function Show({
                                 <Link
                                     key={c.id}
                                     href={route('admin.affiliates.show', c.id)}
-                                    className="inline-flex items-center gap-1.5 rounded-full border border-night-line bg-night-2 px-2.5 py-1 text-sm text-night-ink-2 hover:border-accent-light min-h-11"
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-night-line bg-night-2 px-2.5 py-1 text-sm text-night-ink-2 hover:border-accent min-h-11"
                                 >
                                     <span>{[c.first_name, c.last_name].join(' ')}</span>
                                     <span className="font-mono text-xs text-night-ink-2">({c.affiliate_id})</span>
@@ -411,7 +411,7 @@ export default function Show({
                                             {formatNumber(o.total_amount)} {o.currency || 'FCFA'}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <span className="rounded-full bg-sage/30 px-2 py-0.5 text-xs font-semibold text-sage-soft">
+                                            <span className="rounded-full bg-sage-soft px-2 py-0.5 text-xs font-semibold text-sage">
                                                 {o.payment_status}
                                             </span>
                                         </td>
@@ -456,7 +456,7 @@ export default function Show({
                                             {c.created_at ? new Date(c.created_at).toLocaleDateString('fr-FR') : '—'}
                                         </td>
                                         <td className="px-4 py-3 text-night-ink-2">Niveau {c.level || 1}</td>
-                                        <td className="px-4 py-3 font-bold text-accent-light">
+                                        <td className="px-4 py-3 font-bold text-accent-2">
                                             +{formatNumber(c.amount)} {c.currency || 'FCFA'}
                                         </td>
                                         <td className="px-4 py-3">

@@ -71,7 +71,7 @@ export function OptionGroup({ label, values, selected, onSelect }) {
                     return (
                         <button key={val} type="button" onClick={() => onSelect(val)} aria-pressed={on}
                                 className={['inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3.5 text-sm font-medium transition-colors',
-                                    on ? 'border-ink bg-ink text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
+                                    on ? 'border-deep bg-deep text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
                             {val}
                         </button>
                     );

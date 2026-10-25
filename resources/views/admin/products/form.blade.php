@@ -72,10 +72,10 @@
                     <input type="file" name="main_image_file" accept="image/*" x-on:change="pickMain($event)"
                            class="block w-full text-sm text-night-ink-2 file:mr-3 file:rounded-lg file:border-0 file:bg-night file:px-3 file:py-2 file:text-sm file:font-semibold file:text-night-ink hover:file:bg-night-line/50">
                     <p class="text-xs text-night-ink-2">JPG, PNG, WebP ou AVIF — 5 Mo max.</p>
-                    @error('main_image_file')<p class="text-xs text-rust-tint">{{ $message }}</p>@enderror
+                    @error('main_image_file')<p class="text-xs text-rust">{{ $message }}</p>@enderror
                     @if ($product->main_image)
                         <label class="mt-1 flex items-center gap-2 text-sm text-night-ink-2">
-                            <input type="checkbox" name="remove_main_image" value="1" class="h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-light">
+                            <input type="checkbox" name="remove_main_image" value="1" class="h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-2">
                             Retirer l'image actuelle
                         </label>
                     @endif
@@ -91,8 +91,8 @@
                         @foreach ($product->gallery as $img)
                             <label class="group relative block h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-night-line">
                                 <img src="{{ $img }}" alt="" class="h-full w-full object-cover transition group-has-[:checked]:opacity-30">
-                                <span class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-night py-0.5 text-xs text-rust-tint opacity-0 group-has-[:checked]:opacity-100">Retiré</span>
-                                <input type="checkbox" name="gallery_remove[]" value="{{ $img }}" class="absolute right-1 top-1 h-4 w-4 rounded border-night-ink-2/60 bg-night text-rust-tint">
+                                <span class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-night py-0.5 text-xs text-rust opacity-0 group-has-[:checked]:opacity-100">Retiré</span>
+                                <input type="checkbox" name="gallery_remove[]" value="{{ $img }}" class="absolute right-1 top-1 h-4 w-4 rounded border-night-ink-2/60 bg-night text-rust">
                             </label>
                         @endforeach
                     </div>
@@ -101,12 +101,12 @@
 
                 <input type="file" name="gallery_files[]" accept="image/*" multiple x-on:change="pickGallery($event)"
                        class="block w-full text-sm text-night-ink-2 file:mr-3 file:rounded-lg file:border-0 file:bg-night file:px-3 file:py-2 file:text-sm file:font-semibold file:text-night-ink hover:file:bg-night-line/50">
-                @error('gallery_files')<p class="text-xs text-rust-tint">{{ $message }}</p>@enderror
-                @error('gallery_files.*')<p class="text-xs text-rust-tint">{{ $message }}</p>@enderror
+                @error('gallery_files')<p class="text-xs text-rust">{{ $message }}</p>@enderror
+                @error('gallery_files.*')<p class="text-xs text-rust">{{ $message }}</p>@enderror
 
                 <div class="flex flex-wrap gap-3" x-show="galleryPreviews.length" x-cloak>
                     <template x-for="src in galleryPreviews" :key="src">
-                        <img :src="src" alt="" class="h-20 w-20 rounded-lg border border-accent-light/40 object-cover">
+                        <img :src="src" alt="" class="h-20 w-20 rounded-lg border border-accent/40 object-cover">
                     </template>
                 </div>
             </div>
@@ -137,7 +137,7 @@
                 <label class="flex items-start gap-3 rounded-xl border border-night-line bg-night-2 p-3.5 text-sm">
                     <input type="hidden" name="is_affiliable" value="0">
                     <input type="checkbox" name="is_affiliable" value="1" @checked(old('is_affiliable', $product->is_affiliable))
-                           class="mt-0.5 h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-light">
+                           class="mt-0.5 h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-2">
                     <span>
                         <span class="font-medium text-night-ink">Éligible au programme d'affiliation</span>
                         <span class="block text-xs text-night-ink-2">§4 — réservé aux produits digitaux. Déclenche les commissions 15 · 10 · 5 %.</span>
@@ -192,7 +192,7 @@
                 <label class="flex items-center gap-3 self-end rounded-xl border border-night-line bg-night-2 px-3.5 py-2.5 text-sm">
                     <input type="hidden" name="is_available" value="0">
                     <input type="checkbox" name="is_available" value="1" @checked(old('is_available', $product->is_available ?? true))
-                           class="h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-light">
+                           class="h-4 w-4 rounded border-night-ink-2/60 bg-night text-accent-2">
                     Disponible à la vente
                 </label>
             </div>
@@ -209,7 +209,7 @@
                 @endif
                 @if ($isEdit)
                     <button form="delete-product"
-                            class="inline-flex h-10 items-center rounded-xl border border-rust px-4 text-sm font-semibold text-rust-tint transition-colors hover:bg-rust/20">
+                            class="inline-flex h-10 items-center rounded-xl border border-rust px-4 text-sm font-semibold text-rust transition-colors hover:bg-rust-tint">
                         Supprimer
                     </button>
                 @endif

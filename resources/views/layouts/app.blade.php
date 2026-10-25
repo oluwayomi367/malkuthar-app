@@ -3,7 +3,7 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-ground font-sans text-ink antialiased">
+<body class="theme-dashboard min-h-screen bg-gray-100 font-sans text-ink antialiased">
     @include('partials.tracking-body')
 
     <x-layout.navbar-app />

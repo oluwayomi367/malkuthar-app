@@ -69,6 +69,22 @@ class TrackingAndSeoTest extends TestCase
         $this->get('/login')->assertSee("fbq('init','1234567890')", false);
     }
 
+    public function test_marketing_pixels_wait_for_cookie_consent(): void
+    {
+        config([
+            'malkuthar.tracking.meta_pixel_id' => '1234567890',
+            'malkuthar.tracking.ga_measurement_id' => 'G-TEST',
+        ]);
+
+        // Rendus inertes (type="text/plain") : resources/js/consent.js ne les
+        // active qu'après accord de la catégorie correspondante.
+        $html = $this->get('/login')->assertOk()->getContent();
+
+        $this->assertStringContainsString('<script type="text/plain" data-consent="ads">', $html);
+        $this->assertStringContainsString('<script type="text/plain" data-consent="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-TEST">', $html);
+        $this->assertDoesNotMatchRegularExpression('/<script>[^<]*fbq\(/', $html);
+    }
+
     public function test_registration_rejects_an_unsupported_currency(): void
     {
         $this->post('/register', [

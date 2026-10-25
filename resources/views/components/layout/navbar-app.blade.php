@@ -24,7 +24,7 @@
 <header class="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
     <div class="mx-auto flex h-16 max-w-[1320px] items-center gap-4 px-4 sm:px-6 lg:gap-6">
         <a href="{{ url('/') }}" class="inline-flex shrink-0 items-center gap-2.5 text-ink">
-            <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 object-contain">
+            <img src="{{ \App\Support\StorefrontImages::url('brand.logo') }}" alt="" class="h-8 w-8 object-contain">
             <span class="font-display text-[22px] font-semibold tracking-[0.14em]">MALKUTHAR</span>
         </a>
 

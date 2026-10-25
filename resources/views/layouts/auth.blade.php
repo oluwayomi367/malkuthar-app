@@ -3,59 +3,58 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-ground font-sans text-ink antialiased">
+<body class="flex min-h-screen flex-col bg-ground font-sans text-ink antialiased">
     @include('partials.tracking-body')
 
-    <div class="grid min-h-screen lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    <x-layout.navbar-public />
 
-        {{-- Panneau encre (desktop) : nom de la maison + phrase adaptée au parcours. --}}
-        <aside class="hidden bg-ink text-night-ink lg:block">
-            <div class="sticky top-0 flex h-screen flex-col justify-between px-12 py-12 xl:px-16">
-                <a href="{{ url('/') }}" class="inline-flex items-center gap-3 self-start">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-surface p-1.5">
-                        <img src="{{ asset('images/logo.png') }}" alt="" class="h-full w-full object-contain">
-                    </span>
-                    <span class="font-display text-[22px] font-semibold tracking-[0.2em] text-night-ink">MALKUTHAR</span>
-                </a>
+    {{-- Formulaire centré dans une carte blanche, photo arrondie à droite (desktop). --}}
+    <main id="contenu" class="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-10 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
+            <div class="flex w-full @yield('form_max', 'max-w-[440px]') flex-col items-center">
+                @hasSection('auth_heading')
+                    <h1 class="text-center font-display text-[2.1rem] font-normal leading-tight tracking-[-0.03em] text-ink sm:text-[2.6rem]">@yield('auth_heading')</h1>
+                @endif
+                @hasSection('auth_intro')
+                    <p class="mt-2 max-w-md text-center text-sm text-ink-2 sm:text-[15px]">@yield('auth_intro')</p>
+                @endif
 
-                <div class="max-w-md">
-                    <p class="font-display text-[34px] font-medium leading-[1.15] text-night-ink">
-                        @hasSection('auth_tagline') @yield('auth_tagline') @else Votre compte MALKUTHAR. @endif
-                    </p>
-                    <p class="mt-4 text-[15px] leading-relaxed text-night-ink-2">
-                        @hasSection('auth_subtitle') @yield('auth_subtitle') @else Vos commandes, vos téléchargements, vos réservations et, si vous les avez activés, vos espaces affilié et vendeur. @endif
-                    </p>
-                    @hasSection('auth_panel_extra')
-                        <div class="mt-8">@yield('auth_panel_extra')</div>
-                    @endif
+                <div class="mt-7 w-full rounded-[28px] border border-line bg-surface p-6 shadow-[0_4px_30px_rgba(0,0,0,0.04)] sm:p-8">
+                    @include('partials.flash')
+                    {{ $slot ?? '' }}
+                    @yield('content')
                 </div>
 
-                <p class="text-xs text-night-ink-2">© {{ date('Y') }} MALKUTHAR SARL</p>
+                @hasSection('auth_footer')
+                    <div class="mt-6 flex flex-col items-center gap-3 text-center">@yield('auth_footer')</div>
+                @endif
+
+                <nav aria-label="Liens utiles" class="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-ink-3">
+                    <a href="{{ url('/') }}" class="hover:text-ink">← Accueil</a>
+                    <span aria-hidden="true">•</span>
+                    <a href="{{ route('catalog.index') }}" class="hover:text-ink">Boutique</a>
+                    <span aria-hidden="true">•</span>
+                    <a href="{{ route('affiliation') }}" class="hover:text-ink">Affiliation</a>
+                </nav>
             </div>
-        </aside>
 
-        {{-- Colonne formulaire --}}
-        <div class="flex min-h-screen flex-col px-4 py-6 sm:px-10 lg:px-14 xl:px-20">
-            <header class="flex items-center justify-between gap-4">
-                <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5 lg:hidden">
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 object-contain">
-                    <span class="font-display text-[20px] font-semibold tracking-[0.18em] text-ink">MALKUTHAR</span>
-                </a>
-                <a href="{{ url('/') }}" class="ml-auto inline-flex min-h-11 items-center gap-1.5 text-sm text-ink-2 transition-colors hover:text-ink">
-                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-                        <path d="M12 5l-5 5 5 5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Retour à la boutique
-                </a>
-            </header>
-
-            <main class="mx-auto my-auto w-full @yield('form_max', 'max-w-[440px]') py-10">
-                @include('partials.flash')
-                {{ $slot ?? '' }}
-                @yield('content')
-            </main>
+            <div class="hidden w-full max-w-[440px] lg:sticky lg:top-12 lg:block">
+                <figure class="relative aspect-[4/5] w-full overflow-hidden rounded-[32px] border border-ink/5 bg-ground-alt shadow-sm">
+                    <img src="{{ \App\Support\StorefrontImages::url(trim($__env->yieldContent('auth_image', 'auth.login'))) }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+                    @hasSection('auth_tagline')
+                        <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep/90 via-deep/50 to-transparent p-7 pt-20 text-white">
+                            <p class="font-display text-[24px] font-medium leading-tight">@yield('auth_tagline')</p>
+                            @hasSection('auth_subtitle')
+                                <p class="mt-2 text-sm leading-relaxed text-white/80">@yield('auth_subtitle')</p>
+                            @endif
+                        </figcaption>
+                    @endif
+                </figure>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <x-layout.footer />
 
     @stack('scripts')
 </body>

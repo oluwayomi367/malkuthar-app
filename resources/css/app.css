@@ -10,8 +10,9 @@
 |--------------------------------------------------------------------------
 | Charte MALKUTHAR — refonte 2026
 |--------------------------------------------------------------------------
-| Crème chaud, encre profonde, or sobre. Une seule famille : Poppins,
-| pour les titres comme pour le texte et l'interface. Chaque espace a une teinte de repère
+| Bleu ardoise & or : fond clair neutre, texte ardoise, bandeaux bleu nuit
+| doux, or. Une seule famille : Poppins, pour les titres comme pour le texte et
+| l'interface. Chaque espace a une teinte de repère
 | (--color-space-*) utilisée uniquement pour l'élément actif du menu, le
 | sélecteur d'espace et le bouton principal de l'espace.
 |
@@ -26,28 +27,32 @@
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
     /* ---- Fonds ---- */
-    --color-ground: #f7f5f0;         /* fond de page — crème */
-    --color-ground-alt: #efebe1;     /* sections alternées */
-    --color-surface: #fffefb;        /* cartes */
+    --color-ground: #f6f6f3;         /* fond de page — blanc cassé */
+    --color-ground-alt: #e9ebee;     /* sections alternées */
+    --color-surface: #fefefc;        /* cartes */
 
-    /* ---- Encre (contraste ≥ 4,5:1 sur crème) ---- */
-    --color-ink: #1c1917;
-    --color-ink-2: #57534e;
-    --color-ink-3: #6b665e;
+    /* ---- Encre (contraste ≥ 4,5:1 sur le fond) ---- */
+    --color-ink: #25303e;
+    --color-ink-2: #5a6472;
+    --color-ink-3: #5e6875;
 
-    --color-line: #e4ded0;
-    --color-line-strong: #cfc7b4;
+    --color-line: #dcdfe4;
+    --color-line-strong: #c5cad2;
 
-    /* ---- Or sobre ---- */
-    --color-accent: #8a6d2c;         /* porte le texte blanc */
-    --color-accent-2: #6e5622;       /* survol / pressé */
+    /* ---- Bleu nuit : bandeaux, boutons principaux, pied de page ---- */
+    --color-deep: #2d3e55;
+    --color-deep-2: #24334a;         /* survol / pressé */
+
+    /* ---- Or ---- */
+    --color-accent: #866626;         /* porte le texte blanc */
+    --color-accent-2: #6b511e;       /* survol / pressé */
     --color-accent-soft: #f2ead6;    /* voile d'or */
-    --color-accent-light: #d9be7c;   /* or sur fond sombre */
+    --color-accent-light: #e3c78b;   /* or sur fond sombre */
 
     /* ---- Teintes d'espace ---- */
-    --color-space-client: #1c1917;
-    --color-space-client-soft: #ece9e3;
-    --color-space-affiliate: #8a6d2c;
+    --color-space-client: #2d3e55;
+    --color-space-client-soft: #e4e9f0;
+    --color-space-affiliate: #866626;
     --color-space-affiliate-soft: #f2ead6;
     --color-space-vendor: #3f5a45;
     --color-space-vendor-soft: #e3ebe2;
@@ -62,19 +67,19 @@
     --color-sage-soft: #e3ebe2;
 
     /* ---- Alias de compatibilité (composants existants) ---- */
-    --color-forest: #8a6d2c;
+    --color-forest: #866626;
     --color-forest-tint: #f2ead6;
-    --color-gold: #8a6d2c;
+    --color-gold: #866626;
     --color-gold-tint: #f2ead6;
     --color-amber: #8a5a14;          /* statut « en attente » */
     --color-amber-tint: #f5e9d3;
-    --color-rust: #9b3a2b;           /* statut « échoué » */
+    --color-rust: #a3442f;           /* statut « échoué » */
     --color-rust-tint: #f3ddd7;
 
     /* ---- Hérité (styleguide local uniquement) ---- */
-    --color-paper: #fffefb;
-    --color-surface-line: #e4ded0;
-    --color-ink-soft: #57534e;
+    --color-paper: #fefefc;
+    --color-surface-line: #dcdfe4;
+    --color-ink-soft: #5a6472;
     --color-brand-gold: #8a5a14;
     --color-brand-green: #3f5a45;
     --color-brand-violet: #6f6478;
@@ -178,20 +183,31 @@
 }
 
 /*
-| Thème nuit — console d'administration Blade. Redéfinit les tokens clairs
-| pour que les composants partagés (x-ui.field, x-ui.button…) restent
-| lisibles sur fond sombre sans variante dédiée.
+| Thème admin — console d'administration (Blade et React), fond gris clair.
+| Les écrans admin utilisent les tokens --color-night-* : on les redéfinit ici
+| en clair plutôt que de réécrire chaque écran.
 */
-.theme-night {
-    --color-ground: #14161b;
-    --color-ground-alt: #1c1f26;
-    --color-surface: #1c1f26;
-    --color-ink: #ece8df;
-    --color-ink-2: #a6a095;
-    --color-ink-3: #a6a095;
-    --color-line: #2a2e37;
-    --color-line-strong: #3a3f4a;
-    --color-accent-soft: #2e2818;
-    --color-accent-2: #d9be7c;
-    color-scheme: dark;
+.theme-admin {
+    --color-night: #f3f4f6;          /* fond de page — gris */
+    --color-night-2: #ffffff;        /* cartes, champs */
+    --color-night-line: #e3e5e9;
+    --color-night-ink: var(--color-ink);
+    --color-night-ink-2: var(--color-ink);
+    color-scheme: light;
+}
+
+/*
+| Tableaux de bord (client, affilié, vendeur, admin) : textes secondaires en
+| couleur d'encre au lieu de gris. Les placeholders restent gris pour ne pas
+| ressembler à une valeur saisie.
+*/
+.theme-dashboard,
+.theme-admin {
+    --color-ink-2: var(--color-ink);
+    --color-ink-3: var(--color-ink);
+}
+
+.theme-dashboard ::placeholder,
+.theme-admin ::placeholder {
+    color: #6b7280;
 }

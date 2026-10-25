@@ -28,6 +28,41 @@ class StaticPagesTest extends TestCase
             ->where('contact.email', config('malkuthar.contact.email')));
     }
 
+    public function test_legal_pages_load_and_link_to_each_other(): void
+    {
+        $this->get('/mentions-legales')->assertOk()
+            ->assertSee('Mentions légales')
+            ->assertSee(config('malkuthar.contact.company'))
+            ->assertSee(route('legal.privacy'), false);
+
+        $this->get('/confidentialite')->assertOk()
+            ->assertSee('Politique de confidentialité')
+            ->assertSee(config('malkuthar.contact.email'));
+
+        $this->get('/cookies')->assertOk()
+            ->assertSee('Gestion des cookies')
+            ->assertSee('mal_ref')
+            ->assertSee(config('session.cookie'));
+    }
+
+    public function test_legal_notice_flags_missing_company_details(): void
+    {
+        config(['malkuthar.legal.rccm' => null, 'malkuthar.legal.host_name' => 'Hébergeur Test']);
+
+        $this->get('/mentions-legales')->assertOk()
+            ->assertSee('À compléter')
+            ->assertSee('Hébergeur Test');
+    }
+
+    public function test_cookies_page_lists_only_enabled_trackers(): void
+    {
+        config(['malkuthar.tracking' => ['meta_pixel_id' => '123', 'tiktok_pixel_id' => null, 'ga_measurement_id' => null, 'gtm_container_id' => null]]);
+
+        $this->get('/cookies')->assertOk()
+            ->assertSee('Meta (Facebook) Pixel')
+            ->assertDontSee('TikTok Pixel');
+    }
+
     public function test_affiliation_page_explains_the_program_and_links_to_terms(): void
     {
         $this->get('/affiliation')

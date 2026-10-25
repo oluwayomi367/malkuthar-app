@@ -50,19 +50,19 @@ export default function Index({
         switch (st) {
             case 'active':
                 return (
-                    <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                         Actif
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber">
                         En attente
                     </span>
                 );
             case 'suspended':
                 return (
-                    <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                         Suspendu
                     </span>
                 );
@@ -106,13 +106,13 @@ export default function Index({
                             onClick={() => handleFilter(tab.key)}
                             className={`rounded-full px-3.5 py-1.5 transition-colors cursor-pointer min-h-11 ${
                                 isActive
-                                    ? 'bg-accent-light text-night '
+                                    ? 'bg-accent text-white '
                                     : 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50 hover:text-night-ink'
                             }`}
                         >
                             {tab.label}
                             {tab.key && counts[tab.key] !== undefined && (
-                                <span className={`ml-1.5 font-bold ${isActive ? 'text-night' : 'text-night-ink-2'}`}>
+                                <span className={`ml-1.5 font-bold ${isActive ? 'text-white' : 'text-night-ink-2'}`}>
                                     ({counts[tab.key]})
                                 </span>
                             )}
@@ -128,14 +128,14 @@ export default function Index({
                     placeholder="Nom, raison sociale, email…"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 min-w-[240px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                    className="flex-1 min-w-[240px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                 />
                 <input
                     type="text"
                     placeholder="Région"
                     value={regionFilter}
                     onChange={(e) => setRegionFilter(e.target.value)}
-                    className="w-40 rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                    className="w-40 rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                 />
                 <button
                     type="submit"
@@ -162,7 +162,7 @@ export default function Index({
                                 <div>
                                     <Link
                                         href={route('admin.marketplace.vendors.show', v.id)}
-                                        className="text-base font-semibold text-night-ink hover:text-accent-light"
+                                        className="text-base font-semibold text-night-ink hover:text-accent-2"
                                     >
                                         {v.display_name}
                                     </Link>
@@ -193,7 +193,7 @@ export default function Index({
                                     <button
                                         type="button"
                                         onClick={() => handleApprove(v.id)}
-                                        className="rounded-full border border-sage bg-sage/30 px-3.5 py-1.5 text-sm font-bold text-sage-soft hover:bg-sage/45 transition-colors min-h-11"
+                                        className="rounded-full border border-sage bg-sage-soft px-3.5 py-1.5 text-sm font-bold text-sage hover:bg-sage-soft transition-colors min-h-11"
                                     >
                                         Approuver
                                     </button>
@@ -206,11 +206,11 @@ export default function Index({
                                             onChange={(e) =>
                                                 setRejectReasons({ ...rejectReasons, [v.id]: e.target.value })
                                             }
-                                            className="h-11 w-56 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none"
+                                            className="h-11 w-56 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none"
                                         />
                                         <button
                                             type="submit"
-                                            className="rounded-full border border-rust bg-rust/20 px-3 py-1.5 text-sm font-bold text-rust-tint hover:bg-rust/35 transition-colors min-h-11"
+                                            className="rounded-full border border-rust bg-rust-tint px-3 py-1.5 text-sm font-bold text-rust hover:bg-rust/35 transition-colors min-h-11"
                                         >
                                             Refuser
                                         </button>
@@ -233,7 +233,7 @@ export default function Index({
                             disabled={!link.url}
                             className={`rounded-xl px-3 py-1.5 text-xs font-medium transition-colors ${
                                 link.active
-                                    ? 'bg-accent-light text-night '
+                                    ? 'bg-accent text-white '
                                     : link.url
                                     ? 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50'
                                     : 'border border-night-line bg-night text-night-ink-2 cursor-not-allowed'

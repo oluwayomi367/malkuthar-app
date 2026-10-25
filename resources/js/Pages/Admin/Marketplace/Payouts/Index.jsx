@@ -50,7 +50,7 @@ export default function Index({
         switch (st) {
             case 'paid':
                 return (
-                    <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                         Payé
                     </span>
                 );
@@ -62,13 +62,13 @@ export default function Index({
                 );
             case 'requested':
                 return (
-                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber">
                         À traiter
                     </span>
                 );
             case 'failed':
                 return (
-                    <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                         Échoué
                     </span>
                 );
@@ -105,13 +105,13 @@ export default function Index({
                 </div>
                 <div className="rounded-2xl border border-night-line bg-night-2 p-5">
                     <p className="text-xs font-medium text-night-ink-2">Dû aux vendeurs (en validation)</p>
-                    <p className="mt-2 text-2xl font-bold text-amber-tint">
+                    <p className="mt-2 text-2xl font-bold text-amber">
                         {formatPrice(summary.vendor_pending)} <span className="text-sm font-normal text-night-ink-2">XOF</span>
                     </p>
                 </div>
                 <div className="rounded-2xl border border-night-line bg-night-2 p-5">
                     <p className="text-xs font-medium text-night-ink-2">Versé aux vendeurs</p>
-                    <p className="mt-2 text-2xl font-bold text-sage-soft">
+                    <p className="mt-2 text-2xl font-bold text-sage">
                         {formatPrice(summary.vendor_paid)} <span className="text-sm font-normal text-night-ink-2">XOF</span>
                     </p>
                 </div>
@@ -128,7 +128,7 @@ export default function Index({
                             onClick={() => handleFilter(tab.key)}
                             className={`rounded-full px-3.5 py-1.5 transition-colors cursor-pointer min-h-11 ${
                                 isActive
-                                    ? 'bg-accent-light text-night '
+                                    ? 'bg-accent text-white '
                                     : 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50 hover:text-night-ink'
                             }`}
                         >
@@ -202,11 +202,11 @@ export default function Index({
                                             onChange={(e) =>
                                                 setProviderRefs({ ...providerRefs, [p.id]: e.target.value })
                                             }
-                                            className="h-11 w-44 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none"
+                                            className="h-11 w-44 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none"
                                         />
                                         <button
                                             type="submit"
-                                            className="rounded-full border border-sage bg-sage/30 px-3 py-1.5 text-sm font-bold text-sage-soft hover:bg-sage/45 transition-colors min-h-11"
+                                            className="rounded-full border border-sage bg-sage-soft px-3 py-1.5 text-sm font-bold text-sage hover:bg-sage-soft transition-colors min-h-11"
                                         >
                                             Marquer payé
                                         </button>
@@ -221,11 +221,11 @@ export default function Index({
                                             onChange={(e) =>
                                                 setFailReasons({ ...failReasons, [p.id]: e.target.value })
                                             }
-                                            className="h-11 w-44 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none"
+                                            className="h-11 w-44 rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none"
                                         />
                                         <button
                                             type="submit"
-                                            className="rounded-full border border-rust bg-rust/20 px-3 py-1.5 text-sm font-bold text-rust-tint hover:bg-rust/35 transition-colors min-h-11"
+                                            className="rounded-full border border-rust bg-rust-tint px-3 py-1.5 text-sm font-bold text-rust hover:bg-rust/35 transition-colors min-h-11"
                                         >
                                             Échoué
                                         </button>
@@ -234,7 +234,7 @@ export default function Index({
                             )}
 
                             {p.failure_reason && (
-                                <p className="mt-3 text-xs font-medium text-rust-tint">
+                                <p className="mt-3 text-xs font-medium text-rust">
                                     Échec : {p.failure_reason}
                                 </p>
                             )}
@@ -254,7 +254,7 @@ export default function Index({
                             disabled={!link.url}
                             className={`rounded-xl px-3 py-1.5 text-xs font-medium transition-colors ${
                                 link.active
-                                    ? 'bg-accent-light text-night '
+                                    ? 'bg-accent text-white '
                                     : link.url
                                     ? 'border border-night-line bg-night-2 text-night-ink-2 hover:bg-night-line/50'
                                     : 'border border-night-line bg-night text-night-ink-2 cursor-not-allowed'

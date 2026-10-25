@@ -53,6 +53,11 @@ Route::inertia('/a-propos', 'About')->name('about');
 Route::get('/marketplace', App\Http\Controllers\Marketplace\MarketplaceLandingController::class)->name('marketplace');
 Route::view('/conditions-vendeurs', 'legal.marketplace-vendor-terms')->name('marketplace.vendor-terms');
 
+// Pages légales
+Route::view('/mentions-legales', 'legal.notice')->name('legal.notice');
+Route::view('/confidentialite', 'legal.privacy')->name('legal.privacy');
+Route::view('/cookies', 'legal.cookies')->name('legal.cookies');
+
 // Boutique publique de la place de marché — masquée tant que le module est
 // désactivé (middleware `marketplace`).
 Route::middleware('marketplace')->prefix('place-de-marche')->group(function () {
@@ -281,6 +286,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // §60
     Route::redirect('/', '/admin/dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Images de la vitrine (bannières, tuiles, photos des pages publiques)
+    Route::get('/vitrine/images', [App\Http\Controllers\Admin\StorefrontImageController::class, 'index'])->name('storefront-images.index');
+    Route::post('/vitrine/images/{key}', [App\Http\Controllers\Admin\StorefrontImageController::class, 'update'])->name('storefront-images.update');
+    Route::delete('/vitrine/images/{key}', [App\Http\Controllers\Admin\StorefrontImageController::class, 'destroy'])->name('storefront-images.destroy');
 
     // §6-§18 — catalogue : produits + gestion du stock
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');

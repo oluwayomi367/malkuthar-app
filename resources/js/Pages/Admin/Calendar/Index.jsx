@@ -80,15 +80,15 @@ export default function Index({
                             <Link
                                 key={s.id}
                                 href={`${route('admin.products.edit', s.id)}#availability`}
-                                className="inline-flex items-center gap-2 rounded-full border border-night-line bg-night px-3 py-2 text-sm font-medium text-night-ink transition-colors hover:border-accent-light hover:bg-night-line/50 min-h-11"
+                                className="inline-flex items-center gap-2 rounded-full border border-night-line bg-night px-3 py-2 text-sm font-medium text-night-ink transition-colors hover:border-accent hover:bg-night-line/50 min-h-11"
                             >
                                 <span className="font-semibold text-night-ink">{s.name}</span>
                                 <span className="text-night-ink-2">
                                     {s.duration_minutes || 60} min ·{' '}
                                     {s.schedules_count > 0 ? (
-                                        <span className="text-sage-soft">{s.schedules_count} jour(s)</span>
+                                        <span className="text-sage">{s.schedules_count} jour(s)</span>
                                     ) : (
-                                        <span className="text-rust-tint">calendrier vide</span>
+                                        <span className="text-rust">calendrier vide</span>
                                     )}
                                 </span>
                             </Link>
@@ -107,7 +107,7 @@ export default function Index({
                         onClick={() => handleFilter('upcoming')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'upcoming' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
+                            scope === 'upcoming' ? 'bg-accent text-white' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         À venir
@@ -117,7 +117,7 @@ export default function Index({
                         onClick={() => handleFilter('past')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'past' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
+                            scope === 'past' ? 'bg-accent text-white' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         Passés
@@ -127,7 +127,7 @@ export default function Index({
                         onClick={() => handleFilter('all')}
                         className={[
                             'rounded-lg px-3 py-1 font-semibold transition-colors',
-                            scope === 'all' ? 'bg-accent-light text-night' : 'text-night-ink-2 hover:text-night-ink',
+                            scope === 'all' ? 'bg-accent text-white' : 'text-night-ink-2 hover:text-night-ink',
                         ].join(' ')}
                     >
                         Tous
@@ -137,7 +137,7 @@ export default function Index({
                 <select
                     value={productId || ''}
                     onChange={(e) => handleFilter(undefined, e.target.value)}
-                    className="rounded-xl border border-night-line bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-line bg-night px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Tous les services</option>
                     {services.map((s) => (
@@ -189,7 +189,7 @@ export default function Index({
                                             >
                                                 <div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-mono text-sm font-bold text-accent-light">
+                                                        <span className="font-mono text-sm font-bold text-accent-2">
                                                             {time}
                                                         </span>
                                                         <span className="font-semibold text-night-ink">
@@ -225,7 +225,7 @@ export default function Index({
                                                     <button
                                                         type="button"
                                                         onClick={() => setCancelingBooking(b)}
-                                                        className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust-tint hover:bg-rust/20 min-h-11"
+                                                        className="rounded-full border border-rust bg-night-2 px-2.5 py-1 text-sm font-semibold text-rust hover:bg-rust-tint min-h-11"
                                                     >
                                                         Annuler
                                                     </button>
@@ -265,7 +265,7 @@ export default function Index({
                                     required
                                     value={rescheduleForm.data.datetime}
                                     onChange={(e) => rescheduleForm.setData('datetime', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export default function Index({
                                     onChange={(e) =>
                                         rescheduleForm.setData('notify_client', e.target.checked)
                                     }
-                                    className="rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                    className="rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                 />
                                 <label htmlFor="notify_reschedule" className="text-sm text-night-ink-2">
                                     Notifier le client par email du changement
@@ -293,7 +293,7 @@ export default function Index({
                                 <button
                                     type="submit"
                                     disabled={rescheduleForm.processing}
-                                    className="rounded-full bg-accent-light px-4 py-1.5 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                                    className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-white hover:bg-accent-2 min-h-11"
                                 >
                                     Confirmer le déplacement
                                 </button>
@@ -307,7 +307,7 @@ export default function Index({
             {cancelingBooking && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4">
                     <div className="w-full max-w-md rounded-2xl bg-night-2 p-6 border border-night-line">
-                        <h3 className="font-sans text-base font-semibold text-rust-tint">
+                        <h3 className="font-sans text-base font-semibold text-rust">
                             Annuler la réservation
                         </h3>
                         <p className="mt-1 text-xs text-night-ink-2">
@@ -330,7 +330,7 @@ export default function Index({
                                     id="notify_cancel"
                                     checked={cancelForm.data.notify_client}
                                     onChange={(e) => cancelForm.setData('notify_client', e.target.checked)}
-                                    className="rounded border-night-ink-2/60 text-rust-tint focus:ring-rust"
+                                    className="rounded border-night-ink-2/60 text-rust focus:ring-rust"
                                 />
                                 <label htmlFor="notify_cancel" className="text-sm text-night-ink-2">
                                     Notifier le client de l'annulation

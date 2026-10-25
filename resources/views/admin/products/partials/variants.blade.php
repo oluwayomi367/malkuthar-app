@@ -76,16 +76,16 @@
                                 <label class="flex items-center gap-1.5 text-night-ink-2">
                                     <input type="hidden" :name="`variants[${i}][is_active]`" value="0">
                                     <input type="checkbox" value="1" :name="`variants[${i}][is_active]`" x-model="row.is_active"
-                                           class="h-4 w-4 rounded border-night-ink-2/60 text-accent-light">
+                                           class="h-4 w-4 rounded border-night-ink-2/60 text-accent-2">
                                     Active
                                 </label>
                                 <template x-if="row.image">
                                     <label class="flex items-center gap-1.5 text-night-ink-2">
-                                        <input type="checkbox" value="1" :name="`variants[${i}][remove_image]`" x-model="row.remove_image" class="h-4 w-4 rounded border-night-ink-2/60 text-rust-tint">
+                                        <input type="checkbox" value="1" :name="`variants[${i}][remove_image]`" x-model="row.remove_image" class="h-4 w-4 rounded border-night-ink-2/60 text-rust">
                                         Retirer l'image
                                     </label>
                                 </template>
-                                <button type="button" x-on:click="rows.splice(i, 1)" class="ml-auto text-xs text-rust-tint hover:underline">Retirer</button>
+                                <button type="button" x-on:click="rows.splice(i, 1)" class="ml-auto text-xs text-rust hover:underline">Retirer</button>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
         </div>
 
         <div class="mt-3 flex items-center justify-between">
-            <button type="button" class="text-xs font-semibold text-accent-light hover:underline"
+            <button type="button" class="text-xs font-semibold text-accent-2 hover:underline"
                     x-on:click="rows.push({ id: null, name: '', sku: '', price: '', is_active: true, image: null, _preview: null, remove_image: false, options: { taille:'', couleur:'', modele:'', format:'', autre:'' } })">
                 + Ajouter une variante
             </button>
@@ -124,7 +124,7 @@
                                     <span class="text-night-ink">{{ $v->name }}</span>
                                     @if ($v->sku)<span class="block font-mono text-xs text-night-ink-2">{{ $v->sku }}</span>@endif
                                 </td>
-                                <td class="px-2 py-2 text-center font-semibold {{ (int) $v->stock_available <= 3 ? 'text-rust-tint' : 'text-night-ink' }}">{{ (int) $v->stock_available }}</td>
+                                <td class="px-2 py-2 text-center font-semibold {{ (int) $v->stock_available <= 3 ? 'text-rust' : 'text-night-ink' }}">{{ (int) $v->stock_available }}</td>
                                 <td class="px-2 py-2 text-center text-night-ink-2">{{ (int) $v->stock_reserved }}</td>
                                 <td class="px-2 py-2 text-center text-night-ink-2">{{ (int) $v->stock_sold }}</td>
                                 <td class="py-2 pl-2">

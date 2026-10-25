@@ -3,12 +3,47 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import StorefrontLayout from '../Layouts/StorefrontLayout';
 import ProductCard from '../Components/commerce/ProductCard';
 import OfferCard from '../Components/commerce/OfferCard';
+import { useImages } from '../lib/images';
 
 const UNIVERS = [
-    { label: 'Savoirs & Formations', text: 'Ebooks, formations, audios', image: '/images/categories/digital.jpg', href: '/boutique?type=digital' },
-    { label: "Mode & Artisanat d'art", text: 'Pièces livrées chez vous', image: '/images/categories/physical.jpg', href: '/boutique?type=physical' },
-    { label: 'Résidences & Guest houses', text: 'Séjours et retraites', image: '/images/categories/residence.jpg', href: '/place-de-marche?pole=residences-guest-houses-immobilier' },
-    { label: 'Soins & Praticiens', text: 'Séances sur rendez-vous', image: '/images/categories/service.jpg', href: '/boutique?type=service' },
+    { label: 'Savoirs & Formations', text: 'Ebooks, formations, audios', imageKey: 'home.univers_digital', href: '/boutique?type=digital' },
+    { label: "Mode & Artisanat d'art", text: 'Pièces livrées chez vous', imageKey: 'home.univers_physical', href: '/boutique?type=physical' },
+    { label: 'Résidences & Guest houses', text: 'Séjours et retraites', imageKey: 'home.univers_residence', href: '/place-de-marche?pole=residences-guest-houses-immobilier' },
+    { label: 'Soins & Praticiens', text: 'Séances sur rendez-vous', imageKey: 'home.univers_service', href: '/boutique?type=service' },
+];
+
+// Les trois familles de produits de la maison — cœur de la plateforme (la place de marché vient en complément).
+const PILIERS = [
+    {
+        type: 'digital',
+        eyebrow: 'Produits digitaux',
+        title: 'Savoirs & formations',
+        text: 'Ebooks, formations vidéo, audios et guides pour apprendre à votre rythme, où que vous soyez.',
+        points: ['Accès immédiat après le paiement', 'Téléchargement depuis votre espace client', 'Affiliation possible sur les produits éligibles'],
+        imageKey: 'home.pillar_digital',
+        cta: 'Voir les produits digitaux',
+        d: ['M4 5h16v11H4z', 'M8 20h8', 'M12 16v4'],
+    },
+    {
+        type: 'service',
+        eyebrow: 'Services',
+        title: 'Soins & consultations',
+        text: 'Séances, consultations et accompagnements avec nos praticiens, réservés en quelques clics.',
+        points: ['Choix du créneau dans le calendrier', 'Confirmation par e-mail', 'Paiement Mobile Money ou carte'],
+        imageKey: 'home.pillar_service',
+        cta: 'Réserver un service',
+        d: ['M4 6h16v14H4z', 'M4 10h16', 'M8 3v5', 'M16 3v5'],
+    },
+    {
+        type: 'physical',
+        eyebrow: 'Produits physiques',
+        title: 'Mode & artisanat d\'art',
+        text: 'Vêtements, objets et pièces artisanales de la maison, préparés avec soin et livrés chez vous.',
+        points: ['Choix de la taille et du coloris', 'Livraison avec numéro de suivi', 'Paiement Mobile Money ou carte'],
+        imageKey: 'home.pillar_physical',
+        cta: 'Voir les produits physiques',
+        d: ['M3 7l9-4 9 4-9 4-9-4z', 'M3 7v10l9 4 9-4V7', 'M12 11v10'],
+    },
 ];
 
 const ASSURANCES = [
@@ -24,6 +59,16 @@ function Icon({ d, className = 'h-5 w-5' }) {
              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             {[].concat(d).map((p) => <path key={p} d={p} />)}
         </svg>
+    );
+}
+
+/** Photo en fond de tuile, sous un voile de la couleur de la tuile (le texte reste au-dessus grâce à `isolate`). */
+function TileBackdrop({ image, tint }) {
+    return (
+        <span className="absolute inset-0 -z-10" aria-hidden="true">
+            <img src={image} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <span className={['absolute inset-0', tint].join(' ')} />
+        </span>
     );
 }
 
@@ -95,6 +140,7 @@ function initials(name) {
 export default function Home({ newArrivals = [], bestSellers = [], promotions = [], vendors = [] }) {
     const { marketplaceEnabled, commissionRates } = usePage().props;
     const rates = { 1: 15, 2: 10, 3: 5, ...(commissionRates ?? {}) };
+    const img = useImages();
     const discount = maxDiscount(promotions);
     const marketplaceHref = marketplaceEnabled ? route('marketplace.shop') : route('marketplace');
     const nothingYet = !newArrivals.length && !bestSellers.length && !promotions.length;
@@ -108,9 +154,9 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
             {/* 1. Vitrine d'ouverture : grande bannière + deux tuiles. */}
             <section className="mx-auto max-w-[1280px] px-4 pt-6 sm:px-6 sm:pt-8">
                 <div className="grid gap-4 lg:grid-cols-3">
-                    <div className="relative overflow-hidden rounded-3xl bg-ink text-white lg:col-span-2">
-                        <img src="/images/hero-craft.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-45 sm:left-1/3 sm:w-2/3 sm:opacity-100" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 to-ink/10 sm:via-ink/80" aria-hidden="true" />
+                    <div className="relative overflow-hidden rounded-3xl bg-deep text-white lg:col-span-2">
+                        <img src={img('home.hero')} alt="" className="absolute inset-0 h-full w-full object-cover opacity-45 sm:left-1/3 sm:w-2/3 sm:opacity-100" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-deep via-deep/90 to-deep/10 sm:via-deep/80" aria-hidden="true" />
                         <div className="relative flex min-h-[340px] flex-col justify-end gap-5 p-7 sm:min-h-[420px] sm:max-w-[60%] sm:p-10">
                             <p className="inline-flex w-fit rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-accent-light">Nouveautés de la semaine</p>
                             <h1 className="text-[34px] leading-[1.08] text-white sm:text-[44px]">
@@ -132,7 +178,8 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
 
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
                         {discount > 0 ? (
-                            <a href="#promotions" className="group relative flex min-h-[170px] flex-col justify-between gap-3 overflow-hidden rounded-3xl bg-accent p-5 text-white sm:min-h-[200px] sm:p-7">
+                            <a href="#promotions" className="group relative isolate flex min-h-[170px] flex-col justify-between gap-3 overflow-hidden rounded-3xl bg-accent p-5 text-white sm:min-h-[200px] sm:p-7">
+                                <TileBackdrop image={img('home.tile_promo')} tint="bg-accent/85" />
                                 <p className="text-sm font-semibold text-white/85">Promotions en cours</p>
                                 <div>
                                     <p className="text-[32px] font-semibold leading-none sm:text-[44px]">−{discount} %</p>
@@ -143,7 +190,8 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                                 </span>
                             </a>
                         ) : (
-                            <Link href={route('affiliation')} className="group relative flex min-h-[170px] flex-col justify-between gap-3 overflow-hidden rounded-3xl bg-accent p-5 text-white sm:min-h-[200px] sm:p-7">
+                            <Link href={route('affiliation')} className="group relative isolate flex min-h-[170px] flex-col justify-between gap-3 overflow-hidden rounded-3xl bg-accent p-5 text-white sm:min-h-[200px] sm:p-7">
+                                <TileBackdrop image={img('home.tile_affiliation')} tint="bg-accent/85" />
                                 <p className="text-sm font-semibold text-white/85">Programme d'affiliation</p>
                                 <div>
                                     <p className="text-[32px] font-semibold leading-none sm:text-[44px]">{rates[1]} %</p>
@@ -155,7 +203,8 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                             </Link>
                         )}
 
-                        <a href={route('marketplace.become-vendor')} className="group flex min-h-[170px] flex-col justify-between gap-3 rounded-3xl bg-space-vendor p-5 text-white sm:min-h-[200px] sm:p-7">
+                        <a href={route('marketplace.become-vendor')} className="group relative isolate flex min-h-[170px] flex-col justify-between gap-3 overflow-hidden rounded-3xl bg-space-vendor p-5 text-white sm:min-h-[200px] sm:p-7">
+                            <TileBackdrop image={img('home.tile_vendor')} tint="bg-space-vendor/85" />
                             <p className="text-sm font-semibold text-white/85">Créateurs et praticiens</p>
                             <p className="text-lg font-semibold leading-snug sm:text-2xl">Ouvrez votre boutique sur MALKUTHAR</p>
                             <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
@@ -183,15 +232,63 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                 </ul>
             </section>
 
-            {/* 3. Univers. */}
+            {/* 3. Les trois familles de produits de la maison : bande sombre, rangées alternées. */}
+            <section aria-labelledby="piliers" className="mt-12 bg-gray-100 py-14 text-ink sm:mt-14 sm:py-20">
+                <div className="mx-auto max-w-[1280px] px-4 sm:px-6">
+                    <div className="mx-auto max-w-2xl text-center">
+                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">La maison MALKUTHAR</p>
+                        <h2 id="piliers" className="mt-3 text-[28px] leading-tight text-ink sm:text-[40px]">Trois façons de vous accompagner</h2>
+                        <p className="mt-3 text-[15px] leading-relaxed text-ink-2 sm:text-base">
+                            Apprendre, prendre soin de soi, s'équiper : la boutique réunit nos produits digitaux, nos services et nos créations.
+                        </p>
+                    </div>
+
+                    <ol className="mt-10 divide-y divide-gray-300 border-y border-gray-300 sm:mt-14">
+                        {PILIERS.map((p, i) => (
+                            <li key={p.type} className="grid items-center gap-6 py-10 sm:gap-10 sm:py-12 lg:grid-cols-2 lg:gap-16">
+                                <div className={['relative aspect-[16/10] overflow-hidden rounded-3xl bg-gray-200', i % 2 ? 'lg:order-last' : ''].join(' ')}>
+                                    <img src={img(p.imageKey)} alt="" loading="lazy" className="h-full w-full object-cover" />
+                                </div>
+                                <div>
+                                    <div className="flex items-baseline gap-4">
+                                        <span className="text-[56px] font-semibold leading-none text-transparent [-webkit-text-stroke:1px_var(--color-accent)] sm:text-[72px]" aria-hidden="true">
+                                            0{i + 1}
+                                        </span>
+                                        <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-accent">
+                                            <Icon d={p.d} className="h-4 w-4" />
+                                            {p.eyebrow}
+                                        </span>
+                                    </div>
+                                    <h3 className="mt-4 text-2xl font-semibold text-ink sm:text-[32px]">{p.title}</h3>
+                                    <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-ink-2 sm:text-base">{p.text}</p>
+                                    <ul className="mt-6 flex flex-wrap gap-2">
+                                        {p.points.map((pt) => (
+                                            <li key={pt} className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-surface px-3.5 py-2 text-sm text-ink">
+                                                <Icon d="M5 12.5l4.5 4.5L19 7.5" className="h-4 w-4 shrink-0 text-accent" />
+                                                {pt}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <Link href={`${route('catalog.index')}?type=${p.type}`}
+                                          className="mt-8 inline-flex min-h-12 items-center gap-1.5 rounded-full bg-deep px-6 text-sm font-semibold text-white transition-colors hover:bg-deep-2">
+                                        {p.cta} <Icon d="M5 12h14M13 6l6 6-6 6" className="h-4 w-4" />
+                                    </Link>
+                                </div>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </section>
+
+            {/* 4. Univers. */}
             <section aria-labelledby="univers" className="mx-auto max-w-[1280px] px-4 pt-12 sm:px-6 sm:pt-14">
                 <h2 id="univers" className="mb-6 text-2xl sm:text-[28px]">Acheter par univers</h2>
                 <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                     {UNIVERS.map((u) => (
                         <li key={u.label}>
-                            <Link href={u.href} className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-ink sm:aspect-[4/3]">
-                                <img src={u.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
-                                <span className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" aria-hidden="true" />
+                            <Link href={u.href} className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-deep sm:aspect-[4/3]">
+                                <img src={img(u.imageKey)} alt="" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
+                                <span className="absolute inset-0 bg-gradient-to-t from-deep/85 via-deep/20 to-transparent" aria-hidden="true" />
                                 <span className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
                                     <span className="block text-base font-semibold text-white sm:text-lg">{u.label}</span>
                                     <span className="mt-0.5 block text-xs text-white/80 sm:text-sm">{u.text}</span>
@@ -202,7 +299,7 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                 </ul>
             </section>
 
-            {/* 4. Rayons. */}
+            {/* 5. Rayons. */}
             <Rail id="nouveautes" title="Nouveautés" subtitle="Les derniers ajouts de la boutique et des créateurs." href={route('catalog.index')} items={newArrivals} />
             <div id="promotions">
                 <Rail id="titre-promotions" title="Promotions" subtitle={discount > 0 ? `Jusqu'à −${discount} % sur une sélection.` : null} href={`${route('catalog.index')}?dispo=promo`} items={promotions} tone="band" />
@@ -214,12 +311,12 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                     <div className="rounded-2xl border border-line bg-surface p-8 text-center">
                         <h2 className="text-2xl">La boutique se remplit</h2>
                         <p className="mx-auto mt-2 max-w-md text-[15px] text-ink-2">Les premiers produits arrivent. En attendant, parcourez les univers ou la place de marché.</p>
-                        <Link href={route('catalog.index')} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-sm font-semibold text-white">Voir la boutique</Link>
+                        <Link href={route('catalog.index')} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-deep px-6 text-sm font-semibold text-white">Voir la boutique</Link>
                     </div>
                 </section>
             )}
 
-            {/* 5. Créateurs. */}
+            {/* 6. Créateurs. */}
             {vendors.length > 0 && (
                 <section aria-labelledby="createurs" className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-14">
                     <div className="mb-6 flex items-end justify-between gap-4">
@@ -255,9 +352,9 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
                 </section>
             )}
 
-            {/* 6. Affiliation, en bandeau. */}
-            <section className="mx-auto max-w-[1280px] px-4 pb-16 sm:px-6">
-                <div className="flex flex-col gap-6 rounded-3xl bg-ink p-7 text-white sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+            {/* 7. Affiliation, en bandeau. */}
+            <section className="mx-auto max-w-[1280px] px-4 pb-8 sm:px-6 sm:pb-10">
+                <div className="flex flex-col gap-6 rounded-3xl bg-deep p-7 text-white sm:p-10 lg:flex-row lg:items-center lg:justify-between">
                     <div className="max-w-xl">
                         <h2 className="text-2xl text-white sm:text-[28px]">Recommandez et touchez une commission</h2>
                         <p className="mt-2 text-[15px] text-white/75">Partagez votre lien sur les produits digitaux éligibles. Chaque vente rémunère trois niveaux.</p>
@@ -282,4 +379,4 @@ export default function Home({ newArrivals = [], bestSellers = [], promotions = 
     );
 }
 
-Home.layout = (page) => <StorefrontLayout>{page}</StorefrontLayout>;
+Home.layout = (page) => <StorefrontLayout flushFooter>{page}</StorefrontLayout>;

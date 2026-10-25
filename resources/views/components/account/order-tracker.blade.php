@@ -25,7 +25,7 @@
             <li @if ($loop->iteration === $reached) aria-current="step" @endif>
                 <span @class([
                     'block h-1.5 rounded-full',
-                    'bg-ink' => $done,
+                    'bg-deep' => $done,
                     'bg-line' => ! $done,
                 ])></span>
                 <span @class([

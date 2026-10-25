@@ -47,7 +47,7 @@ export default function Index({
     const headerActions = (
         <Link
             href={route('admin.products.create')}
-            className="rounded-full bg-accent-light px-4 py-2 text-sm font-bold text-night transition-colors hover:bg-accent-light/85 min-h-11 inline-flex items-center justify-center"
+            className="rounded-full bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-accent-2 min-h-11 inline-flex items-center justify-center"
         >
             + Nouveau produit
         </Link>
@@ -58,14 +58,14 @@ export default function Index({
             {/* ALERTE STOCK FAIBLE */}
             {lowStock && lowStock.length > 0 && (
                 <div className="mb-6 rounded-2xl border border-amber bg-amber/25 p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-amber-tint">
+                    <p className="text-xs font-bold uppercase tracking-wider text-amber">
                         Alerte Stock faible
                     </p>
-                    <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-amber-tint">
+                    <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-amber">
                         {lowStock.map((p) => (
                             <li key={p.id}>
                                 <Link href={route('admin.products.edit', p.id)} className="hover:underline">
-                                    {p.name} — <strong className="text-amber-tint">{p.stock_available}</strong> restant(s)
+                                    {p.name} — <strong className="text-amber">{p.stock_available}</strong> restant(s)
                                 </Link>
                             </li>
                         ))}
@@ -80,13 +80,13 @@ export default function Index({
                     placeholder="Nom, SKU, slug…"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 min-w-[220px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                    className="flex-1 min-w-[220px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                 />
 
                 <select
                     value={type || ''}
                     onChange={(e) => handleFilter(e.target.value, undefined)}
-                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Tous les types</option>
                     <option value="digital">Digital</option>
@@ -97,7 +97,7 @@ export default function Index({
                 <select
                     value={status || ''}
                     onChange={(e) => handleFilter(undefined, e.target.value)}
-                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Tous les statuts</option>
                     <option value="published">Publié</option>
@@ -107,7 +107,7 @@ export default function Index({
 
                 <button
                     type="submit"
-                    className="rounded-full bg-accent-light px-4 py-2 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                    className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-2 min-h-11"
                 >
                     Filtrer
                 </button>
@@ -164,7 +164,7 @@ export default function Index({
                                                 <div className="min-w-0">
                                                     <Link
                                                         href={route('admin.products.show', p.id)}
-                                                        className="block truncate font-semibold text-night-ink hover:text-accent-light"
+                                                        className="block truncate font-semibold text-night-ink hover:text-accent-2"
                                                     >
                                                         {p.name}
                                                     </Link>
@@ -179,7 +179,7 @@ export default function Index({
                                                 {typeLabels[p.type] || p.type}
                                             </span>
                                             {p.is_affiliable && (
-                                                <span className="ml-1 rounded bg-accent-light/15 px-1.5 py-0.5 text-xs font-bold text-accent-light">
+                                                <span className="ml-1 rounded bg-accent-soft px-1.5 py-0.5 text-xs font-bold text-accent-2">
                                                     Affiliable
                                                 </span>
                                             )}
@@ -198,7 +198,7 @@ export default function Index({
                                                     <span
                                                         className={[
                                                             'font-bold',
-                                                            p.stock_available <= 5 ? 'text-rust-tint' : 'text-night-ink',
+                                                            p.stock_available <= 5 ? 'text-rust' : 'text-night-ink',
                                                         ].join(' ')}
                                                     >
                                                         {p.stock_available}
@@ -217,7 +217,7 @@ export default function Index({
                                         </td>
                                         <td className="px-4 py-3">
                                             {p.status === 'published' ? (
-                                                <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                                <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                     Publié
                                                 </span>
                                             ) : p.status === 'draft' ? (
@@ -225,7 +225,7 @@ export default function Index({
                                                     Brouillon
                                                 </span>
                                             ) : (
-                                                <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                                                <span className="rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                                                     Archivé
                                                 </span>
                                             )}
@@ -240,7 +240,7 @@ export default function Index({
                                                 </Link>
                                                 <Link
                                                     href={route('admin.products.show', p.id)}
-                                                    className="font-semibold text-accent-light hover:text-night-ink"
+                                                    className="font-semibold text-accent-2 hover:text-night-ink"
                                                 >
                                                     Voir
                                                 </Link>

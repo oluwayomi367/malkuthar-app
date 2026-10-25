@@ -5,22 +5,14 @@
 
 @section('auth_tagline', "Créez et vendez vos offres.")
 @section('auth_subtitle', "Praticiens, créateurs, formateurs, artisans : votre boutique, sous votre nom, sur MALKUTHAR.")
-@section('auth_panel_extra')
-    <div class="flex flex-wrap gap-2">
-        @foreach (['Produits physiques', 'Produits digitaux', 'Services', 'Formations'] as $t)
-            <span class="rounded-full border border-night-ink-2/40 px-3 py-1.5 text-[13px] font-medium text-night-ink">{{ $t }}</span>
-        @endforeach
-    </div>
-@endsection
+@section('auth_image', 'auth.vendor_application')
+
+@section('auth_heading', 'Ouvrir un espace vendeur')
+@section('auth_intro', "Votre compte MALKUTHAR devient aussi votre compte vendeur. Aucun second compte n'est nécessaire.")
 
 @section('content')
-<h1 class="font-display text-[32px] font-semibold leading-tight text-ink sm:text-[36px]">Ouvrir un espace vendeur</h1>
-<p class="mt-2 text-[15px] leading-relaxed text-ink-2">
-    Votre compte MALKUTHAR devient aussi votre compte vendeur. Aucun second compte n'est nécessaire.
-</p>
-
 {{-- Ce qui se passe --}}
-<section class="mt-6 rounded-2xl border border-line bg-surface p-5" aria-labelledby="steps-title">
+<section class="rounded-2xl bg-ground-alt p-5" aria-labelledby="steps-title">
     <h2 id="steps-title" class="font-sans text-base font-semibold text-ink">Étape 1 : Demande d'activation de votre espace vendeur</h2>
     <p class="mt-1.5 text-sm leading-relaxed text-ink-2">
         Ce formulaire sert uniquement à renseigner l'identité de votre boutique. <strong class="font-semibold text-ink">Vous n'avez aucun produit à saisir maintenant.</strong>

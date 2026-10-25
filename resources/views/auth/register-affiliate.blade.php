@@ -4,31 +4,15 @@
 @section('seo_description', 'Inscrivez-vous au programme d\'affiliation MALKUTHAR et touchez des commissions sur 3 niveaux : 15 %, 10 % et 5 % sur chaque vente.')
 @section('form_max', 'max-w-[560px]')
 
+@section('auth_heading', 'Devenir Partenaire Affilié')
+@section('auth_intro', 'Vous obtenez un lien de parrainage personnel et suivez vos gains depuis votre espace affilié.')
 @section('auth_tagline', 'Recommandez, percevez des commissions.')
 @section('auth_subtitle', 'Sur les produits digitaux affiliables, chaque vente est rémunérée sur trois niveaux de parrainage.')
-@section('auth_panel_extra')
-    <dl class="divide-y divide-night-line border-y border-night-line text-sm">
-        <div class="flex items-baseline justify-between py-3">
-            <dt class="text-night-ink-2">Niveau 1 — vos ventes directes</dt>
-            <dd class="font-display text-[26px] font-semibold text-accent-light">15 %</dd>
-        </div>
-        <div class="flex items-baseline justify-between py-3">
-            <dt class="text-night-ink-2">Niveau 2</dt>
-            <dd class="font-display text-[26px] font-semibold text-night-ink">10 %</dd>
-        </div>
-        <div class="flex items-baseline justify-between py-3">
-            <dt class="text-night-ink-2">Niveau 3</dt>
-            <dd class="font-display text-[26px] font-semibold text-night-ink">5 %</dd>
-        </div>
-    </dl>
-@endsection
+@section('auth_image', 'auth.register_affiliate')
 
 @section('content')
-<h1 class="font-display text-[32px] font-semibold leading-tight text-ink">Devenir Partenaire Affilié</h1>
-<p class="mt-2 text-[15px] text-ink-2">Vous obtenez un lien de parrainage personnel et suivez vos gains depuis votre espace affilié.</p>
-
-{{-- Rappel des taux (visible aussi sur mobile, où le panneau encre est masqué) --}}
-<div class="mt-6 rounded-2xl border border-line bg-surface p-5">
+{{-- Rappel des taux --}}
+<div class="rounded-2xl bg-ground-alt p-5">
     <h2 class="font-sans text-base font-semibold tracking-normal text-ink">Commissions sur 3 niveaux</h2>
     <dl class="mt-3 grid grid-cols-3 gap-3 text-center">
         <div class="flex flex-col-reverse rounded-xl bg-accent-soft px-2 py-3">
@@ -88,10 +72,10 @@
     </p>
 </form>
 
-<div class="mt-8 border-t border-line pt-6 text-sm text-ink-2">
-    <p>
-        Déjà inscrit ?
-        <a href="{{ route('login') }}" class="font-semibold text-ink underline decoration-accent underline-offset-4 transition-colors hover:text-accent-2">Se connecter</a>
-    </p>
-</div>
+@endsection
+
+@section('auth_footer')
+    <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface/80 px-4 text-xs font-semibold text-ink shadow-2xs transition-colors hover:border-line-strong hover:bg-surface">
+        <span class="text-accent" aria-hidden="true">✦</span> Déjà inscrit ? Se connecter
+    </a>
 @endsection

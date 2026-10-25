@@ -69,7 +69,7 @@ export default function Index({
                                             </td>
                                             <td className="px-4 py-3">
                                                 {c.is_active ? (
-                                                    <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                                    <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                         Actif
                                                     </span>
                                                 ) : (
@@ -83,7 +83,7 @@ export default function Index({
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDeactivate(c.id, c.code)}
-                                                        className="font-semibold text-rust-tint hover:text-rust-tint hover:underline"
+                                                        className="font-semibold text-rust hover:text-rust hover:underline"
                                                     >
                                                         Désactiver
                                                     </button>
@@ -117,9 +117,9 @@ export default function Index({
                                 placeholder="Ex. BIENVENUE10"
                                 value={form.data.code}
                                 onChange={(e) => form.setData('code', e.target.value.toUpperCase())}
-                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 font-mono uppercase focus:border-accent-light focus:outline-none min-h-11"
+                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 font-mono uppercase focus:border-accent focus:outline-none min-h-11"
                             />
-                            {form.errors.code && <p className="mt-1 text-rust-tint">{form.errors.code}</p>}
+                            {form.errors.code && <p className="mt-1 text-rust">{form.errors.code}</p>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -128,7 +128,7 @@ export default function Index({
                                 <select
                                     value={form.data.type}
                                     onChange={(e) => form.setData('type', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 >
                                     <option value="percent">Pourcentage (%)</option>
                                     <option value="fixed">Montant fixe (FCFA)</option>
@@ -144,9 +144,9 @@ export default function Index({
                                     placeholder={form.data.type === 'percent' ? 'Ex. 10' : 'Ex. 2000'}
                                     value={form.data.value}
                                     onChange={(e) => form.setData('value', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
-                                {form.errors.value && <p className="mt-1 text-rust-tint">{form.errors.value}</p>}
+                                {form.errors.value && <p className="mt-1 text-rust">{form.errors.value}</p>}
                             </div>
                         </div>
 
@@ -158,7 +158,7 @@ export default function Index({
                                 placeholder="Illimité si vide"
                                 value={form.data.max_uses}
                                 onChange={(e) => form.setData('max_uses', e.target.value)}
-                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
 
@@ -169,7 +169,7 @@ export default function Index({
                                     type="date"
                                     value={form.data.starts_at}
                                     onChange={(e) => form.setData('starts_at', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div>
@@ -178,7 +178,7 @@ export default function Index({
                                     type="date"
                                     value={form.data.expires_at}
                                     onChange={(e) => form.setData('expires_at', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                         </div>
@@ -186,7 +186,7 @@ export default function Index({
                         <button
                             type="submit"
                             disabled={form.processing}
-                            className="w-full rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                            className="w-full rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                         >
                             Créer le coupon
                         </button>

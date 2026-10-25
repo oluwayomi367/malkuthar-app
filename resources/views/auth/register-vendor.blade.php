@@ -4,15 +4,11 @@
 @section('seo_description', 'Créez votre compte vendeur certifié sur MALKUTHAR Marketplace. Validation manuelle par l\'administrateur.')
 @section('form_max', 'max-w-[620px]')
 
+@section('auth_heading', 'Créer mon compte vendeur')
+@section('auth_intro', 'Renseignez vos coordonnées puis les informations de votre future boutique.')
 @section('auth_tagline', 'Vendez sur la place de marché MALKUTHAR.')
 @section('auth_subtitle', "Créez votre compte et présentez votre activité. Notre équipe examine chaque demande sous 24 à 48 heures avant l'ouverture de votre boutique.")
-@section('auth_panel_extra')
-    <ul class="divide-y divide-night-line border-y border-night-line text-sm text-night-ink">
-        <li class="py-3">Compte vérifié manuellement par l'équipe</li>
-        <li class="py-3">Tableau de bord vendeur : offres, commandes, revenus</li>
-        <li class="py-3">Versements demandés depuis votre espace</li>
-    </ul>
-@endsection
+@section('auth_image', 'auth.register_vendor')
 
 @php
     $sectors = [
@@ -41,11 +37,9 @@
 @endphp
 
 @section('content')
-<h1 class="font-display text-[32px] font-semibold leading-tight text-ink">Créer mon compte Vendeur</h1>
-<p class="mt-2 text-[15px] text-ink-2">Renseignez vos coordonnées puis les informations de votre future boutique.</p>
 
 {{-- Découplage explicite : Étape 1 = Compte Vendeur, Étape 2 (plus tard) = Création de produit --}}
-<div class="mt-6 rounded-2xl border border-line bg-surface p-5">
+<div class="rounded-2xl bg-ground-alt p-5">
     <h2 class="font-sans text-base font-semibold tracking-normal text-ink">Étape 1 : Création de votre compte Vendeur uniquement</h2>
     <p class="mt-2 text-sm leading-relaxed text-ink-2">
         Ce formulaire enregistre vos identifiants d'accès et la présentation de votre boutique.
@@ -162,9 +156,11 @@
         Vous avez déjà un compte client MALKUTHAR ?
         <a href="{{ route('vendor.application') }}" class="font-semibold text-ink underline decoration-accent underline-offset-4 hover:text-accent-2">Faire une demande vendeur avec mon compte existant</a>
     </p>
-    <p>
-        Déjà vendeur ?
-        <a href="{{ route('login') }}" class="font-semibold text-ink underline decoration-accent underline-offset-4 hover:text-accent-2">Se connecter</a>
-    </p>
 </div>
+@endsection
+
+@section('auth_footer')
+    <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface/80 px-4 text-xs font-semibold text-ink shadow-2xs transition-colors hover:border-line-strong hover:bg-surface">
+        <span class="text-accent" aria-hidden="true">✦</span> Déjà vendeur ? Se connecter
+    </a>
 @endsection

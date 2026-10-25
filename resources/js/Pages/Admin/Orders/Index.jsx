@@ -40,7 +40,7 @@ export default function Index({
                     <p className="text-xs font-bold uppercase tracking-wider text-night-ink-2">
                         À encaisser (COD)
                     </p>
-                    <p className="mt-1 font-display text-2xl font-semibold text-amber-tint">
+                    <p className="mt-1 font-display text-2xl font-semibold text-amber">
                         {formatNumber(kpi.cod_amount)} FCFA
                     </p>
                     <p className="text-xs text-night-ink-2">{kpi.cod_count || 0} commande(s) en attente</p>
@@ -60,7 +60,7 @@ export default function Index({
                     <p className="text-xs font-bold uppercase tracking-wider text-night-ink-2">
                         Chiffre d'affaires aujourd'hui
                     </p>
-                    <p className="mt-1 font-display text-2xl font-semibold text-sage-soft">
+                    <p className="mt-1 font-display text-2xl font-semibold text-sage">
                         {formatNumber(kpi.revenue_today)} FCFA
                     </p>
                     <p className="text-xs text-night-ink-2">Encaissé ce jour</p>
@@ -75,7 +75,7 @@ export default function Index({
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleFilter({ q })}
-                    className="flex-1 min-w-[200px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                    className="flex-1 min-w-[200px] rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                 />
 
                 <select
@@ -84,7 +84,7 @@ export default function Index({
                         setProvider(e.target.value);
                         handleFilter({ provider: e.target.value });
                     }}
-                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Tous les paiements</option>
                     <option value="fedapay">FedaPay</option>
@@ -98,7 +98,7 @@ export default function Index({
                         setPaymentStatus(e.target.value);
                         handleFilter({ paymentStatus: e.target.value });
                     }}
-                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3 py-2.5 text-sm text-night-ink-2 focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Tous les statuts paiement</option>
                     <option value="paid">Payé</option>
@@ -110,7 +110,7 @@ export default function Index({
                 <button
                     type="button"
                     onClick={() => handleFilter({ q })}
-                    className="rounded-full bg-accent-light px-4 py-2 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                    className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-2 min-h-11"
                 >
                     Filtrer
                 </button>
@@ -161,11 +161,11 @@ export default function Index({
                                     </td>
                                     <td className="px-4 py-3.5">
                                         {o.payment_status === 'paid' ? (
-                                            <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                            <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                 Payé
                                             </span>
                                         ) : o.payment_status === 'pending' ? (
-                                            <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                                            <span className="rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber">
                                                 En attente
                                             </span>
                                         ) : (
@@ -177,7 +177,7 @@ export default function Index({
                                     <td className="px-4 py-3.5 text-right">
                                         <Link
                                             href={route('admin.orders.show', o.id)}
-                                            className="font-semibold text-accent-light hover:text-night-ink"
+                                            className="font-semibold text-accent-2 hover:text-night-ink"
                                         >
                                             Détails
                                         </Link>

@@ -43,7 +43,7 @@
 
     @if ($product->presentation_video)
         <div class="mt-3 overflow-hidden rounded-2xl border border-line">
-            <video src="{{ $product->presentation_video }}" controls preload="none" class="aspect-video w-full bg-ink"></video>
+            <video src="{{ $product->presentation_video }}" controls preload="none" class="aspect-video w-full bg-deep"></video>
         </div>
     @endif
 </div>

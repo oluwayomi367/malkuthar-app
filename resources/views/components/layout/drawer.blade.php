@@ -13,7 +13,7 @@
     aria-modal="true"
     aria-label="Menu"
 >
-    <div class="absolute inset-0 bg-ink/50" x-on:click="$store.drawer.close()"></div>
+    <div class="absolute inset-0 bg-deep/50" x-on:click="$store.drawer.close()"></div>
 
     <div
         class="absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col border-r border-line bg-ground"
@@ -26,7 +26,7 @@
     >
         <div class="flex h-[72px] items-center justify-between border-b border-line px-4">
             <a href="{{ url('/') }}" class="flex items-center gap-2.5" x-on:click="$store.drawer.close()">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 object-contain">
+                <img src="{{ \App\Support\StorefrontImages::url('brand.logo') }}" alt="" class="h-8 w-8 object-contain">
                 <span class="font-display text-[20px] font-semibold tracking-[0.18em] text-ink">MALKUTHAR</span>
             </a>
             <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-ground-alt"
@@ -59,7 +59,7 @@
             @else
                 <div class="grid gap-2 px-1 pt-1">
                     <x-ui.button variant="secondary" :href="route('login')" :full="true">Connexion</x-ui.button>
-                    <a href="{{ route('register') }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white hover:bg-ink-2">Créer un compte</a>
+                    <a href="{{ route('register') }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-deep px-6 text-sm font-semibold text-white hover:bg-deep-2">Créer un compte</a>
                 </div>
             @endauth
         </nav>

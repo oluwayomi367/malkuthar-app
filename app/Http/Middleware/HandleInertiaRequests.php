@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\CommissionRateResolver;
 use App\Support\Catalog;
 use App\Support\MarketplaceSettings;
+use App\Support\StorefrontImages;
 use App\Support\StorefrontSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -51,6 +52,8 @@ class HandleInertiaRequests extends Middleware
             'commissionRates' => app(CommissionRateResolver::class)->percentages(),
             'announcementTicker' => StorefrontSettings::announcementTicker(),
             'announcementTickerEnabled' => StorefrontSettings::announcementTickerEnabled(),
+            // Images de la vitrine (remplaçables depuis l'admin) : clé => URL.
+            'images' => StorefrontImages::all(),
             // Numéro du bouton WhatsApp flottant (chiffres seuls, format wa.me).
             'whatsapp' => preg_replace('/\D+/', '', (string) config('malkuthar.contact.whatsapp')) ?: null,
         ];

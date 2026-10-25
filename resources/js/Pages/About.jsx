@@ -1,23 +1,24 @@
 import { Head, Link } from '@inertiajs/react';
 import StorefrontLayout from '../Layouts/StorefrontLayout';
 import Button from '../Components/ui/Button';
+import { useImages } from '../lib/images';
 
 const METIERS = [
     {
         title: 'Produits digitaux',
-        image: '/images/categories/digital.jpg',
+        imageKey: 'about.digital',
         text: "Ebooks, formations et programmes audio. Le lien de téléchargement est envoyé dès que le paiement est confirmé.",
         href: '/boutique?type=digital',
     },
     {
         title: 'Objets et créations',
-        image: '/images/categories/physical.jpg',
+        imageKey: 'about.physical',
         text: "Livres d'art, maroquinerie et accessoires. Stock tenu à jour, expédition avec numéro de suivi.",
         href: '/boutique?type=physical',
     },
     {
         title: 'Services et consultations',
-        image: '/images/categories/service.jpg',
+        imageKey: 'about.service',
         text: 'Consultations, bilans et séances avec des praticiens partenaires, en ligne ou en présentiel.',
         href: '/boutique?type=service',
     },
@@ -39,6 +40,7 @@ const PRINCIPES = [
 ];
 
 export default function About() {
+    const img = useImages();
     return (
         <>
             <Head title="À propos de MALKUTHAR">
@@ -67,7 +69,7 @@ export default function About() {
                     </div>
                     <div className="overflow-hidden rounded-2xl bg-ground-alt">
                         <img
-                            src="/images/about-maison.jpg"
+                            src={img('about.hero')}
                             alt="Atelier de la maison MALKUTHAR"
                             className="aspect-[4/3] h-full w-full object-cover"
                         />
@@ -84,7 +86,7 @@ export default function About() {
                             <li key={m.title}>
                                 <Link href={m.href} className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors hover:border-line-strong">
                                     <div className="aspect-[16/10] overflow-hidden bg-ground-alt">
-                                        <img src={m.image} alt="" loading="lazy" className="h-full w-full object-cover" />
+                                        <img src={img(m.imageKey)} alt="" loading="lazy" className="h-full w-full object-cover" />
                                     </div>
                                     <div className="flex flex-1 flex-col p-6">
                                         <h3 className="text-[17px] text-ink group-hover:text-accent-2">{m.title}</h3>
@@ -111,7 +113,7 @@ export default function About() {
                 </section>
 
                 {/* Affiliation */}
-                <section className="flex flex-col gap-8 rounded-2xl bg-ink p-7 text-white sm:p-10 md:flex-row md:items-end md:justify-between">
+                <section className="flex flex-col gap-8 rounded-2xl bg-deep p-7 text-white sm:p-10 md:flex-row md:items-end md:justify-between">
                     <div className="max-w-2xl">
                         <h2 className="text-3xl text-white">Recommandez nos produits, sur trois niveaux</h2>
                         <p className="mt-4 text-[15px] leading-relaxed text-night-ink-2">

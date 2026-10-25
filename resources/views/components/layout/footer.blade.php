@@ -1,18 +1,18 @@
 @php
-    $heading = 'text-sm font-semibold text-night-ink';
-    $list = 'mt-4 space-y-1 text-sm text-night-ink-2';
-    $link = 'inline-flex min-h-9 items-center transition-colors hover:text-night-ink';
+    $heading = 'text-sm font-semibold text-white';
+    $list = 'mt-4 space-y-1 text-sm text-white/75';
+    $link = 'inline-flex min-h-9 items-center transition-colors hover:text-white';
 @endphp
 
-<footer class="mt-24 bg-ink text-night-ink-2">
+<footer class="mt-24 bg-deep text-white/75">
     <div class="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 lg:py-16">
         <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             <div>
                 <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5">
                     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-surface p-1.5">
-                        <img src="{{ asset('images/logo.png') }}" alt="" class="h-full w-full object-contain">
+                        <img src="{{ \App\Support\StorefrontImages::url('brand.logo') }}" alt="" class="h-full w-full object-contain">
                     </span>
-                    <span class="font-display text-[22px] font-semibold tracking-[0.18em] text-night-ink">MALKUTHAR</span>
+                    <span class="font-display text-[22px] font-semibold tracking-[0.18em] text-white">MALKUTHAR</span>
                 </a>
                 <p class="mt-4 max-w-xs text-sm leading-relaxed">
                     Livres, formations, séances et créations de vendeurs vérifiés, réunis sur une même boutique.
@@ -44,14 +44,15 @@
                 <ul class="{{ $list }}">
                     <li><a href="{{ route('about') }}" class="{{ $link }}">À propos</a></li>
                     <li><a href="{{ route('contact') }}" class="{{ $link }}">Contact</a></li>
-                    <li><a href="{{ url('/mentions-legales') }}" class="{{ $link }}">Conditions générales de vente</a></li>
-                    <li><a href="{{ url('/confidentialite') }}" class="{{ $link }}">Politique de confidentialité</a></li>
-                    <li><a href="{{ url('/cookies') }}" class="{{ $link }}">Gestion des cookies</a></li>
+                    <li><a href="{{ route('legal.notice') }}" class="{{ $link }}">Mentions légales</a></li>
+                    <li><a href="{{ route('legal.privacy') }}" class="{{ $link }}">Politique de confidentialité</a></li>
+                    <li><a href="{{ route('legal.cookies') }}" class="{{ $link }}">Gestion des cookies</a></li>
+                    <li><button type="button" data-cookie-settings class="{{ $link }} text-left">Gérer mes choix de cookies</button></li>
                 </ul>
             </div>
         </div>
 
-        <div class="mt-12 flex flex-col gap-2 border-t border-night-line pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <div class="mt-12 flex flex-col gap-2 border-t border-white/15 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
             <p>© {{ date('Y') }} MALKUTHAR SARL. Tous droits réservés.</p>
             <p>Paiement par FedaPay, CinetPay et Mobile Money</p>
         </div>

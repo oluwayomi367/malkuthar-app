@@ -61,7 +61,7 @@ export default function BookingCalendar({ product, onPick, className = '' }) {
                                     return (
                                         <button key={s} type="button" onClick={() => pick(s)} aria-pressed={on}
                                                 className={['inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-2 text-sm font-medium transition-colors',
-                                                    on ? 'border-ink bg-ink text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
+                                                    on ? 'border-deep bg-deep text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
                                             {on && (
                                                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                     <path d="M5 12.5l4.5 4.5L19 7.5" />

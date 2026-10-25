@@ -60,12 +60,12 @@
                     </form>
                     <form method="POST" action="{{ route('admin.marketplace.vendors.reject', $vendor) }}" class="space-y-2">@csrf
                         <input name="reason" required placeholder="Motif de refus" class="h-10 w-full rounded-xl border border-black/10 bg-surface px-3 text-sm">
-                        <button class="h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust/20">Refuser</button>
+                        <button class="h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust-tint">Refuser</button>
                     </form>
                 @elseif ($vendor->status === 'active')
                     <form method="POST" action="{{ route('admin.marketplace.vendors.suspend', $vendor) }}" class="space-y-2">@csrf
                         <input name="reason" required placeholder="Motif de suspension" class="h-10 w-full rounded-xl border border-black/10 bg-surface px-3 text-sm">
-                        <button class="h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust/20">Suspendre</button>
+                        <button class="h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust-tint">Suspendre</button>
                     </form>
                 @elseif (in_array($vendor->status, ['suspended', 'closed'], true))
                     <form method="POST" action="{{ route('admin.marketplace.vendors.reactivate', $vendor) }}">@csrf

@@ -108,4 +108,16 @@ return [
         'address' => env('MALKUTHAR_ADDRESS', 'Cotonou, Bénin'),
     ],
 
+    // Mentions légales — affichées « À compléter » tant qu'elles ne sont pas renseignées.
+    'legal' => [
+        'legal_form' => env('MALKUTHAR_LEGAL_FORM', 'Société à responsabilité limitée (SARL)'),
+        'capital' => env('MALKUTHAR_CAPITAL'),
+        'rccm' => env('MALKUTHAR_RCCM'),
+        'ifu' => env('MALKUTHAR_IFU'),
+        'publication_director' => env('MALKUTHAR_PUBLICATION_DIRECTOR'),
+        'host_name' => env('MALKUTHAR_HOST_NAME'),
+        'host_address' => env('MALKUTHAR_HOST_ADDRESS'),
+        'updated_at' => env('MALKUTHAR_LEGAL_UPDATED_AT', '25 octobre 2026'),
+    ],
+
 ];

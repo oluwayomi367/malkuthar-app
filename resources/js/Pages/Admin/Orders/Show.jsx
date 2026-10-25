@@ -67,7 +67,7 @@ export default function Show({
                 <button
                     type="button"
                     onClick={submitCancel}
-                    className="rounded-full border border-rust bg-night-2 px-3.5 py-1.5 text-sm font-semibold text-rust-tint hover:bg-rust/20 min-h-11"
+                    className="rounded-full border border-rust bg-night-2 px-3.5 py-1.5 text-sm font-semibold text-rust hover:bg-rust-tint min-h-11"
                 >
                     Annuler
                 </button>
@@ -89,11 +89,11 @@ export default function Show({
                 <span>Paiement : <strong className="text-night-ink uppercase">{order.payment_provider}</strong></span>
                 <span>·</span>
                 {order.payment_status === 'paid' ? (
-                    <span className="rounded-full bg-sage/30 px-2.5 py-0.5 font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-2.5 py-0.5 font-semibold text-sage">
                         Paiement validé
                     </span>
                 ) : (
-                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-2.5 py-0.5 font-semibold text-amber">
                         {order.payment_status}
                     </span>
                 )}
@@ -174,7 +174,7 @@ export default function Show({
                                                 <p className="font-mono text-xs text-night-ink-2">{c.user?.affiliate_id}</p>
                                             </td>
                                             <td className="px-5 py-3 font-medium text-night-ink-2">Niveau {c.level}</td>
-                                            <td className="px-5 py-3 font-bold text-accent-light">
+                                            <td className="px-5 py-3 font-bold text-accent-2">
                                                 +{formatNumber(c.amount)} {c.currency}
                                             </td>
                                             <td className="px-5 py-3">
@@ -241,7 +241,7 @@ export default function Show({
                                     <select
                                         value={fulfilmentForm.data.shipping_status}
                                         onChange={(e) => fulfilmentForm.setData('shipping_status', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 p-2 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 p-2 focus:border-accent focus:outline-none min-h-11"
                                     >
                                         <option value="preparing">En préparation</option>
                                         <option value="shipped">Expédié</option>
@@ -256,13 +256,13 @@ export default function Show({
                                         placeholder="Ex. DHL-2938102"
                                         value={fulfilmentForm.data.tracking_number}
                                         onChange={(e) => fulfilmentForm.setData('tracking_number', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                     />
                                 </div>
                                 <button
                                     type="submit"
                                     disabled={fulfilmentForm.processing}
-                                    className="w-full rounded-full bg-accent-light px-4 py-2 font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                                    className="w-full rounded-full bg-accent px-4 py-2 font-semibold text-white hover:bg-accent-2 min-h-11"
                                 >
                                     Mettre à jour le suivi
                                 </button>

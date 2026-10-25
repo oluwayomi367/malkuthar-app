@@ -25,7 +25,7 @@ export default function Index({
                 <select
                     value={action || ''}
                     onChange={handleActionChange}
-                    className="rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm font-medium text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                    className="rounded-xl border border-night-ink-2/60 bg-night px-3.5 py-2.5 text-sm font-medium text-night-ink focus:border-accent focus:outline-none min-h-11"
                 >
                     <option value="">Toutes les actions</option>
                     {actions.map((a) => (

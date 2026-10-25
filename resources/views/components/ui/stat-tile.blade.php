@@ -8,7 +8,7 @@
 <div {{ $attributes->merge([
     'class' => 'relative overflow-hidden rounded-2xl border p-5 '
         .($emphasis
-            ? 'border-ink bg-ink text-white'
+            ? 'border-deep bg-deep text-white'
             : 'border-line bg-surface'),
 ]) }}>
     <p class="relative text-xs font-semibold uppercase tracking-[0.1em] {{ $emphasis ? 'text-accent-light' : 'text-ink-3' }}">{{ $label }}</p>

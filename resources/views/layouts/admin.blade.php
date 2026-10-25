@@ -3,7 +3,7 @@
 <head>
     @include('partials.head')
 </head>
-<body class="theme-night min-h-screen bg-night font-sans text-night-ink antialiased">
+<body class="theme-admin min-h-screen bg-night font-sans text-night-ink antialiased">
     <x-layout.navbar-admin />
 
     @include('partials.flash')
@@ -15,7 +15,7 @@
             <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
                 <div>
                     @hasSection('eyebrow')
-                        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-accent-light">@yield('eyebrow')</p>
+                        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-accent-2">@yield('eyebrow')</p>
                     @endif
                     <h1 class="mt-1 font-display text-3xl font-semibold text-night-ink sm:text-4xl">@yield('heading', 'Administration')</h1>
                 </div>

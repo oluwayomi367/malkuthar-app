@@ -10,7 +10,7 @@
     <form method="POST" action="{{ route('admin.products.delete', $product) }}"
           onsubmit="return confirm('Supprimer définitivement « {{ $product->name }} » ?')">
         @csrf @method('DELETE')
-        <button class="inline-flex h-11 items-center rounded-xl border border-rust px-4 text-sm font-semibold text-rust-tint transition-colors hover:bg-rust/20 sm:h-10">Supprimer</button>
+        <button class="inline-flex h-11 items-center rounded-xl border border-rust px-4 text-sm font-semibold text-rust transition-colors hover:bg-rust-tint sm:h-10">Supprimer</button>
     </form>
 @endsection
 
@@ -38,7 +38,7 @@
     @if ($product->is_affiliable)<x-ui.badge tone="accent">Affiliable · commissions 15/10/5</x-ui.badge>@endif
     @unless ($product->is_available)<x-ui.badge tone="rust">Indisponible à la vente</x-ui.badge>@endunless
     @if ($product->status === 'published')
-        <a href="{{ route('catalog.show', $product->slug) }}" target="_blank" rel="noopener" class="ml-auto text-sm text-accent-light hover:underline">Voir en boutique</a>
+        <a href="{{ route('catalog.show', $product->slug) }}" target="_blank" rel="noopener" class="ml-auto text-sm text-accent-2 hover:underline">Voir en boutique</a>
     @endif
 </div>
 
@@ -62,7 +62,7 @@
             </div>
         @endif
         @if ($product->presentation_video)
-            <a href="{{ $product->presentation_video }}" target="_blank" rel="noopener" class="mt-3 inline-flex text-sm text-accent-light hover:underline">Vidéo de présentation</a>
+            <a href="{{ $product->presentation_video }}" target="_blank" rel="noopener" class="mt-3 inline-flex text-sm text-accent-2 hover:underline">Vidéo de présentation</a>
         @endif
     </div>
 
@@ -80,7 +80,7 @@
             @if ($product->promotional_price)
                 <div>
                     <dt class="text-xs uppercase tracking-wide text-night-ink-2">Prix promo</dt>
-                    <dd class="mt-0.5 font-display text-2xl font-semibold text-accent-light">{{ $m($product->promotional_price) }} {{ $product->currency }}</dd>
+                    <dd class="mt-0.5 font-display text-2xl font-semibold text-accent-2">{{ $m($product->promotional_price) }} {{ $product->currency }}</dd>
                 </div>
             @endif
             <div>
@@ -124,7 +124,7 @@
                     <p class="text-xs uppercase tracking-wide text-night-ink-2">CA ({{ $sales['currency'] }})</p>
                 </div>
                 <div class="rounded-xl border border-night-line py-3">
-                    <p class="font-display text-2xl font-semibold {{ $sales['pending_revenue'] > 0 ? 'text-amber-tint' : 'text-night-ink-2' }}">{{ $m($sales['pending_revenue']) }}</p>
+                    <p class="font-display text-2xl font-semibold {{ $sales['pending_revenue'] > 0 ? 'text-amber' : 'text-night-ink-2' }}">{{ $m($sales['pending_revenue']) }}</p>
                     <p class="text-xs uppercase tracking-wide text-night-ink-2">En attente COD</p>
                 </div>
             </div>
@@ -151,8 +151,8 @@
                             @endforeach
                             @if ($sales['commission_reversed'] > 0)
                                 <tr>
-                                    <td class="py-2 pr-3 text-rust-tint">Reprises (remboursements)</td>
-                                    <td class="px-2 py-2 text-right text-rust-tint">−{{ $m($sales['commission_reversed']) }}</td>
+                                    <td class="py-2 pr-3 text-rust">Reprises (remboursements)</td>
+                                    <td class="px-2 py-2 text-right text-rust">−{{ $m($sales['commission_reversed']) }}</td>
                                 </tr>
                             @endif
                             <tr class="font-semibold">
@@ -181,7 +181,7 @@
             <div class="rounded-2xl border border-night-line bg-night-2 p-5">
                 <div class="flex items-center justify-between">
                     <h2 class="font-sans text-base font-semibold text-night-ink">Stock</h2>
-                    <a href="{{ route('admin.products.edit', $product) }}#stock" class="text-xs text-accent-light hover:underline">Ajuster</a>
+                    <a href="{{ route('admin.products.edit', $product) }}#stock" class="text-xs text-accent-2 hover:underline">Ajuster</a>
                 </div>
                 @php
                     $hasVariants = $product->relationLoaded('variants') && $product->variants->isNotEmpty();
@@ -191,7 +191,7 @@
                 @endphp
                 <div class="mt-3 grid grid-cols-3 gap-3 text-center">
                     <div class="rounded-xl border border-night-line bg-night-2 py-3">
-                        <p class="font-display text-2xl font-semibold {{ $sumAvail <= 5 ? 'text-rust-tint' : 'text-night-ink' }}">{{ $sumAvail }}</p>
+                        <p class="font-display text-2xl font-semibold {{ $sumAvail <= 5 ? 'text-rust' : 'text-night-ink' }}">{{ $sumAvail }}</p>
                         <p class="text-xs uppercase tracking-wide text-night-ink-2">Disponible</p>
                     </div>
                     <div class="rounded-xl border border-night-line bg-night-2 py-3">
@@ -215,7 +215,7 @@
                                     <tr @class(['text-night-ink-2' => ! $v->is_active])>
                                         <td class="py-2 pr-3 text-night-ink">{{ $v->name }}@unless ($v->is_active) <span class="text-xs text-night-ink-2">(inactive)</span>@endunless</td>
                                         <td class="px-2 py-2 font-mono text-xs text-night-ink-2">{{ $v->sku ?: '—' }}</td>
-                                        <td class="px-2 py-2 text-center {{ (int) $v->stock_available <= 3 ? 'text-rust-tint' : '' }}">{{ (int) $v->stock_available }}</td>
+                                        <td class="px-2 py-2 text-center {{ (int) $v->stock_available <= 3 ? 'text-rust' : '' }}">{{ (int) $v->stock_available }}</td>
                                         <td class="px-2 py-2 text-center text-night-ink-2">{{ (int) $v->stock_reserved }}</td>
                                         <td class="pl-2 py-2 text-center text-night-ink-2">{{ (int) $v->stock_sold }}</td>
                                         <td class="pl-2 py-2 text-right text-night-ink-2">{{ $v->price !== null ? number_format((float) $v->price, 0, ',', ' ').' '.$product->currency : '—' }}</td>

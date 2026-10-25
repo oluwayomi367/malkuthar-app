@@ -47,7 +47,7 @@ export default function Index({
                             <h2 className="font-sans text-base font-semibold text-night-ink">
                                 Bandeau d'annonces défilant
                             </h2>
-                            <span className="rounded-full bg-accent-light/15 px-2.5 py-0.5 text-xs font-bold text-accent-light uppercase tracking-wider">
+                            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold text-accent-2 uppercase tracking-wider">
                                 Vitrine
                             </span>
                         </div>
@@ -64,10 +64,10 @@ export default function Index({
                                     value={tickerForm.data.announcement_ticker}
                                     onChange={(e) => tickerForm.setData('announcement_ticker', e.target.value)}
                                     placeholder="Ex. Téléchargement immédiat · Expédition sous 48 h · Affiliation sur 3 niveaux"
-                                    className="mt-1.5 block w-full rounded-xl border bg-night border-night-ink-2/60 p-3 text-sm leading-relaxed text-night-ink focus:border-accent-light focus:outline-none"
+                                    className="mt-1.5 block w-full rounded-xl border bg-night border-night-ink-2/60 p-3 text-sm leading-relaxed text-night-ink focus:border-accent focus:outline-none"
                                 />
                                 {tickerForm.errors.announcement_ticker && (
-                                    <p className="mt-1 text-rust-tint">{tickerForm.errors.announcement_ticker}</p>
+                                    <p className="mt-1 text-rust">{tickerForm.errors.announcement_ticker}</p>
                                 )}
                             </div>
 
@@ -79,7 +79,7 @@ export default function Index({
                                     onChange={(e) =>
                                         tickerForm.setData('announcement_ticker_enabled', e.target.checked)
                                     }
-                                    className="rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                    className="rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                 />
                                 <label htmlFor="ticker_enabled" className="text-night-ink-2 font-medium">
                                     Activer l'affichage du bandeau d'annonces
@@ -89,7 +89,7 @@ export default function Index({
                             <button
                                 type="submit"
                                 disabled={tickerForm.processing}
-                                className="rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                                className="rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer le bandeau
                             </button>
@@ -108,7 +108,7 @@ export default function Index({
                                 className={[
                                     'rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider',
                                     mpForm.data.enabled
-                                        ? 'bg-sage/30 text-sage-soft'
+                                        ? 'bg-sage-soft text-sage'
                                         : 'bg-night-line text-night-ink-2',
                                 ].join(' ')}
                             >
@@ -126,7 +126,7 @@ export default function Index({
                                     id="mp_enabled"
                                     checked={mpForm.data.enabled}
                                     onChange={(e) => mpForm.setData('enabled', e.target.checked)}
-                                    className="h-4 w-4 rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                    className="h-4 w-4 rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                                 />
                                 <label htmlFor="mp_enabled" className="cursor-pointer">
                                     <span className="block font-semibold text-night-ink">
@@ -149,7 +149,7 @@ export default function Index({
                                         required
                                         value={mpForm.data.starter_rate_percent}
                                         onChange={(e) => mpForm.setData('starter_rate_percent', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                     />
                                 </div>
                                 <div>
@@ -162,7 +162,7 @@ export default function Index({
                                         required
                                         value={mpForm.data.growth_rate_percent}
                                         onChange={(e) => mpForm.setData('growth_rate_percent', e.target.value)}
-                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                     />
                                 </div>
                             </div>
@@ -176,14 +176,14 @@ export default function Index({
                                     required
                                     value={mpForm.data.growth_threshold_amount}
                                     onChange={(e) => mpForm.setData('growth_threshold_amount', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={mpForm.processing}
-                                className="rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                                className="rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer les réglages
                             </button>
@@ -218,7 +218,7 @@ export default function Index({
                                         <td className="px-4 py-2.5 font-semibold text-night-ink">
                                             {v.display_name}
                                         </td>
-                                        <td className="px-4 py-2.5 font-mono font-bold text-accent-light">
+                                        <td className="px-4 py-2.5 font-mono font-bold text-accent-2">
                                             {Math.round(v.commission_rate_override * 100 * 100) / 100} %
                                         </td>
                                         <td className="px-4 py-2.5 text-night-ink-2">
@@ -227,7 +227,7 @@ export default function Index({
                                         <td className="px-4 py-2.5 text-right">
                                             <Link
                                                 href={route('admin.marketplace.vendors.show', v.id)}
-                                                className="font-semibold text-accent-light hover:text-night-ink"
+                                                className="font-semibold text-accent-2 hover:text-night-ink"
                                             >
                                                 Voir
                                             </Link>

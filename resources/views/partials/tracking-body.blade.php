@@ -1,5 +1,2 @@
-@php $gtm = config('malkuthar.tracking.gtm_container_id'); @endphp
-@if ($gtm)
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ $gtm }}"
-        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-@endif
+{{-- La version <noscript> de Google Tag Manager a été retirée : sans JavaScript,
+     le visiteur ne peut pas donner son consentement (voir resources/js/consent.js). --}}

@@ -56,8 +56,8 @@ export default function Index({
         <AdminLayout title="Taux de commission" eyebrow={eyebrow} heading={heading}>
             {/* EN-TÊTE : TAUX EN VIGUEUR + DÉLAI DE VALIDATION */}
             <div className="mb-6 grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-accent-light/40 bg-amber/25 p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent-light">
+                <div className="rounded-2xl border border-accent/40 bg-amber/25 p-5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-accent-2">
                         {applied_rates_label}
                     </p>
                     <p className="mt-2 font-display text-2xl font-semibold text-night-ink">
@@ -87,19 +87,19 @@ export default function Index({
                                 required
                                 value={delayForm.data.validation_delay_days}
                                 onChange={(e) => delayForm.setData('validation_delay_days', e.target.value)}
-                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={delayForm.processing}
-                            className="rounded-full bg-accent-light px-3.5 py-1.5 text-sm font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                            className="rounded-full bg-accent px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                         >
                             Enregistrer
                         </button>
                     </form>
                     {delayForm.errors.validation_delay_days && (
-                        <p className="mt-1 text-xs text-rust-tint">{delayForm.errors.validation_delay_days}</p>
+                        <p className="mt-1 text-xs text-rust">{delayForm.errors.validation_delay_days}</p>
                     )}
                 </div>
             </div>
@@ -127,7 +127,7 @@ export default function Index({
                                                 <div className="flex items-center gap-2">
                                                     <span>{c.name}</span>
                                                     {c.is_default && (
-                                                        <span className="rounded bg-accent-light/15 px-1.5 py-0.5 text-xs font-bold text-accent-light">
+                                                        <span className="rounded bg-accent-soft px-1.5 py-0.5 text-xs font-bold text-accent-2">
                                                             Par défaut
                                                         </span>
                                                     )}
@@ -151,7 +151,7 @@ export default function Index({
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDelete(c.id, c.name)}
-                                                    className="font-medium text-rust-tint hover:text-rust-tint hover:underline"
+                                                    className="font-medium text-rust hover:text-rust hover:underline"
                                                 >
                                                     Supprimer
                                                 </button>
@@ -184,7 +184,7 @@ export default function Index({
                                 placeholder="Ex. Promotion Rentrée"
                                 value={campaignForm.data.name}
                                 onChange={(e) => campaignForm.setData('name', e.target.value)}
-                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
 
@@ -199,7 +199,7 @@ export default function Index({
                                     required
                                     value={campaignForm.data.rate_l1}
                                     onChange={(e) => campaignForm.setData('rate_l1', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div>
@@ -212,7 +212,7 @@ export default function Index({
                                     required
                                     value={campaignForm.data.rate_l2}
                                     onChange={(e) => campaignForm.setData('rate_l2', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div>
@@ -225,7 +225,7 @@ export default function Index({
                                     required
                                     value={campaignForm.data.rate_l3}
                                     onChange={(e) => campaignForm.setData('rate_l3', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                         </div>
@@ -237,7 +237,7 @@ export default function Index({
                                     type="date"
                                     value={campaignForm.data.starts_at}
                                     onChange={(e) => campaignForm.setData('starts_at', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                             <div>
@@ -246,7 +246,7 @@ export default function Index({
                                     type="date"
                                     value={campaignForm.data.ends_at}
                                     onChange={(e) => campaignForm.setData('ends_at', e.target.value)}
-                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                    className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-2 py-2.5 focus:border-accent focus:outline-none min-h-11"
                                 />
                             </div>
                         </div>
@@ -259,7 +259,7 @@ export default function Index({
                                 max="100"
                                 value={campaignForm.data.priority}
                                 onChange={(e) => campaignForm.setData('priority', e.target.value)}
-                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent-light focus:outline-none min-h-11"
+                                className="mt-1 block w-full rounded-lg border border-night-ink-2/60 px-3 py-2.5 focus:border-accent focus:outline-none min-h-11"
                             />
                         </div>
 
@@ -269,7 +269,7 @@ export default function Index({
                                 id="is_default"
                                 checked={campaignForm.data.is_default}
                                 onChange={(e) => campaignForm.setData('is_default', e.target.checked)}
-                                className="rounded border-night-ink-2/60 text-accent-light focus:ring-accent-light"
+                                className="rounded border-night-ink-2/60 text-accent-2 focus:ring-accent"
                             />
                             <label htmlFor="is_default" className="text-night-ink-2">
                                 Définir comme campagne par défaut
@@ -279,7 +279,7 @@ export default function Index({
                         <button
                             type="submit"
                             disabled={campaignForm.processing}
-                            className="w-full rounded-full bg-accent-light px-4 py-2 font-semibold text-night transition-colors hover:bg-accent-light/85 disabled:opacity-50 min-h-11"
+                            className="w-full rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-2 disabled:opacity-50 min-h-11"
                         >
                             Créer la campagne
                         </button>

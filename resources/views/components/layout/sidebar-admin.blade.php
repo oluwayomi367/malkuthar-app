@@ -26,6 +26,7 @@
             ['label' => 'Taux de commission', 'route' => 'admin.commission-campaigns.index', 'match' => 'admin.commission-campaigns.*', 'icon' => 'M19 5L5 19M7.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM16.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'],
         ],
         'Système' => [
+            ['label' => 'Images de la vitrine', 'route' => 'admin.storefront-images.index', 'match' => 'admin.storefront-images.*', 'icon' => 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4M9 9.5h.01'],
             ['label' => 'Réglages Vitrine & MP', 'route' => 'admin.marketplace.settings.index', 'match' => 'admin.marketplace.settings.*', 'icon' => 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.1-1.2L14 3h-4l-.4 2.6a7 7 0 0 0-2.1 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2.1 1.2L10 21h4l.4-2.6a7 7 0 0 0 2.1-1.2l2.4 1 2-3.4-2-1.6c.06-.4.1-.8.1-1.2z'],
             ['label' => "Journal d'audit", 'route' => 'admin.audit-logs.index', 'match' => 'admin.audit-logs.*', 'icon' => 'M5 4h14v16l-4-2-3 2-3-2-4 2zM9 9h6M9 13h6'],
         ],
@@ -56,10 +57,10 @@
                                @if ($active) aria-current="page" @endif
                                @class([
                                    'relative flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
-                                   'bg-night-line font-semibold text-night-ink before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accent-light' => $active,
+                                   'bg-night-line font-semibold text-night-ink before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accent' => $active,
                                    'text-night-ink-2 hover:bg-night-line/50 hover:text-night-ink' => ! $active,
                                ])>
-                                <svg @class(['h-[18px] w-[18px] shrink-0', 'text-accent-light' => $active]) viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ $l['icon'] }}"/></svg>
+                                <svg @class(['h-[18px] w-[18px] shrink-0', 'text-accent-2' => $active]) viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ $l['icon'] }}"/></svg>
                                 {{ $l['label'] }}
                             </a>
                         </li>

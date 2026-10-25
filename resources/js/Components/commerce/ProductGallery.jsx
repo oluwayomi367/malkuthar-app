@@ -48,7 +48,7 @@ export default function ProductGallery({ product, className = '' }) {
 
             {product.presentation_video && (
                 <div className="mt-3 overflow-hidden rounded-2xl border border-line">
-                    <video src={product.presentation_video} controls preload="none" className="aspect-video w-full bg-ink" />
+                    <video src={product.presentation_video} controls preload="none" className="aspect-video w-full bg-deep" />
                 </div>
             )}
         </div>

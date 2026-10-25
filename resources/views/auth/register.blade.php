@@ -4,27 +4,20 @@
 @section('seo_description', 'Créez votre compte client MALKUTHAR pour suivre vos commandes, accéder à vos livres et réserver vos séances.')
 @section('form_max', 'max-w-[560px]')
 
+@section('auth_heading', 'Créer mon compte')
+@section('auth_intro', "Quelques informations suffisent. Les champs marqués d'un astérisque sont obligatoires.")
 @section('auth_tagline', 'Votre espace client.')
 @section('auth_subtitle', 'Suivez vos commandes, retrouvez vos livres numériques et gérez vos réservations depuis un même endroit.')
-@section('auth_panel_extra')
-    <ul class="divide-y divide-night-line border-y border-night-line text-sm text-night-ink">
-        <li class="py-3">Téléchargement des produits digitaux dès le paiement</li>
-        <li class="py-3">Historique et suivi de vos commandes</li>
-        <li class="py-3">Réservation des séances et consultations</li>
-    </ul>
-@endsection
+@section('auth_image', 'auth.register')
 
 @section('content')
-<h1 class="font-display text-[32px] font-semibold leading-tight text-ink">Créer mon compte Client</h1>
-<p class="mt-2 text-[15px] text-ink-2">Quelques informations suffisent. Les champs marqués d'un astérisque sont obligatoires.</p>
-
 @if ($errors->any())
-    <div class="mt-6">
+    <div class="mb-5">
         <x-ui.alert tone="error">Veuillez vérifier les informations saisies dans les champs ci-dessous.</x-ui.alert>
     </div>
 @endif
 
-<form method="POST" action="{{ route('register.client.store') }}" class="mt-8 grid gap-5">
+<form method="POST" action="{{ route('register.client.store') }}" class="grid gap-5">
     @csrf
 
     <div class="grid gap-5 sm:grid-cols-2">
@@ -51,10 +44,10 @@
     </div>
 </form>
 
-<div class="mt-8 border-t border-line pt-6 text-sm text-ink-2">
-    <p>
-        Déjà inscrit ?
-        <a href="{{ route('login') }}" class="font-semibold text-ink underline decoration-accent underline-offset-4 transition-colors hover:text-accent-2">Se connecter</a>
-    </p>
-</div>
+@endsection
+
+@section('auth_footer')
+    <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface/80 px-4 text-xs font-semibold text-ink shadow-2xs transition-colors hover:border-line-strong hover:bg-surface">
+        <span class="text-accent" aria-hidden="true">✦</span> Déjà inscrit ? Se connecter
+    </a>
 @endsection

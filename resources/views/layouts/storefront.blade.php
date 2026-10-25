@@ -10,7 +10,7 @@
 
     @include('partials.flash')
 
-    <main class="flex-1">
+    <main id="contenu" class="flex-1">
         {{ $slot ?? '' }}
         @yield('content')
     </main>

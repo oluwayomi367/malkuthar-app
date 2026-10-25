@@ -61,7 +61,7 @@
         @foreach ($secondary as $link)
             <a href="{{ $link['href'] }}" @class([
                 'inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-[13px]',
-                'border-ink bg-ink font-semibold text-white' => $link['active'],
+                'border-deep bg-deep font-semibold text-white' => $link['active'],
                 'border-line bg-surface text-ink-2' => ! $link['active'],
             ]) @if ($link['active']) aria-current="page" @endif>
                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

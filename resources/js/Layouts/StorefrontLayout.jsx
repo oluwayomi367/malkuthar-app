@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import Alert from '../Components/ui/Alert';
+import { useImages } from '../lib/images';
 import { cartCount } from '../lib/cart';
 
 const DEFAULT_TICKER = "Téléchargement immédiat des produits numériques | Expédition suivie à domicile | Paiement Mobile Money et carte bancaire";
@@ -34,8 +35,6 @@ const ICONS = {
 /** Univers mis en avant dans la barre de catégories (mêmes destinations que l'accueil). */
 const UNIVERS_NAV = [
     { label: 'Formations', href: '/boutique?type=digital', match: 'type=digital' },
-    { label: 'Mode & Artisanat', href: '/boutique?type=physical', match: 'type=physical' },
-    { label: 'Résidences', href: '/place-de-marche?pole=residences-guest-houses-immobilier', match: 'pole=residences' },
     { label: 'Soins & Praticiens', href: '/boutique?type=service', match: 'type=service' },
 ];
 
@@ -67,9 +66,10 @@ function SearchForm({ className = '', inputId }) {
 }
 
 function Brand({ onClick, size = 'md', tone = 'light' }) {
+    const img = useImages();
     return (
         <Link href="/" onClick={onClick} className="flex shrink-0 items-center gap-2.5" aria-label="MALKUTHAR, accueil">
-            <img src="/images/logo.png" alt="" className={size === 'sm' ? 'h-8 w-8 object-contain' : 'h-9 w-9 object-contain'} />
+            <img src={img('brand.logo', '/images/logo.png')} alt="" className={size === 'sm' ? 'h-8 w-8 object-contain' : 'h-9 w-9 object-contain'} />
             <span className={[
                 'font-display font-semibold leading-none tracking-[0.14em]',
                 tone === 'dark' ? 'text-white' : 'text-ink',
@@ -141,7 +141,7 @@ function Drawer({ open, onClose, categories, marketplaceHref, user }) {
 
     return (
         <div hidden={!open} className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-ink/50" onClick={onClose} aria-hidden="true" />
+            <div className="absolute inset-0 bg-deep/50" onClick={onClose} aria-hidden="true" />
             <div role="dialog" aria-modal="true" aria-label="Menu principal"
                  className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-surface">
                 <div className="flex h-16 items-center justify-between border-b border-line px-5">
@@ -183,7 +183,7 @@ function Drawer({ open, onClose, categories, marketplaceHref, user }) {
                         {user ? (
                             <>
                                 <a href={route('espace')}
-                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white">
+                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-deep px-6 text-sm font-semibold text-white">
                                     Mon espace
                                 </a>
                                 <form method="POST" action={route('logout')}>
@@ -196,7 +196,7 @@ function Drawer({ open, onClose, categories, marketplaceHref, user }) {
                         ) : (
                             <>
                                 <a href={route('login')}
-                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white">
+                                   className="flex min-h-11 w-full items-center justify-center rounded-full bg-deep px-6 text-sm font-semibold text-white">
                                     Connexion
                                 </a>
                                 <a href={route('register')}
@@ -220,26 +220,27 @@ function FooterColumn({ title, children }) {
     return (
         <div>
             <h2 className="font-sans text-sm font-semibold tracking-normal text-white">{title}</h2>
-            <ul className="mt-4 space-y-3 text-sm text-night-ink-2">{children}</ul>
+            <ul className="mt-4 space-y-3 text-sm text-white/75">{children}</ul>
         </div>
     );
 }
 
 const footerLink = 'transition-colors hover:text-white';
 
-function Footer({ marketplaceHref }) {
+function Footer({ marketplaceHref, flush = false }) {
+    const img = useImages();
     return (
-        <footer className="mt-24 bg-ink text-night-ink">
+        <footer className={[flush ? '' : 'mt-24', 'bg-deep text-white'].join(' ')}>
             <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6">
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
                     <div>
                         <Link href="/" className="inline-flex items-center gap-2.5" aria-label="MALKUTHAR, accueil">
                             <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-surface p-1">
-                                <img src="/images/logo.png" alt="" className="h-full w-full object-contain" />
+                                <img src={img('brand.logo', '/images/logo.png')} alt="" className="h-full w-full object-contain" />
                             </span>
                             <span className="font-display text-[22px] font-semibold leading-none tracking-[0.14em] text-white">MALKUTHAR</span>
                         </Link>
-                        <p className="mt-4 max-w-xs text-sm leading-relaxed text-night-ink-2">
+                        <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
                             Formations, créations artisanales, résidences et consultations, réunies sur une même boutique.
                         </p>
                         <a href={route('contact')} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-accent-light hover:text-white">
@@ -262,12 +263,13 @@ function Footer({ marketplaceHref }) {
                     <FooterColumn title="Informations">
                         <li><Link href={route('about')} className={footerLink}>À propos</Link></li>
                         <li><Link href={route('contact')} className={footerLink}>Contact</Link></li>
-                        <li><a href="/mentions-legales" className={footerLink}>Conditions générales de vente</a></li>
+                        <li><a href="/mentions-legales" className={footerLink}>Mentions légales</a></li>
                         <li><a href="/confidentialite" className={footerLink}>Politique de confidentialité</a></li>
                         <li><a href="/cookies" className={footerLink}>Gestion des cookies</a></li>
+                        <li><button type="button" data-cookie-settings className={`${footerLink} text-left`}>Gérer mes choix de cookies</button></li>
                     </FooterColumn>
                 </div>
-                <div className="mt-14 flex flex-col gap-2 border-t border-night-line pt-6 text-sm text-night-ink-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-14 flex flex-col gap-2 border-t border-white/15 pt-6 text-sm text-white/75 sm:flex-row sm:items-center sm:justify-between">
                     <p>© {new Date().getFullYear()} MALKUTHAR SARL. Tous droits réservés.</p>
                     <p>Paiement sécurisé : FedaPay · CinetPay · Mobile Money</p>
                 </div>
@@ -278,7 +280,8 @@ function Footer({ marketplaceHref }) {
 
 /** Layout persistant Inertia — navbar/drawer/footer ne se remontent pas
  * entre deux pages de la vitrine (voir chaque Page.jsx : `Page.layout = ...`). */
-export default function StorefrontLayout({ children }) {
+/** `flushFooter` : colle le pied de page au dernier bloc (sans marge haute). */
+export default function StorefrontLayout({ children, flushFooter = false }) {
     const { props, url } = usePage();
     const {
         categories = [],
@@ -340,7 +343,7 @@ export default function StorefrontLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-ground font-sans text-ink antialiased">
-            <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-white">
+            <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-deep focus:px-5 focus:py-3 focus:text-sm focus:text-white">
                 Aller au contenu
             </a>
 
@@ -360,7 +363,7 @@ export default function StorefrontLayout({ children }) {
 
             <header className="sticky top-0 z-40">
                 {/* Barre principale : marque, recherche, compte, panier. */}
-                <div className="bg-ink text-white">
+                <div className="bg-deep text-white">
                     <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-3 px-4 sm:px-6 lg:h-[76px] lg:gap-8">
                         <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Ouvrir le menu" aria-expanded={drawerOpen}
                                 className="-ml-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white hover:bg-white/10 lg:hidden">
@@ -405,7 +408,7 @@ export default function StorefrontLayout({ children }) {
 
                 {/* Barre de catégories. */}
                 <div className="relative hidden border-b border-line bg-surface lg:block">
-                    <nav className="mx-auto flex h-12 max-w-[1280px] items-center gap-1 px-6" aria-label="Catégories">
+                    <nav className="mx-auto flex h-12 max-w-[1280px] items-center justify-center gap-1 px-6" aria-label="Catégories">
                         <button type="button" onClick={() => setMegaOpen((v) => !v)} onMouseEnter={() => setMegaOpen(true)}
                                 aria-expanded={megaOpen} aria-controls="menu-boutique"
                                 className="mr-2 inline-flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ground-alt px-4 text-sm font-semibold text-ink transition-colors hover:bg-line">
@@ -419,8 +422,9 @@ export default function StorefrontLayout({ children }) {
                         <span className="mx-2 h-5 w-px bg-line-strong" aria-hidden="true" />
                         <NavLink href={marketplaceHref} active={is('/place-de-marche') || is('/marketplace')}>Place de marché</NavLink>
                         <NavLink href={route('affiliation')} active={is('/affiliation') || is('/programme-affiliation')}>Affiliation</NavLink>
+                        <span className="mx-2 h-5 w-px bg-line-strong" aria-hidden="true" />
                         <a href={route('marketplace.become-vendor')}
-                           className="ml-auto inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold text-space-vendor hover:text-ink">
+                           className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold text-space-vendor hover:text-ink">
                             Vendre sur MALKUTHAR
                             <Icon d={ICONS.arrow} className="h-4 w-4" />
                         </a>
@@ -440,7 +444,7 @@ export default function StorefrontLayout({ children }) {
 
             <main id="contenu">{children}</main>
 
-            <Footer marketplaceHref={marketplaceHref} />
+            <Footer marketplaceHref={marketplaceHref} flush={flushFooter} />
 
             {/* Contact WhatsApp — discret, icône seule. Remonte au-dessus de la barre d'action mobile (StickyCta). */}
             {props.whatsapp && (

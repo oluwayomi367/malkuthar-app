@@ -45,7 +45,7 @@
             <template x-for="s in slots" :key="s">
                 <button type="button" x-on:click="pick(s)"
                         class="h-11 min-w-[4.5rem] rounded-full border px-4 text-sm font-medium transition-colors"
-                        :class="time === s ? 'border-ink bg-ink text-white' : 'border-line-strong text-ink hover:border-ink'" :aria-pressed="time === s"
+                        :class="time === s ? 'border-deep bg-deep text-white' : 'border-line-strong text-ink hover:border-ink'" :aria-pressed="time === s"
                         x-text="s"></button>
             </template>
         </div>

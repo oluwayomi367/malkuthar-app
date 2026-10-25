@@ -56,6 +56,7 @@ const NAV_GROUPS = [
     {
         title: 'Système',
         links: [
+            { label: 'Images de la vitrine', route: 'admin.storefront-images.index', icon: 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4M9 9.5h.01' },
             { label: 'Réglages Vitrine & MP', route: 'admin.marketplace.settings.index', icon: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.1-1.2L14 3h-4l-.4 2.6a7 7 0 0 0-2.1 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2.1 1.2L10 21h4l.4-2.6a7 7 0 0 0 2.1-1.2l2.4 1 2-3.4-2-1.6c.06-.4.1-.8.1-1.2z' },
             { label: "Journal d'audit", route: 'admin.audit-logs.index', icon: 'M5 4h14v16l-4-2-3 2-3-2-4 2zM9 9h6M9 13h6' },
         ],
@@ -93,11 +94,11 @@ function NavList({ onNavigate }) {
                                         className={[
                                             'relative flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
                                             active
-                                                ? 'bg-night-line font-semibold text-night-ink before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accent-light'
+                                                ? 'bg-night-line font-semibold text-night-ink before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accent'
                                                 : 'text-night-ink-2 hover:bg-night-line/50 hover:text-night-ink',
                                         ].join(' ')}
                                     >
-                                        <span className={active ? 'text-accent-light' : ''}>
+                                        <span className={active ? 'text-accent-2' : ''}>
                                             <Icon d={link.icon} />
                                         </span>
                                         <span>{link.label}</span>
@@ -132,7 +133,7 @@ export default function AdminLayout({ title, eyebrow, heading, actions, children
     const pageEyebrow = eyebrow && eyebrow !== 'MALKUTHAR' ? eyebrow : null;
 
     return (
-        <div className="min-h-screen bg-night font-sans text-night-ink antialiased [color-scheme:dark] [&_:focus-visible]:outline-accent-light">
+        <div className="theme-admin min-h-screen bg-night font-sans text-night-ink antialiased [&_:focus-visible]:outline-accent">
             <Head title={title ? `${title} — Administration MALKUTHAR` : 'Administration — MALKUTHAR'} />
 
             <header className="sticky top-0 z-40 border-b border-night-line bg-night">
@@ -160,7 +161,7 @@ export default function AdminLayout({ title, eyebrow, heading, actions, children
                             <span className="font-display text-2xl font-semibold tracking-[0.12em] text-night-ink">
                                 MALKUTHAR
                             </span>
-                            <span className="rounded-full border border-accent-light/40 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.1em] text-accent-light">
+                            <span className="rounded-full border border-accent/40 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.1em] text-accent-2">
                                 Console
                             </span>
                         </Link>
@@ -217,7 +218,7 @@ export default function AdminLayout({ title, eyebrow, heading, actions, children
             {(flash?.success || flash?.error) && (
                 <div className="mx-auto max-w-[1280px] space-y-2 px-4 pt-5 sm:px-6">
                     {flash?.success && (
-                        <div role="status" className="flex items-start gap-2.5 rounded-xl border border-sage bg-sage/20 px-4 py-3 text-sm text-sage-soft">
+                        <div role="status" className="flex items-start gap-2.5 rounded-xl border border-sage bg-sage-soft px-4 py-3 text-sm text-sage">
                             <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M5 12.5l4.5 4.5L19 7.5" />
                             </svg>
@@ -225,7 +226,7 @@ export default function AdminLayout({ title, eyebrow, heading, actions, children
                         </div>
                     )}
                     {flash?.error && (
-                        <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rust bg-rust/20 px-4 py-3 text-sm text-rust-tint">
+                        <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rust bg-rust-tint px-4 py-3 text-sm text-rust">
                             <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M12 8v5M12 16.5h.01M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
                             </svg>
@@ -247,7 +248,7 @@ export default function AdminLayout({ title, eyebrow, heading, actions, children
                         <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-night-line pb-6">
                             <div>
                                 {pageEyebrow && (
-                                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent-light">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent-2">
                                         {pageEyebrow}
                                     </p>
                                 )}

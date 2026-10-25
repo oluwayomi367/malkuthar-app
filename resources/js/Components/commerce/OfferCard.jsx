@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { isFavorite, toggleFavorite } from '../../lib/wishlist';
 import CatalogCard from './CatalogCard';
+import ShowcaseCard from './ShowcaseCard';
 
 const TYPE_LABELS = {
     physical: 'Physique',
@@ -10,7 +11,8 @@ const TYPE_LABELS = {
     training: 'Formation',
 };
 
-export default function OfferCard({ offer }) {
+/** `variant` : « catalog » (carte par défaut) ou « showcase » (vitrine). */
+export default function OfferCard({ offer, variant = 'catalog' }) {
     const hasSale = offer.sale_price !== null && Number(offer.sale_price) < Number(offer.price);
     const off = hasSale ? Math.round(100 - (offer.sale_price / offer.price) * 100) : 0;
 
@@ -63,9 +65,11 @@ export default function OfferCard({ offer }) {
     };
 
     const needsChoice = offer.type === 'physical' || offer.type === 'service';
+    const showcase = variant === 'showcase';
+    const Card = showcase ? ShowcaseCard : CatalogCard;
 
     return (
-        <CatalogCard
+        <Card
             href={route('marketplace.shop.offer', offer.slug)}
             title={offer.title}
             image={offer.main_image_url}
@@ -80,14 +84,14 @@ export default function OfferCard({ offer }) {
             colors={offer.colors ?? []}
             meta={offer.rating_count > 0 ? (
                 <span>
-                    <span className="font-semibold text-ink-2">{Number(offer.rating_avg).toFixed(1).replace('.', ',')} / 5</span>
+                    <span className={showcase ? 'font-semibold text-black' : 'font-semibold text-ink-2'}>{Number(offer.rating_avg).toFixed(1).replace('.', ',')} / 5</span>
                     {' '}({offer.rating_count} avis)
                 </span>
             ) : null}
             fav={fav}
             onToggleFav={handleToggleFav}
             onAdd={handleAddToCart}
-            addLabel={needsChoice ? 'Choisir' : 'Ajouter'}
+            addLabel={needsChoice ? (showcase ? 'Choisir les options' : 'Choisir') : (showcase ? 'Ajouter au panier' : 'Ajouter')}
             adding={adding}
             added={added}
         />

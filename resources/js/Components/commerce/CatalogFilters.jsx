@@ -30,7 +30,7 @@ export function Segments({ label, items }) {
                     <li key={it.key}>
                         <button type="button" onClick={it.onClick} aria-pressed={it.active}
                                 className={['inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-colors',
-                                    it.active ? 'border-ink bg-ink text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
+                                    it.active ? 'border-deep bg-deep text-white' : 'border-line-strong bg-surface text-ink hover:border-ink'].join(' ')}>
                             {it.label}
                         </button>
                     </li>
@@ -46,7 +46,7 @@ export function FilterPanel({ open, onClose, onSubmit, hasActive, onReset, child
         <>
             {open && (
                 <button type="button" aria-label="Fermer les filtres" onClick={onClose}
-                        className="fixed inset-0 z-40 bg-ink/40 lg:hidden" />
+                        className="fixed inset-0 z-40 bg-deep/40 lg:hidden" />
             )}
             <aside
                 aria-label="Filtres"
@@ -68,7 +68,7 @@ export function FilterPanel({ open, onClose, onSubmit, hasActive, onReset, child
                     {children}
                     <div className="space-y-2 pt-5">
                         <button type="submit"
-                                className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-2">
+                                className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-deep px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-2">
                             Appliquer les filtres
                         </button>
                         {hasActive && (
@@ -145,7 +145,7 @@ export function CheckOption({ checked, onClick, label, count }) {
                 className="group flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm">
             <span className="flex min-w-0 items-center gap-2.5">
                 <span className={['flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded border transition-colors',
-                    checked ? 'border-ink bg-ink text-white' : 'border-line-strong bg-surface group-hover:border-ink'].join(' ')}>
+                    checked ? 'border-deep bg-deep text-white' : 'border-line-strong bg-surface group-hover:border-ink'].join(' ')}>
                     {checked && (
                         <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <path d="M2.5 6l2.5 2.5 4.5-5" />

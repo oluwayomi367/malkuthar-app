@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { addToCart } from '../../lib/cart';
 import { isFavorite, toggleFavorite } from '../../lib/wishlist';
 import CatalogCard from './CatalogCard';
+import ShowcaseCard from './ShowcaseCard';
 
 const TYPE_LABELS = { digital: 'Digital', physical: 'Physique', service: 'Service', training: 'Formation' };
 
-export default function ProductCard({ product }) {
+/** `variant` : « catalog » (carte par défaut) ou « showcase » (vitrine de la boutique). */
+export default function ProductCard({ product, variant = 'catalog' }) {
     const isAffiliable = product.type === 'digital' && product.is_affiliable;
     const price = product.promotional_price ?? product.price;
     const hasSale = product.promotional_price !== null && product.promotional_price !== undefined && Number(product.promotional_price) < Number(product.price);
@@ -48,8 +50,10 @@ export default function ProductCard({ product }) {
         setTimeout(() => setAdded(false), 2000);
     };
 
+    const Card = variant === 'showcase' ? ShowcaseCard : CatalogCard;
+
     return (
-        <CatalogCard
+        <Card
             href={route('catalog.show', product.slug)}
             title={product.name}
             image={product.main_image}

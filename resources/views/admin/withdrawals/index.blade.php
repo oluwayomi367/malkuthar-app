@@ -53,7 +53,7 @@
                             @csrf
                             <input name="reason" required placeholder="Motif d'échec"
                                    class="h-9 rounded-lg border border-black/10 bg-surface px-3 text-xs text-ink placeholder:text-ink-3">
-                            <button class="h-9 rounded-lg border border-rust/40 bg-rust/10 px-3 text-xs font-semibold text-rust hover:bg-rust/20">Marquer échoué</button>
+                            <button class="h-9 rounded-lg border border-rust/40 bg-rust/10 px-3 text-xs font-semibold text-rust hover:bg-rust-tint">Marquer échoué</button>
                         </form>
                     </div>
                 @elseif ($w->failure_reason)

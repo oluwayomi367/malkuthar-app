@@ -48,7 +48,7 @@
 <div id="retrait" class="scroll-mt-24" x-data="withdrawForm(@js($available), @js($currency))">
     <div class="mt-8 grid gap-5 lg:grid-cols-5">
         {{-- Solde --}}
-        <section class="flex flex-col rounded-2xl bg-ink p-6 text-white sm:p-7 lg:col-span-3" aria-labelledby="balance-title">
+        <section class="flex flex-col rounded-2xl bg-deep p-6 text-white sm:p-7 lg:col-span-3" aria-labelledby="balance-title">
             <h2 id="balance-title" class="font-sans text-sm font-semibold text-accent-light">Solde disponible</h2>
             <p class="mt-3 font-display text-[44px] font-semibold leading-none sm:text-[56px]">
                 {{ $money($available) }}<span class="ml-2 font-sans text-base font-medium text-white/70">{{ $currency }}</span>

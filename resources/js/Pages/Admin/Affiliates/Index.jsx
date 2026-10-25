@@ -28,11 +28,11 @@ export default function Index({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Nom, email, identifiant, code de parrainage…"
-                    className="flex-1 rounded-xl border border-night-ink-2/60 bg-night px-4 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                    className="flex-1 rounded-xl border border-night-ink-2/60 bg-night px-4 py-2.5 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                 />
                 <button
                     type="submit"
-                    className="rounded-full bg-accent-light px-5 py-2.5 text-sm font-semibold text-night hover:bg-accent-light/85 min-h-11"
+                    className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-2 min-h-11"
                 >
                     Rechercher
                 </button>
@@ -83,11 +83,11 @@ export default function Index({
                                     </td>
                                     <td className="px-4 py-3.5">
                                         {a.status === 'active' ? (
-                                            <span className="rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                            <span className="rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                 Actif
                                             </span>
                                         ) : (
-                                            <span className="rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                                            <span className="rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                                                 {a.status || 'Inactif'}
                                             </span>
                                         )}
@@ -95,7 +95,7 @@ export default function Index({
                                     <td className="px-4 py-3.5 text-right">
                                         <Link
                                             href={route('admin.affiliates.show', a.id)}
-                                            className="font-semibold text-accent-light hover:text-night-ink"
+                                            className="font-semibold text-accent-2 hover:text-night-ink"
                                         >
                                             Ouvrir
                                         </Link>

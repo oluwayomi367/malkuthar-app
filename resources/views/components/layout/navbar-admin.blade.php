@@ -10,7 +10,7 @@
 
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
             <span class="font-display text-[22px] font-semibold tracking-[0.14em] text-night-ink">MALKUTHAR</span>
-            <span class="rounded-full bg-night-line px-2.5 py-0.5 text-xs font-semibold text-accent-light">Console</span>
+            <span class="rounded-full bg-night-line px-2.5 py-0.5 text-xs font-semibold text-accent-2">Console</span>
         </a>
 
         <div class="ml-auto flex items-center gap-2 text-sm">

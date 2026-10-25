@@ -16,7 +16,7 @@
 
 <div class="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
     {{-- Demande --}}
-    <section class="rounded-2xl bg-ink p-6 text-white sm:p-7" aria-labelledby="payout-balance">
+    <section class="rounded-2xl bg-deep p-6 text-white sm:p-7" aria-labelledby="payout-balance">
         <h2 id="payout-balance" class="font-sans text-sm font-semibold text-accent-light">Solde disponible</h2>
         <p class="mt-3 font-display text-[44px] font-semibold leading-none">
             {{ $money($balance->available_amount) }}<span class="ml-2 font-sans text-base font-medium text-white/70">{{ $balance->currency }}</span>

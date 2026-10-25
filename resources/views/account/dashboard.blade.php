@@ -75,7 +75,7 @@
 
     {{-- Prochain rendez-vous --}}
     @if ($nextAppointment)
-        <section class="flex flex-col rounded-2xl bg-ink p-5 text-white sm:p-6" aria-labelledby="next-appointment-title">
+        <section class="flex flex-col rounded-2xl bg-deep p-5 text-white sm:p-6" aria-labelledby="next-appointment-title">
             <h2 id="next-appointment-title" class="font-sans text-sm font-semibold text-accent-light">Prochain rendez-vous</h2>
             <p class="mt-3 text-base font-semibold leading-snug">{{ $nextAppointment->product_name }}</p>
             <p class="mt-3 font-display text-[28px] font-semibold leading-tight">

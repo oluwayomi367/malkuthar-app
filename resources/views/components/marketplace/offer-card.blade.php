@@ -50,7 +50,7 @@
         </div>
 
         <a href="{{ $url }}"
-           class="mt-auto inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white">
+           class="mt-auto inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink transition-colors hover:border-ink hover:bg-deep hover:text-white">
             Voir l'offre<span class="sr-only"> : {{ $offer->title }}</span>
         </a>
     </div>

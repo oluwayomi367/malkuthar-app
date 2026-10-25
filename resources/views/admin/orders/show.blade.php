@@ -205,7 +205,7 @@
                 <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-rust">Rembourser</p>
                 <input name="reason" placeholder="Motif (facultatif)"
                        class="mt-3 h-10 w-full rounded-xl border border-black/10 bg-surface px-3 text-sm text-ink placeholder:text-ink-3">
-                <button class="mt-2 h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust/20">Rembourser la commande</button>
+                <button class="mt-2 h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust-tint">Rembourser la commande</button>
             </form>
         {{-- Annuler (non payée) --}}
         @elseif ($order->status !== 'cancelled')
@@ -216,7 +216,7 @@
                 <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-rust">Annuler</p>
                 <input name="reason" placeholder="Motif (facultatif)"
                        class="mt-3 h-10 w-full rounded-xl border border-black/10 bg-surface px-3 text-sm text-ink placeholder:text-ink-3">
-                <button class="mt-2 h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust/20">Annuler la commande</button>
+                <button class="mt-2 h-10 w-full rounded-xl border border-rust/40 bg-rust/10 text-sm font-semibold text-rust hover:bg-rust-tint">Annuler la commande</button>
             </form>
         @endif
     </div>

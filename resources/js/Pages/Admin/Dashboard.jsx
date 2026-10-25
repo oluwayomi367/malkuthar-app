@@ -16,18 +16,18 @@ const formatDateTime = (value) =>
 function DecisionQueue({ href, label, count, display, detail, tone = 'amber', emptyText = 'Rien en attente' }) {
     const pending = Number(count) > 0;
     const tones = {
-        amber: 'bg-amber-tint',
-        rust: 'bg-rust-tint',
+        amber: 'bg-amber',
+        rust: 'bg-rust',
     };
 
     return (
         <Link
             href={href}
-            className="group flex flex-col justify-between rounded-2xl border border-night-line bg-night-2 p-5 transition-colors hover:border-accent-light/50"
+            className="group flex flex-col justify-between rounded-2xl border border-night-line bg-night-2 p-5 transition-colors hover:border-accent/50"
         >
             <div className="flex items-start justify-between gap-3">
                 <span className="text-sm font-medium text-night-ink-2">{label}</span>
-                <svg className="h-4 w-4 shrink-0 text-night-ink-2 transition-colors group-hover:text-accent-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg className="h-4 w-4 shrink-0 text-night-ink-2 transition-colors group-hover:text-accent-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
             </div>
@@ -69,7 +69,7 @@ function SectionHead({ title, href, linkLabel }) {
         <div className="mb-3 flex items-baseline justify-between gap-4">
             <h2 className="font-display text-2xl font-semibold text-night-ink">{title}</h2>
             {href && (
-                <Link href={href} className="inline-flex min-h-11 items-center text-sm font-semibold text-accent-light hover:text-night-ink">
+                <Link href={href} className="inline-flex min-h-11 items-center text-sm font-semibold text-accent-2 hover:text-night-ink">
                     {linkLabel}
                 </Link>
             )}
@@ -140,11 +140,11 @@ export default function Dashboard({
                 <SectionHead title="Indicateurs" />
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <Kpi label={labels.affiliates || 'Affiliés'} value={f('affiliates_total')}>
-                        <span className="font-semibold text-sage-soft">{f('affiliates_active')} actifs</span>
+                        <span className="font-semibold text-sage">{f('affiliates_active')} actifs</span>
                         {' · '}
                         {f('affiliates_new')} ce mois
                         {stats.affiliates_suspended > 0 && (
-                            <span className="text-rust-tint"> · {f('affiliates_suspended')} suspendus</span>
+                            <span className="text-rust"> · {f('affiliates_suspended')} suspendus</span>
                         )}
                     </Kpi>
 
@@ -155,7 +155,7 @@ export default function Dashboard({
                                 {' · '}
                                 <Link
                                     href={route('admin.orders.index', { provider: 'cod', payment_status: 'pending' })}
-                                    className="font-semibold text-amber-tint underline decoration-amber-tint/40 underline-offset-2 hover:decoration-amber-tint"
+                                    className="font-semibold text-amber underline decoration-amber/40 underline-offset-2 hover:decoration-amber"
                                 >
                                     {f('cod_to_collect_amount')} à encaisser (COD)
                                 </Link>
@@ -164,17 +164,17 @@ export default function Dashboard({
                     </Kpi>
 
                     <Kpi label="Commissions générées" value={f('commissions_generated')} unit="FCFA">
-                        <span className="font-semibold text-amber-tint">{f('commissions_pending')} en attente</span>
+                        <span className="font-semibold text-amber">{f('commissions_pending')} en attente</span>
                         {' · '}
-                        <span className="font-semibold text-sage-soft">{f('commissions_available')} disponibles</span>
+                        <span className="font-semibold text-sage">{f('commissions_available')} disponibles</span>
                     </Kpi>
 
                     <Kpi label="Retraits" value={f('withdrawals_requested')}>
-                        <span className="font-semibold text-amber-tint">{f('withdrawals_processing')} à traiter</span>
+                        <span className="font-semibold text-amber">{f('withdrawals_processing')} à traiter</span>
                         {' · '}
                         {f('withdrawals_paid')} payés
                         {stats.withdrawals_failed > 0 && (
-                            <span className="text-rust-tint"> · {f('withdrawals_failed')} échoués</span>
+                            <span className="text-rust"> · {f('withdrawals_failed')} échoués</span>
                         )}
                     </Kpi>
                 </div>
@@ -207,7 +207,7 @@ export default function Dashboard({
                                                 {formatNumber(w.amount)} {w.currency || 'FCFA'}
                                             </td>
                                             <td className={TD}>
-                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber-tint">
+                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/25 px-2.5 py-0.5 text-xs font-semibold text-amber">
                                                     <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
                                                     En cours
                                                 </span>
@@ -240,7 +240,7 @@ export default function Dashboard({
                                             <td className={TD}>
                                                 <Link
                                                     href={route('admin.affiliates.show', a.id)}
-                                                    className="font-semibold text-night-ink hover:text-accent-light"
+                                                    className="font-semibold text-night-ink hover:text-accent-2"
                                                 >
                                                     {[a.first_name, a.last_name].filter(Boolean).join(' ') || 'Affilié'}
                                                 </Link>
@@ -248,12 +248,12 @@ export default function Dashboard({
                                             <td className={`${TD} font-mono text-night-ink-2`}>{a.affiliate_id}</td>
                                             <td className={TD}>
                                                 {a.status === 'active' ? (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sage/30 px-2.5 py-0.5 text-xs font-semibold text-sage-soft">
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sage-soft px-2.5 py-0.5 text-xs font-semibold text-sage">
                                                         <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
                                                         Actif
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-rust/20 px-2.5 py-0.5 text-xs font-semibold text-rust-tint">
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-rust-tint px-2.5 py-0.5 text-xs font-semibold text-rust">
                                                         <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
                                                         {a.status === 'suspended' ? 'Suspendu' : a.status || 'Inactif'}
                                                     </span>

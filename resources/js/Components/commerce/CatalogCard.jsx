@@ -135,7 +135,7 @@ export default function CatalogCard({
                         aria-label={added ? `« ${title} » ajouté au panier` : `${addLabel} : ${title}`}
                         className={[
                             'inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors disabled:opacity-50',
-                            added ? 'bg-sage text-white' : 'bg-ink text-white hover:bg-accent-2',
+                            added ? 'bg-sage text-white' : 'bg-deep text-white hover:bg-accent-2',
                         ].join(' ')}
                     >
                         {added ? (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Head, usePage, Link } from '@inertiajs/react';
 import StorefrontLayout from '../../Layouts/StorefrontLayout';
+import { useImages } from '../../lib/images';
 import Button from '../../Components/ui/Button';
 
 const POLES = [
@@ -9,7 +10,7 @@ const POLES = [
         poleSlug: 'mode-beaute-cosmetiques',
         titre: 'Mode, beauté et cosmétiques',
         subtitle: 'Cosmétiques naturels, créateurs de mode, maroquinerie, cordonnerie.',
-        photo: '/images/categories/physical.jpg',
+        photoKey: 'marketplace.landing_mode',
         points: [
             'Le client paie en ligne avant l\'expédition (Mobile Money ou carte).',
             'Gestion des tailles, pointures, contenances et du stock par variante.',
@@ -21,7 +22,7 @@ const POLES = [
         poleSlug: 'residences-guest-houses-immobilier',
         titre: 'Résidences, guest houses et immobilier',
         subtitle: 'Guest houses, résidences meublées de court séjour, agences agréées.',
-        photo: '/images/categories/residence.jpg',
+        photoKey: 'marketplace.landing_residence',
         points: [
             'Paiement ou acompte encaissé avant l\'arrivée du voyageur.',
             'Politique d\'annulation affichée sur chaque annonce.',
@@ -33,7 +34,7 @@ const POLES = [
         poleSlug: 'services-praticiens-specialises',
         titre: 'Services et praticiens',
         subtitle: 'Thérapeutes, accompagnants bien-être, coachs, consultants.',
-        photo: '/images/categories/service.jpg',
+        photoKey: 'marketplace.landing_service',
         points: [
             'Le client choisit un créneau dans votre agenda et paie à la réservation.',
             'Consultation en visio (lien envoyé) ou en cabinet (adresse transmise).',
@@ -45,7 +46,7 @@ const POLES = [
         poleSlug: 'savoirs-formations-en-ligne',
         titre: 'Savoirs et formations en ligne',
         subtitle: 'Formateurs, auteurs, conférenciers, animateurs d\'ateliers.',
-        photo: '/images/categories/digital.jpg',
+        photoKey: 'marketplace.landing_digital',
         points: [
             'Accès au contenu ouvert automatiquement après paiement.',
             'Programme d\'affiliation sur trois niveaux pour vos formations.',
@@ -104,6 +105,7 @@ const Check = () => (
 );
 
 export default function Landing({ enabled, stats, starterRate, growthRate, growthThreshold, userVendor }) {
+    const img = useImages();
     const { auth } = usePage().props;
     const [openFaq, setOpenFaq] = useState(null);
 
@@ -219,7 +221,7 @@ export default function Landing({ enabled, stats, starterRate, growthRate, growt
                     {POLES.map((pole) => (
                         <article key={pole.key} className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(28,25,23,0.04)]">
                             <div className="aspect-[16/9] w-full overflow-hidden bg-ground-alt">
-                                <img src={pole.photo} alt="" loading="lazy" className="h-full w-full object-cover" />
+                                <img src={img(pole.photoKey)} alt="" loading="lazy" className="h-full w-full object-cover" />
                             </div>
                             <div className="flex flex-1 flex-col p-6">
                                 <h3 className="text-lg font-semibold text-ink">{pole.titre}</h3>

@@ -113,7 +113,7 @@
                     </select>
                 </label>
 
-                <button class="inline-flex h-10 items-center justify-center rounded-xl border border-rust/40 bg-rust/10 px-4 text-sm font-semibold text-rust hover:bg-rust/20">Suspendre le compte</button>
+                <button class="inline-flex h-10 items-center justify-center rounded-xl border border-rust/40 bg-rust/10 px-4 text-sm font-semibold text-rust hover:bg-rust-tint">Suspendre le compte</button>
                 <p class="text-[11px] text-ink-3">Aucune donnée financière n'est supprimée : tout passe par des transitions de statut et des écritures de registre.</p>
             </form>
         @else

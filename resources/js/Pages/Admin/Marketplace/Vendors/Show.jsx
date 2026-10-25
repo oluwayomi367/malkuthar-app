@@ -52,19 +52,19 @@ export default function Show({ vendor = {} }) {
         switch (st) {
             case 'active':
                 return (
-                    <span className="rounded-full bg-sage/30 px-3 py-1 text-xs font-semibold text-sage-soft">
+                    <span className="rounded-full bg-sage-soft px-3 py-1 text-xs font-semibold text-sage">
                         Actif
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber-tint">
+                    <span className="rounded-full bg-amber/25 px-3 py-1 text-xs font-semibold text-amber">
                         En attente
                     </span>
                 );
             case 'suspended':
                 return (
-                    <span className="rounded-full bg-rust/20 px-3 py-1 text-xs font-semibold text-rust-tint">
+                    <span className="rounded-full bg-rust-tint px-3 py-1 text-xs font-semibold text-rust">
                         Suspendu
                     </span>
                 );
@@ -153,7 +153,7 @@ export default function Show({ vendor = {} }) {
                         )}
 
                         {vendor.suspension_reason && (
-                            <div className="mt-4 rounded-xl border border-rust bg-rust/20 p-3 text-sm text-rust-tint">
+                            <div className="mt-4 rounded-xl border border-rust bg-rust-tint p-3 text-sm text-rust">
                                 <strong>Motif de suspension :</strong> {vendor.suspension_reason}
                             </div>
                         )}
@@ -192,7 +192,7 @@ export default function Show({ vendor = {} }) {
                                     <button
                                         type="button"
                                         onClick={handleApprove}
-                                        className="h-10 w-full rounded-xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
+                                        className="h-10 w-full rounded-xl border border-sage bg-sage-soft text-xs font-bold text-sage hover:bg-sage-soft transition-colors"
                                     >
                                         Approuver le compte
                                     </button>
@@ -203,11 +203,11 @@ export default function Show({ vendor = {} }) {
                                             placeholder="Motif de refus"
                                             value={rejectReason}
                                             onChange={(e) => setRejectReason(e.target.value)}
-                                            className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                            className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                         />
                                         <button
                                             type="submit"
-                                            className="h-10 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
+                                            className="h-10 w-full rounded-xl border border-rust bg-rust-tint text-xs font-bold text-rust hover:bg-rust/35 transition-colors"
                                         >
                                             Refuser la candidature
                                         </button>
@@ -223,11 +223,11 @@ export default function Show({ vendor = {} }) {
                                         placeholder="Motif de suspension"
                                         value={suspendReason}
                                         onChange={(e) => setSuspendReason(e.target.value)}
-                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent-light focus:outline-none min-h-11"
+                                        className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink placeholder:text-night-ink-2/70 focus:border-accent focus:outline-none min-h-11"
                                     />
                                     <button
                                         type="submit"
-                                        className="h-10 w-full rounded-xl border border-rust bg-rust/20 text-xs font-bold text-rust-tint hover:bg-rust/35 transition-colors"
+                                        className="h-10 w-full rounded-xl border border-rust bg-rust-tint text-xs font-bold text-rust hover:bg-rust/35 transition-colors"
                                     >
                                         Suspendre le compte
                                     </button>
@@ -238,7 +238,7 @@ export default function Show({ vendor = {} }) {
                                 <button
                                     type="button"
                                     onClick={handleReactivate}
-                                    className="h-10 w-full rounded-xl border border-sage bg-sage/30 text-xs font-bold text-sage-soft hover:bg-sage/45 transition-colors"
+                                    className="h-10 w-full rounded-xl border border-sage bg-sage-soft text-xs font-bold text-sage hover:bg-sage-soft transition-colors"
                                 >
                                     Réactiver le compte
                                 </button>
@@ -265,14 +265,14 @@ export default function Show({ vendor = {} }) {
                                     onChange={(e) =>
                                         commissionForm.setData('commission_rate_percent', e.target.value)
                                     }
-                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent-light focus:outline-none min-h-11"
+                                    className="h-11 w-full rounded-xl border border-night-ink-2/60 bg-night px-3 text-sm text-night-ink focus:border-accent focus:outline-none min-h-11"
                                 />
                                 <span className="absolute right-3 top-2.5 text-xs text-night-ink-2 font-semibold">%</span>
                             </div>
                             <button
                                 type="submit"
                                 disabled={commissionForm.processing}
-                                className="h-10 rounded-full bg-accent-light px-4 text-sm font-bold text-night hover:bg-accent-light/85 transition-colors disabled:opacity-50 min-h-11"
+                                className="h-10 rounded-full bg-accent px-4 text-sm font-bold text-white hover:bg-accent-2 transition-colors disabled:opacity-50 min-h-11"
                             >
                                 Enregistrer
                             </button>
@@ -284,7 +284,7 @@ export default function Show({ vendor = {} }) {
             <div className="mt-8">
                 <Link
                     href={route('admin.marketplace.vendors.index')}
-                    className="text-xs font-semibold text-accent-light hover:underline"
+                    className="text-xs font-semibold text-accent-2 hover:underline"
                 >
                     Tous les vendeurs
                 </Link>

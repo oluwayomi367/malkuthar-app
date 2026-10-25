@@ -1,4 +1,5 @@
 import './bootstrap';
+import './consent';
 
 // Stores Alpine partagés — panier (localStorage) + tiroir de navigation.
 document.addEventListener('alpine:init', () => {
